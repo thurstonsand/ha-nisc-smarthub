@@ -1,0 +1,93 @@
+[tools]
+python = "3.14"
+uv = "0.12.12"
+hk = "1.56.1"
+markdownlint-cli2 = "0.23.2"
+
+[settings]
+env_cache = true
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+# Pin uv to mise's interpreter so it never downloads its own Python and rebuilds
+# .venv underneath mise.
+UV_PYTHON = { value = "{{ tools.python.path }}/bin/python", tools = true }
+HK_MISE = "1"
+
+[hooks]
+enter = "mise run --quiet bootstrap"
+
+[tasks.bootstrap]
+description = "Prepare the repo for a new shell"
+depends = ["bootstrap:*"]
+
+[tasks."bootstrap:deps"]
+description = "Sync Python dependencies into .venv"
+run = "uv sync --dev"
+# pyvenv.cfg is a source so that deleting .venv resyncs it.
+sources = ["pyproject.toml", "uv.lock", ".venv/pyvenv.cfg"]
+outputs = { auto = true }
+quiet = true
+
+[tasks."bootstrap:hooks"]
+description = "Install git hooks"
+run = [
+  "hk install --mise --quiet",
+  "mkdir -p .mise && touch .mise/hooks",
+]
+sources = ["mise.toml", "hk.pkl"]
+outputs = [".mise/hooks"]
+quiet = true
+
+[tasks.check]
+description = "Run every non-mutating check across the repo"
+depends = [
+  "bootstrap:deps",
+  "docs:lint",
+  "python:fmt:check",
+  "python:lint",
+  "python:typecheck",
+]
+
+[tasks.fix]
+description = "Run every mutating formatter and autofixer across the repo"
+depends = [
+  "docs:lint:fix",
+  "python:fmt",
+  "python:lint:fix",
+]
+
+[tasks."docs:lint"]
+description = "Lint Markdown"
+run = "markdownlint-cli2"
+
+[tasks."docs:lint:fix"]
+description = "Autofix Markdown lint findings"
+run = "markdownlint-cli2 --fix"
+
+[tasks."python:lint"]
+description = "Report ruff lint findings"
+run = "ruff check ."
+
+# Separate from `python:lint` because --unsafe-fixes rewrites code in ways worth
+# reading; it stays out of the commit path and off `check`.
+[tasks."python:lint:fix"]
+description = "Apply ruff lint fixes, including unsafe ones"
+run = "ruff check --fix --unsafe-fixes ."
+
+[tasks."python:fmt"]
+description = "Format Python sources with ruff"
+run = "ruff format ."
+
+[tasks."python:fmt:check"]
+description = "Report Python sources ruff would reformat"
+run = "ruff format --check ."
+
+[tasks."python:typecheck"]
+description = "Type-check Python with basedpyright"
+run = "basedpyright"
+
+[tasks.test]
+description = "Run the test suite"
+depends = ["bootstrap:deps"]
+run = "pytest"

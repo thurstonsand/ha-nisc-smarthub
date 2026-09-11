@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "home-assistant": {
+      "type": "http",
+      "url": "https://fdsnaiutiizykhbtju3uhpmumkqhtmmi.ui.nabu.casa/api/webhook/mcp_51f5eb2b59bda0c5d2dcf0f640901cef",
+      "auth": "oauth"
+    }
+  }
+}

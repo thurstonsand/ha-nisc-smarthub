@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install mise
+        uses: jdx/mise-action@v3
+        with:
+          install: true
+          cache: true
+
+      # No shell `enter` hook in CI, so the venv sync and hook install run
+      # explicitly.
+      - name: Bootstrap
+        run: mise run bootstrap
+
+      # `mise run test` joins once the suite exists; pytest exits 5 on an empty
+      # collection, which would fail the job for the wrong reason.
+      - name: Check
+        run: mise run check

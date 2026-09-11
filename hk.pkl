@@ -1,0 +1,43 @@
+amends "package://github.com/jdx/hk/releases/download/v1.56.1/hk@1.56.1#/Config.pkl"
+
+import "package://github.com/jdx/hk/releases/download/v1.56.1/hk@1.56.1#/Builtins.pkl"
+
+// Every step is glob'd and `check` never mutates; the mutating form lives in `fix`.
+// A step with a `fix` leaves `stage` unset, which hk reads as that step's own glob.
+local linters = new Mapping<String, Step> {
+  // `ruff check --force-exclude {{files}}`, then `--fix` only if that fails.
+  // `--unsafe-fixes` stays in the manual `fix` task, where a human reads the diff.
+  ["ruff-check"] = (Builtins.ruff) {}
+  ["ruff-format"] = (Builtins.ruff_format) {}
+
+  ["markdownlint"] {
+    glob = "**/*.md"
+    exclude = "**/node_modules/**"
+    check = "markdownlint-cli2 --no-globs {{files}}"
+    fix = "markdownlint-cli2 --no-globs --fix {{files}}"
+  }
+
+  // No glob: basedpyright reads pyproject.toml and judges the project as a whole,
+  // so a staged file list would not narrow the work anyway.
+  ["basedpyright"] {
+    check = "basedpyright"
+  }
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    // Staged versus unstaged is the review ledger here, and the fixing steps
+    // stage what they rewrite. Without a stash, ruff-format reformats a file
+    // whose unstaged hunks nobody has read yet and stages the whole thing.
+    stash = "git"
+    steps = linters
+  }
+  ["check"] {
+    steps = linters
+  }
+  ["fix"] {
+    fix = true
+    steps = linters
+  }
+}
