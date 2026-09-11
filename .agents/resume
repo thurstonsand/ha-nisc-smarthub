@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+"$HOME/.local/bin/mise" trust --yes "$repo_root/mise.toml" >/dev/null

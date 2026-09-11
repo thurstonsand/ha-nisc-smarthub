@@ -19,3 +19,6 @@ CLAUDE.local.md
 # Local Home Assistant dev instance (the dev-loop ticket decides what, if
 # anything, under config/ is tracked)
 config/
+
+# Amp orb runtime state
+/.amp/portals/*
