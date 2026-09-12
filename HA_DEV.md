@@ -584,7 +584,7 @@ await hass.async_block_till_done()
 
 **Registry assertions** — device by scoped lookup (`async_get_device_by_identifier((DOMAIN, id), entry.entry_id)`), entity by `er.async_get(hass).async_get("sensor.x")`, and lifecycle `async_setup()` → `LOADED`, `async_unload()` → `NOT_LOADED`. Never the deprecated unscoped `async_get_device()`.
 
-**Snapshots** (syrupy) are for large stable structures — diagnostics, entity registry dumps. They complement functional assertions; they do not replace them. A snapshot asserts "unchanged since I recorded it", which assumes the recording was right; to check that an entity goes unavailable on an API error, assert that specific state. Read the diff before committing an `.ambr` file — an accepted snapshot of a bug is worse than no test.
+**Snapshots** (syrupy) are for large stable structures — diagnostics, entity registry dumps. They complement functional assertions; they do not replace them. A snapshot asserts "unchanged since I recorded it", which assumes the recording was right; to check that an entity goes unavailable on an API error, assert that specific state. Read the diff before committing an `.ambr` file — an accepted snapshot of a bug is worse than no test. Define the `snapshot` fixture in `tests/conftest.py` with `HomeAssistantSnapshotExtension`, as Core's conftest does: syrupy and the Home Assistant test plugin both ship a `snapshot` fixture, the plugin's override only wins when plugin registration order favors it, and that order follows `site-packages` directory order, so a suite that passes on macOS can fail on a Linux runner looking for `__snapshots__/`.
 
 ### Mocking
 

@@ -8,6 +8,8 @@ from freezegun.api import FrozenDateTimeFactory
 from homeassistant.const import CONF_EMAIL, CONF_HOST, CONF_LOCATION, CONF_PASSWORD
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.syrupy import HomeAssistantSnapshotExtension
+from syrupy.assertion import SnapshotAssertion
 
 from custom_components.nisc_smarthub.const import (
     CONF_ACCOUNT,
@@ -25,6 +27,18 @@ from . import recordings
 # day 28), so a test that never moves the clock sees them as the current cycle
 # whatever the real date is.
 FROZEN_NOW = datetime(2026, 9, 11, 12, tzinfo=UTC)
+
+
+# Both syrupy and the Home Assistant test plugin define a `snapshot` fixture,
+# and which one wins depends on plugin registration order, which follows the
+# directory order of site-packages: sorted on APFS, hash order on ext4. On a
+# Linux runner syrupy's own fixture can win and look for snapshots under
+# `__snapshots__`. A conftest fixture outranks both, so the extension is
+# chosen here, the way Home Assistant core's conftest does.
+@pytest.fixture
+def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
+    """Return the snapshot assertion with Home Assistant's serializer and paths."""
+    return snapshot.use_extension(HomeAssistantSnapshotExtension)
 
 
 @pytest.fixture(autouse=True)
