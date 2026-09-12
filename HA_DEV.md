@@ -276,6 +276,8 @@ Migrations must be idempotent and must never delete a key they do not understand
 
 ### Adding a config option
 
+An options flow that applies its change by reloading the entry calls `hass.config_entries.async_schedule_reload` itself and must not also register an update listener. In 2026.9 `async_update_reload_and_abort` warns about integrations that do both, and 2026.12 removes the combination.
+
 1. **Decide data or options** using the table above. This is the one irreversible choice here.
 2. Add the `CONF_*` key to `const.py`.
 3. Add the field to `schemas/config.py` or `schemas/options.py` with a selector and a default.
@@ -412,7 +414,9 @@ Always redacted: passwords, API keys and tokens, OAuth credentials, TOTP secrets
 
 **Update `en.json` only**, and only when asked or at a feature milestone. Never touch another language file without asking — code works without translations, so business logic comes first.
 
-**NEVER use `[%key:...%]` references, and never create `strings.json`.** Both are Home Assistant **Core** build-time features. Core compiles `strings.json` into `translations/en.json` and resolves the references on the way; a custom integration has no such build step, so its `translations/*.json` is served exactly as written. Write out the full English text for every key, even when it duplicates another key or a Core string. The symptom when this is wrong: the config flow shows raw keys instead of translated labels.
+**NEVER use `[%key:...%]` references.** They are a Home Assistant **Core** build-time feature: Core compiles `strings.json` into `translations/en.json` and resolves the references on the way; a custom integration has no such build step, so its `translations/*.json` is served exactly as written. Write out the full English text for every key, even when it duplicates another key or a Core string. The symptom when this is wrong: the config flow shows raw keys instead of translated labels.
+
+This repository still authors `strings.json` (hassfest reads it) and ships an identical `translations/en.json`; `mise run strings:check` fails the build if they drift or if a `[%key:...%]` reference appears.
 
 **Placeholders** use `{variable}` and their names must match the code exactly. Do not put single quotes around a placeholder inside a string value (`"Service '{service}' is unavailable"`) — it is untranslatable across languages and fails validation. Escaped double quotes are fine.
 
@@ -693,7 +697,7 @@ Only a **primary** source settles a question: the installed source you import, o
 - `device_trigger.py` / `device_condition.py` / `device_action.py`
 - Creating an `aiohttp.ClientSession` instead of `async_get_clientsession(hass)`
 - `from __future__ import annotations` — Python 3.14 evaluates annotations lazily already
-- `strings.json` and `[%key:…%]` references, which only work in Core
+- `[%key:…%]` references, which only work in Core (`strings.json` is fine here, mirrored by `strings:check`)
 - A hand-written retry loop around `ConfigEntryNotReady`
 - Adding a warning filter to make a deprecation go away
 
@@ -709,6 +713,8 @@ Only a **primary** source settles a question: the installed source you import, o
 **4 spaces, 88 columns** (ruff's `line-length` in `pyproject.toml`), double quotes, full type hints, async for all I/O. YAML 2 spaces; JSON 2 spaces, no trailing commas, no comments.
 
 ### Typing
+
+This repository runs basedpyright strict. Home Assistant declares entity attributes such as `device_info`, `native_value`, and `extra_state_attributes` as both class-level `_attr_*` values and properties, and strict mode reports every property override on an integration entity as `reportIncompatibleVariableOverride`. Suppress it per line on the override (`# pyright: ignore[reportIncompatibleVariableOverride]`); there is no project-wide setting that keeps the rest of strict mode.
 
 - Annotate every parameter and return value. `-> None` on procedures. No bare `Any` where a `TypedDict` or dataclass is meant.
 - Never `from __future__ import annotations`.

@@ -1,0 +1,98 @@
+[
+  {
+    "account": "900000001",
+    "address": "scrubbed",
+    "agreementStatus": 0,
+    "consumerClassCode": "scrubbed",
+    "customer": "scrubbed",
+    "customerName": "scrubbed",
+    "disconnectNonPay": false,
+    "email": "member@example.com",
+    "inactive": false,
+    "invoiceGroupNumber": "scrubbed",
+    "isAutoPay": false,
+    "isDisconnected": false,
+    "isMultiService": false,
+    "isPendingDisconnect": false,
+    "isUnCollectible": false,
+    "primaryServiceLocationId": "70001",
+    "providerOrServiceDescription": "scrubbed",
+    "providerToDescription": {
+      "COBB": "scrubbed"
+    },
+    "providerToProviderDescription": {
+      "COBB": "scrubbed"
+    },
+    "serviceLocationIdToServiceLocationSummary": {
+      "70001": {
+        "activeRateSchedules": [
+          "NFON:COBB",
+          "NFOFF:COBB",
+          "NFSOF:COBB"
+        ],
+        "address": {
+          "addr1": "scrubbed",
+          "city": "scrubbed",
+          "state": "GA",
+          "zip": "scrubbed"
+        },
+        "id": {
+          "serviceLocation": "70001",
+          "srvLocNbr": 70001
+        },
+        "location": "scrubbed",
+        "meterNumbersToExternalMeterBaseIds": {
+          "1N0000000001": "9000001"
+        },
+        "serviceStatus": "ACTIVE"
+      }
+    },
+    "serviceLocationToIndustries": {
+      "70001": [
+        "ELECTRIC"
+      ]
+    },
+    "serviceLocationToProviders": {
+      "70001": [
+        "COBB"
+      ]
+    },
+    "serviceLocationToUserDataServiceLocationSummaries": {
+      "70001": [
+        {
+          "activeRateSchedules": [
+            "NFON:COBB",
+            "NFOFF:COBB",
+            "NFSOF:COBB"
+          ],
+          "address": {
+            "addr1": "scrubbed",
+            "city": "scrubbed",
+            "state": "GA",
+            "zip": "scrubbed"
+          },
+          "id": {
+            "serviceLocation": "70001",
+            "srvLocNbr": 70001
+          },
+          "location": "scrubbed",
+          "serviceStatus": "ACTIVE",
+          "services": [
+            "ELEC"
+          ]
+        }
+      ]
+    },
+    "serviceToProviders": {
+      "ELEC": [
+        "COBB"
+      ]
+    },
+    "serviceToServiceDescription": {
+      "ELEC": "scrubbed"
+    },
+    "services": [
+      "ELEC"
+    ]
+  }
+]

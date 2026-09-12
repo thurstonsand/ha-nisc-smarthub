@@ -1,0 +1,12 @@
+default_config:
+
+homeassistant:
+  debug: true
+
+logger:
+  default: info
+  logs:
+    custom_components.nisc_smarthub: debug
+
+http:
+  server_host: 127.0.0.1

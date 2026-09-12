@@ -1,34 +1,21 @@
 #!/usr/bin/env bash
+# Prepare an orb for this repository: mise, the pinned toolchain, the venv.
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-mise_bin="$HOME/.local/bin/mise"
+cd "$(dirname "$0")/.."
 
-run_step() {
-  local label="$1"
-  shift
-  local started_at=$SECONDS
-
-  printf '==> %s\n' "$label"
-  "$@"
-  printf '<== %s (%ss)\n' "$label" "$((SECONDS - started_at))"
-}
-
-if [[ ! -x "$mise_bin" ]]; then
-  run_step "Install mise" bash -c 'curl https://mise.run | sh'
+if ! command -v mise >/dev/null 2>&1; then
+  curl -fsSL https://mise.run | sh
+  export PATH="$HOME/.local/bin:$PATH"
 fi
 
-export PATH="$HOME/.local/bin:$PATH"
+# Orb shells are login shells, so activation goes in .bash_profile as well.
+for profile in "$HOME/.bashrc" "$HOME/.bash_profile"; do
+  if ! grep -qs 'mise activate bash' "$profile"; then
+    echo 'eval "$(mise activate bash)"' >>"$profile"
+  fi
+done
 
-run_step "Trust repository tool configuration" "$mise_bin" trust --yes "$repo_root/mise.toml"
-run_step "Install pinned toolchain" "$mise_bin" install
-run_step "Sync dependencies and install git hooks" "$mise_bin" run bootstrap
-
-profile_marker="# ha-nisc-smarthub mise activation"
-if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
-  cat >> "$HOME/.bash_profile" <<'EOF'
-
-# ha-nisc-smarthub mise activation
-eval "$("$HOME/.local/bin/mise" activate bash)"
-EOF
-fi
+mise trust --yes
+mise install
+mise run bootstrap

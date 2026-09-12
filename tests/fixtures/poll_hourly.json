@@ -1,0 +1,4148 @@
+{
+  "data": {
+    "ELECTRIC": [
+      {
+        "accountNumber": "900000001",
+        "baseSeries": {
+          "color": "scrubbed",
+          "data": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 0.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788224400000,
+              "y": 1.16
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788228000000,
+              "y": 0.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788231600000,
+              "y": 0.96
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788235200000,
+              "y": 0.89
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788238800000,
+              "y": 0.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788242400000,
+              "y": 0.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788246000000,
+              "y": 0.71
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788249600000,
+              "y": 0.67
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788253200000,
+              "y": 1.2
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788256800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788260400000,
+              "y": 2.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788264000000,
+              "y": 2.55
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788267600000,
+              "y": 2.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788271200000,
+              "y": 3.11
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788274800000,
+              "y": 3.46
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788278400000,
+              "y": 3.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788282000000,
+              "y": 3.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788285600000,
+              "y": 3.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788289200000,
+              "y": 2.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788292800000,
+              "y": 2.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788296400000,
+              "y": 2.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788300000000,
+              "y": 2.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788303600000,
+              "y": 1.58
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 1.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788310800000,
+              "y": 1.36
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788314400000,
+              "y": 1.4
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788318000000,
+              "y": 1.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788321600000,
+              "y": 1.26
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788325200000,
+              "y": 0.97
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788328800000,
+              "y": 1.03
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788332400000,
+              "y": 1.12
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788336000000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788339600000,
+              "y": 1.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788343200000,
+              "y": 1.81
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788346800000,
+              "y": 3.22
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788350400000,
+              "y": 3.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788354000000,
+              "y": 3.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788357600000,
+              "y": 3.87
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788361200000,
+              "y": 3.76
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788364800000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788368400000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788372000000,
+              "y": 3.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788375600000,
+              "y": 2.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788379200000,
+              "y": 2.54
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788382800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788386400000,
+              "y": 2.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788390000000,
+              "y": 1.68
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 1.48
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788397200000,
+              "y": 1.17
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788400800000,
+              "y": 1.38
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788404400000,
+              "y": 1.41
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788408000000,
+              "y": 1.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788411600000,
+              "y": 1.08
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788415200000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788418800000,
+              "y": 1.15
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788422400000,
+              "y": 1.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788426000000,
+              "y": 1.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788429600000,
+              "y": 1.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788433200000,
+              "y": 2.42
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788436800000,
+              "y": 2.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788440400000,
+              "y": 2.78
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788444000000,
+              "y": 4.29
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788447600000,
+              "y": 3.86
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788451200000,
+              "y": 3.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788454800000,
+              "y": 3.35
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788458400000,
+              "y": 3.62
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788462000000,
+              "y": 3.59
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788465600000,
+              "y": 2.91
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788469200000,
+              "y": 3.19
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788472800000,
+              "y": 2.73
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788476400000,
+              "y": 3.23
+            }
+          ],
+          "dataGrouping": {
+            "enabled": false,
+            "smoothed": false
+          },
+          "fillOpacity": 0.0,
+          "lineWidth": 0,
+          "marker": {
+            "enabled": false
+          },
+          "name": "scrubbed",
+          "turboThreshold": 0,
+          "type": "scrubbed"
+        },
+        "baseUsageParameters": {
+          "accountNumber": "900000001",
+          "endDateTime": 1788494400000,
+          "includeDemand": false,
+          "industries": [
+            "scrubbed"
+          ],
+          "screen": "scrubbed",
+          "serviceLocationNumber": "70001",
+          "startDateTime": 1788235200000,
+          "timeFrame": "HOURLY",
+          "userId": "member@example.com"
+        },
+        "connectDate": "August 28, 2026",
+        "editedSeries": {},
+        "endDateTime": 1788494400000,
+        "estimatedSeries": {},
+        "hasDaily": false,
+        "hasHourly": false,
+        "industry": "scrubbed",
+        "meterToChartData": {
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='null', rateName='null', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001', color='#4A92DB', maxReadDate=1788494400000, minReadDate=1788235200000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 0.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788224400000,
+              "y": 1.16
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788228000000,
+              "y": 0.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788231600000,
+              "y": 0.96
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788235200000,
+              "y": 0.89
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788238800000,
+              "y": 0.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788242400000,
+              "y": 0.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788246000000,
+              "y": 0.71
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788249600000,
+              "y": 0.67
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788253200000,
+              "y": 1.2
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788256800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788260400000,
+              "y": 2.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788264000000,
+              "y": 2.55
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788267600000,
+              "y": 2.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788271200000,
+              "y": 3.11
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788274800000,
+              "y": 3.46
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788278400000,
+              "y": 3.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788282000000,
+              "y": 3.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788285600000,
+              "y": 3.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788289200000,
+              "y": 2.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788292800000,
+              "y": 2.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788296400000,
+              "y": 2.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788300000000,
+              "y": 2.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788303600000,
+              "y": 1.58
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 1.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788310800000,
+              "y": 1.36
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788314400000,
+              "y": 1.4
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788318000000,
+              "y": 1.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788321600000,
+              "y": 1.26
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788325200000,
+              "y": 0.97
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788328800000,
+              "y": 1.03
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788332400000,
+              "y": 1.12
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788336000000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788339600000,
+              "y": 1.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788343200000,
+              "y": 1.81
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788346800000,
+              "y": 3.22
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788350400000,
+              "y": 3.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788354000000,
+              "y": 3.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788357600000,
+              "y": 3.87
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788361200000,
+              "y": 3.76
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788364800000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788368400000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788372000000,
+              "y": 3.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788375600000,
+              "y": 2.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788379200000,
+              "y": 2.54
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788382800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788386400000,
+              "y": 2.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788390000000,
+              "y": 1.68
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 1.48
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788397200000,
+              "y": 1.17
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788400800000,
+              "y": 1.38
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788404400000,
+              "y": 1.41
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788408000000,
+              "y": 1.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788411600000,
+              "y": 1.08
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788415200000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788418800000,
+              "y": 1.15
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788422400000,
+              "y": 1.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788426000000,
+              "y": 1.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788429600000,
+              "y": 1.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788433200000,
+              "y": 2.42
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788436800000,
+              "y": 2.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788440400000,
+              "y": 2.78
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788444000000,
+              "y": 4.29
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788447600000,
+              "y": 3.86
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788451200000,
+              "y": 3.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788454800000,
+              "y": 3.35
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788458400000,
+              "y": 3.62
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788462000000,
+              "y": 3.59
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788465600000,
+              "y": 2.91
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788469200000,
+              "y": 3.19
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788472800000,
+              "y": 2.73
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788476400000,
+              "y": 3.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 0.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788224400000,
+              "y": 1.16
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788228000000,
+              "y": 0.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788231600000,
+              "y": 0.96
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788235200000,
+              "y": 0.89
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788238800000,
+              "y": 0.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788242400000,
+              "y": 0.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788246000000,
+              "y": 0.71
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788249600000,
+              "y": 0.67
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788253200000,
+              "y": 1.2
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788256800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788260400000,
+              "y": 2.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788264000000,
+              "y": 2.55
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788267600000,
+              "y": 2.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788271200000,
+              "y": 3.11
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788274800000,
+              "y": 3.46
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788278400000,
+              "y": 3.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788282000000,
+              "y": 3.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788285600000,
+              "y": 3.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788289200000,
+              "y": 2.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788292800000,
+              "y": 2.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788296400000,
+              "y": 2.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788300000000,
+              "y": 2.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788303600000,
+              "y": 1.58
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 1.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788310800000,
+              "y": 1.36
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788314400000,
+              "y": 1.4
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788318000000,
+              "y": 1.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788321600000,
+              "y": 1.26
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788325200000,
+              "y": 0.97
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788328800000,
+              "y": 1.03
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788332400000,
+              "y": 1.12
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788336000000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788339600000,
+              "y": 1.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788343200000,
+              "y": 1.81
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788346800000,
+              "y": 3.22
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788350400000,
+              "y": 3.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788354000000,
+              "y": 3.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788357600000,
+              "y": 3.87
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788361200000,
+              "y": 3.76
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788364800000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788368400000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788372000000,
+              "y": 3.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788375600000,
+              "y": 2.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788379200000,
+              "y": 2.54
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788382800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788386400000,
+              "y": 2.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788390000000,
+              "y": 1.68
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 1.48
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788397200000,
+              "y": 1.17
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788400800000,
+              "y": 1.38
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788404400000,
+              "y": 1.41
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788408000000,
+              "y": 1.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788411600000,
+              "y": 1.08
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788415200000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788418800000,
+              "y": 1.15
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788422400000,
+              "y": 1.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788426000000,
+              "y": 1.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788429600000,
+              "y": 1.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788433200000,
+              "y": 2.42
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788436800000,
+              "y": 2.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788440400000,
+              "y": 2.78
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788444000000,
+              "y": 4.29
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788447600000,
+              "y": 3.86
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788451200000,
+              "y": 3.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788454800000,
+              "y": 3.35
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788458400000,
+              "y": 3.62
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788462000000,
+              "y": 3.59
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788465600000,
+              "y": 2.91
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788469200000,
+              "y": 3.19
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788472800000,
+              "y": 2.73
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788476400000,
+              "y": 3.23
+            }
+          ]
+        },
+        "meters": [
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "seriesId": "1N0000000001",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          }
+        ],
+        "series": [
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788220800000,
+                "y": 0.95
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788224400000,
+                "y": 1.16
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788228000000,
+                "y": 0.85
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788231600000,
+                "y": 0.96
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788235200000,
+                "y": 0.89
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788238800000,
+                "y": 0.82
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788242400000,
+                "y": 0.61
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788246000000,
+                "y": 0.71
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788249600000,
+                "y": 0.67
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788253200000,
+                "y": 1.2
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788256800000,
+                "y": 2.02
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788260400000,
+                "y": 2.14
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788264000000,
+                "y": 2.55
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788267600000,
+                "y": 2.85
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788271200000,
+                "y": 3.11
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788274800000,
+                "y": 3.46
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788278400000,
+                "y": 3.95
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788282000000,
+                "y": 3.77
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788285600000,
+                "y": 3.43
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788289200000,
+                "y": 2.61
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788292800000,
+                "y": 2.13
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788296400000,
+                "y": 2.43
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788300000000,
+                "y": 2.23
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788303600000,
+                "y": 1.58
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788307200000,
+                "y": 1.31
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788310800000,
+                "y": 1.36
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788314400000,
+                "y": 1.4
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788318000000,
+                "y": 1.02
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788321600000,
+                "y": 1.26
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788325200000,
+                "y": 0.97
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788328800000,
+                "y": 1.03
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788332400000,
+                "y": 1.12
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788336000000,
+                "y": 1.06
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788339600000,
+                "y": 1.33
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788343200000,
+                "y": 1.81
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788346800000,
+                "y": 3.22
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788350400000,
+                "y": 3.24
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788354000000,
+                "y": 3.63
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788357600000,
+                "y": 3.87
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788361200000,
+                "y": 3.76
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788364800000,
+                "y": 3.69
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788368400000,
+                "y": 3.69
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788372000000,
+                "y": 3.44
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788375600000,
+                "y": 2.66
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788379200000,
+                "y": 2.54
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788382800000,
+                "y": 2.02
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788386400000,
+                "y": 2.31
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788390000000,
+                "y": 1.68
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788393600000,
+                "y": 1.48
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788397200000,
+                "y": 1.17
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788400800000,
+                "y": 1.38
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788404400000,
+                "y": 1.41
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788408000000,
+                "y": 1.14
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788411600000,
+                "y": 1.08
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788415200000,
+                "y": 1.06
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788418800000,
+                "y": 1.15
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788422400000,
+                "y": 1.24
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788426000000,
+                "y": 1.77
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788429600000,
+                "y": 1.85
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788433200000,
+                "y": 2.42
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788436800000,
+                "y": 2.69
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788440400000,
+                "y": 2.78
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788444000000,
+                "y": 4.29
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788447600000,
+                "y": 3.86
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788451200000,
+                "y": 3.66
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788454800000,
+                "y": 3.35
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788458400000,
+                "y": 3.62
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788462000000,
+                "y": 3.59
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788465600000,
+                "y": 2.91
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788469200000,
+                "y": 3.19
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788472800000,
+                "y": 2.73
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788476400000,
+                "y": 3.23
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "isNet": false,
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001",
+            "stack": "scrubbed",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0,
+            "zIndex": 0
+          }
+        ],
+        "serviceLocationNumber": "70001",
+        "startDateTime": 1788235200000,
+        "timeFrame": "HOURLY",
+        "type": "USAGE",
+        "unitOfMeasure": "KWH",
+        "xToOrderedInterval": {
+          "1788220800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788224400000,
+              "start": 1788220800000
+            }
+          },
+          "1788224400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788228000000,
+              "start": 1788224400000
+            }
+          },
+          "1788228000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788231600000,
+              "start": 1788228000000
+            }
+          },
+          "1788231600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788235200000,
+              "start": 1788231600000
+            }
+          },
+          "1788235200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788238800000,
+              "start": 1788235200000
+            }
+          },
+          "1788238800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788242400000,
+              "start": 1788238800000
+            }
+          },
+          "1788242400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788246000000,
+              "start": 1788242400000
+            }
+          },
+          "1788246000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788249600000,
+              "start": 1788246000000
+            }
+          },
+          "1788249600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788253200000,
+              "start": 1788249600000
+            }
+          },
+          "1788253200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788256800000,
+              "start": 1788253200000
+            }
+          },
+          "1788256800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788260400000,
+              "start": 1788256800000
+            }
+          },
+          "1788260400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788264000000,
+              "start": 1788260400000
+            }
+          },
+          "1788264000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788267600000,
+              "start": 1788264000000
+            }
+          },
+          "1788267600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788271200000,
+              "start": 1788267600000
+            }
+          },
+          "1788271200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788274800000,
+              "start": 1788271200000
+            }
+          },
+          "1788274800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788278400000,
+              "start": 1788274800000
+            }
+          },
+          "1788278400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788282000000,
+              "start": 1788278400000
+            }
+          },
+          "1788282000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788285600000,
+              "start": 1788282000000
+            }
+          },
+          "1788285600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788289200000,
+              "start": 1788285600000
+            }
+          },
+          "1788289200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788292800000,
+              "start": 1788289200000
+            }
+          },
+          "1788292800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788296400000,
+              "start": 1788292800000
+            }
+          },
+          "1788296400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788300000000,
+              "start": 1788296400000
+            }
+          },
+          "1788300000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788303600000,
+              "start": 1788300000000
+            }
+          },
+          "1788303600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788307200000,
+              "start": 1788303600000
+            }
+          },
+          "1788307200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788310800000,
+              "start": 1788307200000
+            }
+          },
+          "1788310800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788314400000,
+              "start": 1788310800000
+            }
+          },
+          "1788314400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788318000000,
+              "start": 1788314400000
+            }
+          },
+          "1788318000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788321600000,
+              "start": 1788318000000
+            }
+          },
+          "1788321600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788325200000,
+              "start": 1788321600000
+            }
+          },
+          "1788325200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788328800000,
+              "start": 1788325200000
+            }
+          },
+          "1788328800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788332400000,
+              "start": 1788328800000
+            }
+          },
+          "1788332400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788336000000,
+              "start": 1788332400000
+            }
+          },
+          "1788336000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788339600000,
+              "start": 1788336000000
+            }
+          },
+          "1788339600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788343200000,
+              "start": 1788339600000
+            }
+          },
+          "1788343200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788346800000,
+              "start": 1788343200000
+            }
+          },
+          "1788346800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788350400000,
+              "start": 1788346800000
+            }
+          },
+          "1788350400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788354000000,
+              "start": 1788350400000
+            }
+          },
+          "1788354000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788357600000,
+              "start": 1788354000000
+            }
+          },
+          "1788357600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788361200000,
+              "start": 1788357600000
+            }
+          },
+          "1788361200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788364800000,
+              "start": 1788361200000
+            }
+          },
+          "1788364800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788368400000,
+              "start": 1788364800000
+            }
+          },
+          "1788368400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788372000000,
+              "start": 1788368400000
+            }
+          },
+          "1788372000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788375600000,
+              "start": 1788372000000
+            }
+          },
+          "1788375600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788379200000,
+              "start": 1788375600000
+            }
+          },
+          "1788379200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788382800000,
+              "start": 1788379200000
+            }
+          },
+          "1788382800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788386400000,
+              "start": 1788382800000
+            }
+          },
+          "1788386400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788390000000,
+              "start": 1788386400000
+            }
+          },
+          "1788390000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788393600000,
+              "start": 1788390000000
+            }
+          },
+          "1788393600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788397200000,
+              "start": 1788393600000
+            }
+          },
+          "1788397200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788400800000,
+              "start": 1788397200000
+            }
+          },
+          "1788400800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788404400000,
+              "start": 1788400800000
+            }
+          },
+          "1788404400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788408000000,
+              "start": 1788404400000
+            }
+          },
+          "1788408000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788411600000,
+              "start": 1788408000000
+            }
+          },
+          "1788411600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788415200000,
+              "start": 1788411600000
+            }
+          },
+          "1788415200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788418800000,
+              "start": 1788415200000
+            }
+          },
+          "1788418800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788422400000,
+              "start": 1788418800000
+            }
+          },
+          "1788422400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788426000000,
+              "start": 1788422400000
+            }
+          },
+          "1788426000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788429600000,
+              "start": 1788426000000
+            }
+          },
+          "1788429600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788433200000,
+              "start": 1788429600000
+            }
+          },
+          "1788433200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788436800000,
+              "start": 1788433200000
+            }
+          },
+          "1788436800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788440400000,
+              "start": 1788436800000
+            }
+          },
+          "1788440400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788444000000,
+              "start": 1788440400000
+            }
+          },
+          "1788444000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788447600000,
+              "start": 1788444000000
+            }
+          },
+          "1788447600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788451200000,
+              "start": 1788447600000
+            }
+          },
+          "1788451200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788454800000,
+              "start": 1788451200000
+            }
+          },
+          "1788454800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788458400000,
+              "start": 1788454800000
+            }
+          },
+          "1788458400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788462000000,
+              "start": 1788458400000
+            }
+          },
+          "1788462000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788465600000,
+              "start": 1788462000000
+            }
+          },
+          "1788465600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788469200000,
+              "start": 1788465600000
+            }
+          },
+          "1788469200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788472800000,
+              "start": 1788469200000
+            }
+          },
+          "1788472800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788476400000,
+              "start": 1788472800000
+            }
+          },
+          "1788476400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788480000000,
+              "start": 1788476400000
+            }
+          }
+        }
+      },
+      {
+        "accountNumber": "900000001",
+        "baseSeries": {
+          "color": "scrubbed",
+          "data": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 0.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788224400000,
+              "y": 1.16
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788228000000,
+              "y": 0.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788231600000,
+              "y": 0.96
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788235200000,
+              "y": 0.89
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788238800000,
+              "y": 0.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788242400000,
+              "y": 0.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788246000000,
+              "y": 0.71
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788249600000,
+              "y": 0.67
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788253200000,
+              "y": 1.2
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788256800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788260400000,
+              "y": 2.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788264000000,
+              "y": 2.55
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788267600000,
+              "y": 2.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788271200000,
+              "y": 3.11
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788274800000,
+              "y": 3.46
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788278400000,
+              "y": 3.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788282000000,
+              "y": 3.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788285600000,
+              "y": 3.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788289200000,
+              "y": 2.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788292800000,
+              "y": 2.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788296400000,
+              "y": 2.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788300000000,
+              "y": 2.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788303600000,
+              "y": 1.58
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 1.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788310800000,
+              "y": 1.36
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788314400000,
+              "y": 1.4
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788318000000,
+              "y": 1.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788321600000,
+              "y": 1.26
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788325200000,
+              "y": 0.97
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788328800000,
+              "y": 1.03
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788332400000,
+              "y": 1.12
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788336000000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788339600000,
+              "y": 1.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788343200000,
+              "y": 1.81
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788346800000,
+              "y": 3.22
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788350400000,
+              "y": 3.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788354000000,
+              "y": 3.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788357600000,
+              "y": 3.87
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788361200000,
+              "y": 3.76
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788364800000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788368400000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788372000000,
+              "y": 3.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788375600000,
+              "y": 2.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788379200000,
+              "y": 2.54
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788382800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788386400000,
+              "y": 2.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788390000000,
+              "y": 1.68
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 1.48
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788397200000,
+              "y": 1.17
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788400800000,
+              "y": 1.38
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788404400000,
+              "y": 1.41
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788408000000,
+              "y": 1.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788411600000,
+              "y": 1.08
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788415200000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788418800000,
+              "y": 1.15
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788422400000,
+              "y": 1.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788426000000,
+              "y": 1.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788429600000,
+              "y": 1.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788433200000,
+              "y": 2.42
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788436800000,
+              "y": 2.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788440400000,
+              "y": 2.78
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788444000000,
+              "y": 4.29
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788447600000,
+              "y": 3.86
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788451200000,
+              "y": 3.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788454800000,
+              "y": 3.35
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788458400000,
+              "y": 3.62
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788462000000,
+              "y": 3.59
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788465600000,
+              "y": 2.91
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788469200000,
+              "y": 3.19
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788472800000,
+              "y": 2.73
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788476400000,
+              "y": 3.23
+            }
+          ],
+          "dataGrouping": {
+            "enabled": false,
+            "smoothed": false
+          },
+          "fillOpacity": 0.0,
+          "lineWidth": 0,
+          "marker": {
+            "enabled": false
+          },
+          "name": "scrubbed",
+          "turboThreshold": 0,
+          "type": "scrubbed"
+        },
+        "connectDate": "August 28, 2026",
+        "editedSeries": {},
+        "endDateTime": 1788480000000,
+        "estimatedSeries": {},
+        "hasDaily": false,
+        "hasHourly": false,
+        "industry": "scrubbed",
+        "meterToChartData": {
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='Off Peak', rateName='Off Peak', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001 - Off Peak', color='#FFC846', maxReadDate=1788480000000, minReadDate=1788242400000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788242400000,
+              "y": 0.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788246000000,
+              "y": 0.71
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788249600000,
+              "y": 0.67
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788253200000,
+              "y": 1.2
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788256800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788260400000,
+              "y": 2.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788264000000,
+              "y": 2.55
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788296400000,
+              "y": 2.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788300000000,
+              "y": 2.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788303600000,
+              "y": 1.58
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788328800000,
+              "y": 1.03
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788332400000,
+              "y": 1.12
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788336000000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788339600000,
+              "y": 1.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788343200000,
+              "y": 1.81
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788346800000,
+              "y": 3.22
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788350400000,
+              "y": 3.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788382800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788386400000,
+              "y": 2.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788390000000,
+              "y": 1.68
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788415200000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788418800000,
+              "y": 1.15
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788422400000,
+              "y": 1.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788426000000,
+              "y": 1.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788429600000,
+              "y": 1.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788433200000,
+              "y": 2.42
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788436800000,
+              "y": 2.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788469200000,
+              "y": 3.19
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788472800000,
+              "y": 2.73
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788476400000,
+              "y": 3.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788242400000,
+              "y": 0.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788246000000,
+              "y": 0.71
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788249600000,
+              "y": 0.67
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788253200000,
+              "y": 1.2
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788256800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788260400000,
+              "y": 2.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788264000000,
+              "y": 2.55
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788296400000,
+              "y": 2.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788300000000,
+              "y": 2.23
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788303600000,
+              "y": 1.58
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788328800000,
+              "y": 1.03
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788332400000,
+              "y": 1.12
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788336000000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788339600000,
+              "y": 1.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788343200000,
+              "y": 1.81
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788346800000,
+              "y": 3.22
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788350400000,
+              "y": 3.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788382800000,
+              "y": 2.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788386400000,
+              "y": 2.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788390000000,
+              "y": 1.68
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788415200000,
+              "y": 1.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788418800000,
+              "y": 1.15
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788422400000,
+              "y": 1.24
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788426000000,
+              "y": 1.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788429600000,
+              "y": 1.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788433200000,
+              "y": 2.42
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788436800000,
+              "y": 2.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788469200000,
+              "y": 3.19
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788472800000,
+              "y": 2.73
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788476400000,
+              "y": 3.23
+            }
+          ],
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='Off Peak', rateName='Super Off Pk', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001 - Super Off Pk', color='#48A23F', maxReadDate=1788415200000, minReadDate=1788220800000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 0.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788224400000,
+              "y": 1.16
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788228000000,
+              "y": 0.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788231600000,
+              "y": 0.96
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788235200000,
+              "y": 0.89
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788238800000,
+              "y": 0.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 1.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788310800000,
+              "y": 1.36
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788314400000,
+              "y": 1.4
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788318000000,
+              "y": 1.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788321600000,
+              "y": 1.26
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788325200000,
+              "y": 0.97
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 1.48
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788397200000,
+              "y": 1.17
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788400800000,
+              "y": 1.38
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788404400000,
+              "y": 1.41
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788408000000,
+              "y": 1.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788411600000,
+              "y": 1.08
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 0.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788224400000,
+              "y": 1.16
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788228000000,
+              "y": 0.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788231600000,
+              "y": 0.96
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788235200000,
+              "y": 0.89
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788238800000,
+              "y": 0.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 1.31
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788310800000,
+              "y": 1.36
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788314400000,
+              "y": 1.4
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788318000000,
+              "y": 1.02
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788321600000,
+              "y": 1.26
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788325200000,
+              "y": 0.97
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 1.48
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788397200000,
+              "y": 1.17
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788400800000,
+              "y": 1.38
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788404400000,
+              "y": 1.41
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788408000000,
+              "y": 1.14
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788411600000,
+              "y": 1.08
+            }
+          ],
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='On Peak', rateName='On Peak', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001 - On Peak', color='#E36F1E', maxReadDate=1788469200000, minReadDate=1788267600000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788267600000,
+              "y": 2.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788271200000,
+              "y": 3.11
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788274800000,
+              "y": 3.46
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788278400000,
+              "y": 3.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788282000000,
+              "y": 3.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788285600000,
+              "y": 3.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788289200000,
+              "y": 2.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788292800000,
+              "y": 2.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788354000000,
+              "y": 3.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788357600000,
+              "y": 3.87
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788361200000,
+              "y": 3.76
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788364800000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788368400000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788372000000,
+              "y": 3.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788375600000,
+              "y": 2.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788379200000,
+              "y": 2.54
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788440400000,
+              "y": 2.78
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788444000000,
+              "y": 4.29
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788447600000,
+              "y": 3.86
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788451200000,
+              "y": 3.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788454800000,
+              "y": 3.35
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788458400000,
+              "y": 3.62
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788462000000,
+              "y": 3.59
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788465600000,
+              "y": 2.91
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788267600000,
+              "y": 2.85
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788271200000,
+              "y": 3.11
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788274800000,
+              "y": 3.46
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788278400000,
+              "y": 3.95
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788282000000,
+              "y": 3.77
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788285600000,
+              "y": 3.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788289200000,
+              "y": 2.61
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788292800000,
+              "y": 2.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788354000000,
+              "y": 3.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788357600000,
+              "y": 3.87
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788361200000,
+              "y": 3.76
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788364800000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788368400000,
+              "y": 3.69
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788372000000,
+              "y": 3.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788375600000,
+              "y": 2.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788379200000,
+              "y": 2.54
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788440400000,
+              "y": 2.78
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788444000000,
+              "y": 4.29
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788447600000,
+              "y": 3.86
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788451200000,
+              "y": 3.66
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788454800000,
+              "y": 3.35
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788458400000,
+              "y": 3.62
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788462000000,
+              "y": 3.59
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788465600000,
+              "y": 2.91
+            }
+          ]
+        },
+        "meters": [
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "rate": "scrubbed",
+            "rateName": "Off Peak",
+            "seriesId": "1N0000000001 - Off Peak",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          },
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "rate": "scrubbed",
+            "rateName": "On Peak",
+            "seriesId": "1N0000000001 - On Peak",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          },
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "rate": "scrubbed",
+            "rateName": "Super Off Pk",
+            "seriesId": "1N0000000001 - Super Off Pk",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          }
+        ],
+        "series": [
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788242400000,
+                "y": 0.61
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788246000000,
+                "y": 0.71
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788249600000,
+                "y": 0.67
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788253200000,
+                "y": 1.2
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788256800000,
+                "y": 2.02
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788260400000,
+                "y": 2.14
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788264000000,
+                "y": 2.55
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788296400000,
+                "y": 2.43
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788300000000,
+                "y": 2.23
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788303600000,
+                "y": 1.58
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788328800000,
+                "y": 1.03
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788332400000,
+                "y": 1.12
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788336000000,
+                "y": 1.06
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788339600000,
+                "y": 1.33
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788343200000,
+                "y": 1.81
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788346800000,
+                "y": 3.22
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788350400000,
+                "y": 3.24
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788382800000,
+                "y": 2.02
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788386400000,
+                "y": 2.31
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788390000000,
+                "y": 1.68
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788415200000,
+                "y": 1.06
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788418800000,
+                "y": 1.15
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788422400000,
+                "y": 1.24
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788426000000,
+                "y": 1.77
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788429600000,
+                "y": 1.85
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788433200000,
+                "y": 2.42
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788436800000,
+                "y": 2.69
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788469200000,
+                "y": 3.19
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788472800000,
+                "y": 2.73
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788476400000,
+                "y": 3.23
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001 - Off Peak",
+            "rateName": "Off Peak",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0
+          },
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788267600000,
+                "y": 2.85
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788271200000,
+                "y": 3.11
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788274800000,
+                "y": 3.46
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788278400000,
+                "y": 3.95
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788282000000,
+                "y": 3.77
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788285600000,
+                "y": 3.43
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788289200000,
+                "y": 2.61
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788292800000,
+                "y": 2.13
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788354000000,
+                "y": 3.63
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788357600000,
+                "y": 3.87
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788361200000,
+                "y": 3.76
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788364800000,
+                "y": 3.69
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788368400000,
+                "y": 3.69
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788372000000,
+                "y": 3.44
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788375600000,
+                "y": 2.66
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788379200000,
+                "y": 2.54
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788440400000,
+                "y": 2.78
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788444000000,
+                "y": 4.29
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788447600000,
+                "y": 3.86
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788451200000,
+                "y": 3.66
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788454800000,
+                "y": 3.35
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788458400000,
+                "y": 3.62
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788462000000,
+                "y": 3.59
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788465600000,
+                "y": 2.91
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001 - On Peak",
+            "rateName": "On Peak",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0
+          },
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788220800000,
+                "y": 0.95
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788224400000,
+                "y": 1.16
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788228000000,
+                "y": 0.85
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788231600000,
+                "y": 0.96
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788235200000,
+                "y": 0.89
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788238800000,
+                "y": 0.82
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788307200000,
+                "y": 1.31
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788310800000,
+                "y": 1.36
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788314400000,
+                "y": 1.4
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788318000000,
+                "y": 1.02
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788321600000,
+                "y": 1.26
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788325200000,
+                "y": 0.97
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788393600000,
+                "y": 1.48
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788397200000,
+                "y": 1.17
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788400800000,
+                "y": 1.38
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788404400000,
+                "y": 1.41
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788408000000,
+                "y": 1.14
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788411600000,
+                "y": 1.08
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001 - Super Off Pk",
+            "rateName": "Super Off Pk",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0
+          }
+        ],
+        "serviceLocationNumber": "70001",
+        "startDateTime": 1788220800000,
+        "timeFrame": "HOURLY",
+        "type": "TIME_OF_USE",
+        "unitOfMeasure": "KWH",
+        "xToOrderedInterval": {
+          "1788220800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788224400000,
+              "start": 1788220800000
+            }
+          },
+          "1788224400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788228000000,
+              "start": 1788224400000
+            }
+          },
+          "1788228000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788231600000,
+              "start": 1788228000000
+            }
+          },
+          "1788231600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788235200000,
+              "start": 1788231600000
+            }
+          },
+          "1788235200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788238800000,
+              "start": 1788235200000
+            }
+          },
+          "1788238800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788242400000,
+              "start": 1788238800000
+            }
+          },
+          "1788242400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788246000000,
+              "start": 1788242400000
+            }
+          },
+          "1788246000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788249600000,
+              "start": 1788246000000
+            }
+          },
+          "1788249600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788253200000,
+              "start": 1788249600000
+            }
+          },
+          "1788253200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788256800000,
+              "start": 1788253200000
+            }
+          },
+          "1788256800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788260400000,
+              "start": 1788256800000
+            }
+          },
+          "1788260400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788264000000,
+              "start": 1788260400000
+            }
+          },
+          "1788264000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788267600000,
+              "start": 1788264000000
+            }
+          },
+          "1788267600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788271200000,
+              "start": 1788267600000
+            }
+          },
+          "1788271200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788274800000,
+              "start": 1788271200000
+            }
+          },
+          "1788274800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788278400000,
+              "start": 1788274800000
+            }
+          },
+          "1788278400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788282000000,
+              "start": 1788278400000
+            }
+          },
+          "1788282000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788285600000,
+              "start": 1788282000000
+            }
+          },
+          "1788285600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788289200000,
+              "start": 1788285600000
+            }
+          },
+          "1788289200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788292800000,
+              "start": 1788289200000
+            }
+          },
+          "1788292800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788296400000,
+              "start": 1788292800000
+            }
+          },
+          "1788296400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788300000000,
+              "start": 1788296400000
+            }
+          },
+          "1788300000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788303600000,
+              "start": 1788300000000
+            }
+          },
+          "1788303600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788307200000,
+              "start": 1788303600000
+            }
+          },
+          "1788307200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788310800000,
+              "start": 1788307200000
+            }
+          },
+          "1788310800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788314400000,
+              "start": 1788310800000
+            }
+          },
+          "1788314400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788318000000,
+              "start": 1788314400000
+            }
+          },
+          "1788318000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788321600000,
+              "start": 1788318000000
+            }
+          },
+          "1788321600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788325200000,
+              "start": 1788321600000
+            }
+          },
+          "1788325200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788328800000,
+              "start": 1788325200000
+            }
+          },
+          "1788328800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788332400000,
+              "start": 1788328800000
+            }
+          },
+          "1788332400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788336000000,
+              "start": 1788332400000
+            }
+          },
+          "1788336000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788339600000,
+              "start": 1788336000000
+            }
+          },
+          "1788339600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788343200000,
+              "start": 1788339600000
+            }
+          },
+          "1788343200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788346800000,
+              "start": 1788343200000
+            }
+          },
+          "1788346800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788350400000,
+              "start": 1788346800000
+            }
+          },
+          "1788350400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788354000000,
+              "start": 1788350400000
+            }
+          },
+          "1788354000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788357600000,
+              "start": 1788354000000
+            }
+          },
+          "1788357600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788361200000,
+              "start": 1788357600000
+            }
+          },
+          "1788361200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788364800000,
+              "start": 1788361200000
+            }
+          },
+          "1788364800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788368400000,
+              "start": 1788364800000
+            }
+          },
+          "1788368400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788372000000,
+              "start": 1788368400000
+            }
+          },
+          "1788372000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788375600000,
+              "start": 1788372000000
+            }
+          },
+          "1788375600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788379200000,
+              "start": 1788375600000
+            }
+          },
+          "1788379200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788382800000,
+              "start": 1788379200000
+            }
+          },
+          "1788382800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788386400000,
+              "start": 1788382800000
+            }
+          },
+          "1788386400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788390000000,
+              "start": 1788386400000
+            }
+          },
+          "1788390000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788393600000,
+              "start": 1788390000000
+            }
+          },
+          "1788393600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788397200000,
+              "start": 1788393600000
+            }
+          },
+          "1788397200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788400800000,
+              "start": 1788397200000
+            }
+          },
+          "1788400800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788404400000,
+              "start": 1788400800000
+            }
+          },
+          "1788404400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788408000000,
+              "start": 1788404400000
+            }
+          },
+          "1788408000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788411600000,
+              "start": 1788408000000
+            }
+          },
+          "1788411600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788415200000,
+              "start": 1788411600000
+            }
+          },
+          "1788415200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788418800000,
+              "start": 1788415200000
+            }
+          },
+          "1788418800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788422400000,
+              "start": 1788418800000
+            }
+          },
+          "1788422400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788426000000,
+              "start": 1788422400000
+            }
+          },
+          "1788426000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788429600000,
+              "start": 1788426000000
+            }
+          },
+          "1788429600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788433200000,
+              "start": 1788429600000
+            }
+          },
+          "1788433200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788436800000,
+              "start": 1788433200000
+            }
+          },
+          "1788436800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788440400000,
+              "start": 1788436800000
+            }
+          },
+          "1788440400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788444000000,
+              "start": 1788440400000
+            }
+          },
+          "1788444000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788447600000,
+              "start": 1788444000000
+            }
+          },
+          "1788447600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788451200000,
+              "start": 1788447600000
+            }
+          },
+          "1788451200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788454800000,
+              "start": 1788451200000
+            }
+          },
+          "1788454800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788458400000,
+              "start": 1788454800000
+            }
+          },
+          "1788458400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788462000000,
+              "start": 1788458400000
+            }
+          },
+          "1788462000000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788465600000,
+              "start": 1788462000000
+            }
+          },
+          "1788465600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788469200000,
+              "start": 1788465600000
+            }
+          },
+          "1788469200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788472800000,
+              "start": 1788469200000
+            }
+          },
+          "1788472800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788476400000,
+              "start": 1788472800000
+            }
+          },
+          "1788476400000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788480000000,
+              "start": 1788476400000
+            }
+          }
+        }
+      }
+    ]
+  },
+  "status": "COMPLETE"
+}

@@ -1,0 +1,336 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to SmartHub",
+        "description": "Sign in to your co-op's SmartHub portal.",
+        "data": {
+          "host": "Portal host",
+          "email": "Email",
+          "password": "Password",
+          "totp_secret": "Two-factor secret"
+        },
+        "data_description": {
+          "host": "The portal's address, such as example.smarthub.coop.",
+          "email": "The email address you sign in to SmartHub with.",
+          "password": "The password for that account.",
+          "totp_secret": "The two-factor setup key from the portal, not a six-digit code."
+        }
+      },
+      "location": {
+        "title": "Choose a service location",
+        "description": "This account has more than one metered premise. Each one needs its own entry.",
+        "data": {
+          "location": "Service location"
+        },
+        "data_description": {
+          "location": "The premise whose usage this entry tracks."
+        }
+      },
+      "cycle": {
+        "title": "Tariff and billing cycle",
+        "description": "How your usage is priced, and when your bill's cycle starts. The rates are seeded from the schedule this package ships; correct them if yours differ.",
+        "data": {
+          "tariff": "Rate schedule",
+          "cycle_day": "Cycle start day",
+          "effective_from": "Rates effective from",
+          "on_peak_rate": "On-peak rate",
+          "off_peak_rate": "Off-peak rate",
+          "super_off_peak_rate": "Super off-peak rate",
+          "super_off_peak_allowance": "Super off-peak allowance",
+          "service_charge": "Service charge",
+          "pca_factor": "Power cost adjustment",
+          "sales_tax_rate": "Sales tax rate",
+          "recurring_adjustment": "Recurring adjustment"
+        },
+        "data_description": {
+          "tariff": "The published rate schedule your account is billed under.",
+          "cycle_day": "The day of the month the billing cycle starts. A day past the end of a short month falls on its last day.",
+          "effective_from": "The day these rates took effect. Hours before it keep the rates that applied then.",
+          "on_peak_rate": "Dollars per kWh between 1:00 PM and 9:00 PM.",
+          "off_peak_rate": "Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight.",
+          "super_off_peak_rate": "Dollars per kWh between midnight and 6:00 AM, once the allowance is spent.",
+          "super_off_peak_allowance": "Free super off-peak kWh per billing cycle.",
+          "service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
+          "pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
+          "sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
+          "recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in to SmartHub again",
+        "description": "The portal stopped accepting the stored credentials for {email}.",
+        "data": {
+          "password": "Password",
+          "totp_secret": "Two-factor secret"
+        },
+        "data_description": {
+          "password": "The current password for that account.",
+          "totp_secret": "The two-factor setup key from the portal, not a six-digit code."
+        }
+      },
+      "reconfigure": {
+        "title": "Change this service location",
+        "description": "Everything about this entry that can still change.",
+        "menu_options": {
+          "add_rate_version": "Add a rate version",
+          "remove_rate_version": "Remove the newest rate version",
+          "cycle_day": "Billing cycle start day",
+          "credentials": "Portal credentials"
+        }
+      },
+      "add_rate_version": {
+        "title": "Add a rate version",
+        "description": "A dated set of rates. Every hour from its day on is priced under it, and earlier hours keep the rates that applied then. The fields are seeded from your newest version.",
+        "data": {
+          "effective_from": "Rates effective from",
+          "on_peak_rate": "On-peak rate",
+          "off_peak_rate": "Off-peak rate",
+          "super_off_peak_rate": "Super off-peak rate",
+          "super_off_peak_allowance": "Super off-peak allowance",
+          "service_charge": "Service charge",
+          "pca_factor": "Power cost adjustment",
+          "sales_tax_rate": "Sales tax rate",
+          "recurring_adjustment": "Recurring adjustment"
+        },
+        "data_description": {
+          "effective_from": "The day these rates took effect. A cycle you have finalized stays priced from its bill whatever day this is.",
+          "on_peak_rate": "Dollars per kWh between 1:00 PM and 9:00 PM.",
+          "off_peak_rate": "Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight.",
+          "super_off_peak_rate": "Dollars per kWh between midnight and 6:00 AM, once the allowance is spent.",
+          "super_off_peak_allowance": "Free super off-peak kWh per billing cycle.",
+          "service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
+          "pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
+          "sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
+          "recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
+        }
+      },
+      "remove_rate_version": {
+        "title": "Remove the newest rate version",
+        "description": "The version effective from {effective_from} is dropped, and the one before it prices those hours again."
+      },
+      "cycle_day": {
+        "title": "Billing cycle start day",
+        "data": {
+          "cycle_day": "Cycle start day"
+        },
+        "data_description": {
+          "cycle_day": "The day of the month the billing cycle starts. A day past the end of a short month falls on its last day. Cycles you have finalized keep the read dates from their bills."
+        }
+      },
+      "credentials": {
+        "title": "Portal credentials",
+        "description": "The new login has to reach this same service location.",
+        "data": {
+          "email": "Email",
+          "password": "Password",
+          "totp_secret": "Two-factor secret"
+        },
+        "data_description": {
+          "email": "The email address you sign in to SmartHub with.",
+          "password": "The password for that account.",
+          "totp_secret": "The two-factor setup key from the portal, not a six-digit code."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The portal rejected the credentials or the two-factor code.",
+      "cannot_connect": "The portal could not be reached, or it did not finish the usage poll.",
+      "rate_version_after_connect_date": "The first rate version has to be in effect from the account's connect date, so this date cannot be later than it.",
+      "not_a_number": "This has to be a number.",
+      "negative_number": "This cannot be negative.",
+      "invalid_cycle_day": "The cycle day has to be a whole day of the month, 1 to 31.",
+      "duplicate_rate_version": "A rate version already takes effect on this day. Remove it first, or pick another day.",
+      "wrong_account": "That login does not reach this service location."
+    },
+    "abort": {
+      "reauth_successful": "The stored credentials have been replaced.",
+      "reconfigure_successful": "The entry has been updated.",
+      "last_rate_version": "This entry has one rate version left, and removing it would leave its hours unpriced.",
+      "already_configured": "That service location already has an entry.",
+      "already_in_progress": "Another configuration of this integration is already in progress.",
+      "no_service_locations": "This login has no service locations to track.",
+      "multiple_providers": "This account is served by more than one provider, which this integration cannot price yet.",
+      "multiple_meters": "This service location has more than one meter, which this integration cannot price yet.",
+      "no_matching_tariff": "No tariff in this integration prices the rate schedules on this service location ({codes})."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "cycle_usage": {
+        "name": "Cycle-to-date usage"
+      },
+      "cycle_cost": {
+        "name": "Cycle-to-date cost",
+        "state_attributes": {
+          "energy": {
+            "name": "Energy"
+          },
+          "fixed": {
+            "name": "Service charge"
+          },
+          "rider": {
+            "name": "Rider"
+          },
+          "tax": {
+            "name": "Sales tax"
+          },
+          "adjustment": {
+            "name": "Recurring adjustment"
+          },
+          "residual": {
+            "name": "Residual"
+          },
+          "priced_hours": {
+            "name": "Priced hours"
+          },
+          "unpriced_hours": {
+            "name": "Unpriced hours"
+          }
+        }
+      },
+      "allowance_remaining_super_off_peak": {
+        "name": "Super off-peak allowance remaining"
+      },
+      "last_poll": {
+        "name": "Last poll"
+      },
+      "newest_data_hour": {
+        "name": "Newest data hour"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling",
+        "data": {
+          "poll_interval_minutes": "Poll interval"
+        },
+        "data_description": {
+          "poll_interval_minutes": "Minutes between polls. SmartHub publishes hourly data about a day late, so there is little to gain below a few hours."
+        }
+      }
+    },
+    "error": {
+      "invalid_poll_interval": "The poll interval has to be a whole number of minutes, 30 or more."
+    }
+  },
+  "services": {
+    "reconcile": {
+      "name": "Reconcile",
+      "description": "Recomputes and rewrites usage and cost statistics from a day, or from the start of your history.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Service location",
+          "description": "The entry whose statistics are recomputed."
+        },
+        "from": {
+          "name": "From",
+          "description": "The first day to recompute. The window opens at the start of that day's billing cycle, and a day earlier than the connect date is treated as the connect date. Left empty, the whole history is recomputed."
+        }
+      }
+    },
+    "finalize_cycle": {
+      "name": "Finalize a cycle",
+      "description": "Records what a posted bill charged for one billing cycle and reprices it so its cost statistics match the bill to the cent.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Service location",
+          "description": "The entry the bill belongs to."
+        },
+        "cycle_start": {
+          "name": "Cycle start",
+          "description": "The day the cycle this bill covers starts on, as the integration already has it."
+        },
+        "read_start": {
+          "name": "Read start",
+          "description": "The bill's first read date. It replaces the calendar start of the cycle."
+        },
+        "read_end": {
+          "name": "Read end",
+          "description": "The bill's last read date, which is where the next cycle starts."
+        },
+        "service_charge": {
+          "name": "Service charge",
+          "description": "The fixed charge the bill lists for this cycle."
+        },
+        "pca_factor": {
+          "name": "Power cost adjustment",
+          "description": "Dollars per kWh for the rider the bill reveals, signed."
+        },
+        "tax": {
+          "name": "Sales tax",
+          "description": "The tax line on the bill, in dollars."
+        },
+        "bill_total": {
+          "name": "Bill total",
+          "description": "What the bill charges. Whatever the priced components do not account for is smeared across the cycle's hours as a residual."
+        }
+      }
+    },
+    "unfinalize_cycle": {
+      "name": "Unfinalize a cycle",
+      "description": "Drops a cycle's recorded bill and prices it from the rate schedule again.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Service location",
+          "description": "The entry the cycle belongs to."
+        },
+        "cycle_start": {
+          "name": "Cycle start",
+          "description": "The day the finalized cycle starts on."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "unknown_entry": {
+      "message": "No NISC SmartHub entry with the id {entry_id}."
+    },
+    "entry_not_loaded": {
+      "message": "The entry for {target} is not loaded, so it cannot reconcile."
+    },
+    "reconcile_failed": {
+      "message": "The reconcile run did not finish: {error}"
+    },
+    "unknown_cycle": {
+      "message": "No billing cycle of this entry starts on {cycle_start}."
+    },
+    "cycle_not_finalized": {
+      "message": "The cycle starting {cycle_start} has no recorded bill to drop."
+    },
+    "read_dates_out_of_order": {
+      "message": "The read start {read_start} is not before the read end {read_end}."
+    },
+    "read_end_in_future": {
+      "message": "The read end {read_end} has not happened yet, so the cycle has no bill to match."
+    },
+    "overlapping_cycle": {
+      "message": "Those read dates overlap the finalized cycle starting {cycle_start}. Unfinalize it first, or correct the dates."
+    },
+    "cycle_has_no_priced_hours": {
+      "message": "SmartHub has reported nothing past {newest_data_hour}, so the cycle ending {read_end} does not have every hour it needs to carry its bill yet."
+    },
+    "from_in_future": {
+      "message": "The day {from} has not happened yet, so there is nothing to recompute from it."
+    },
+    "not_a_finite_number": {
+      "message": "The value {value} given for {field} is not a number this can price with."
+    }
+  },
+  "issues": {
+    "newer_rate_version": {
+      "title": "A newer rate version has been published",
+      "description": "This release ships rates for {tariff} effective from {effective_from}, newer than any version this entry is configured with. Rates are never applied on your behalf, because pricing your history under a rate you are not billed under would rewrite it wrongly. Compare them with your bill and add the version through Reconfigure."
+    },
+    "unclassified_hours": {
+      "title": "Some hours have usage but no time-of-use classification",
+      "description": "SmartHub reported usage for {count} hours it never classified into a rate period, the oldest at {oldest}, and they sit between hours it did classify. Those hours carry kWh and no cost. The next run that finds them classified prices them and clears this."
+    },
+    "unknown_period_label": {
+      "title": "SmartHub reported a rate period this tariff does not know",
+      "description": "The portal classified hours as {labels}, which {tariff} does not price. Those hours carry kWh and no cost. This needs a new release of the integration; report the labels above."
+    }
+  }
+}

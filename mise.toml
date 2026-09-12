@@ -3,6 +3,8 @@ python = "3.14"
 uv = "0.12.12"
 hk = "1.56.1"
 markdownlint-cli2 = "0.23.2"
+fnox = "1.35.1"
+"1password-cli" = "2.39.0"
 
 [settings]
 env_cache = true
@@ -47,6 +49,7 @@ depends = [
   "python:fmt:check",
   "python:lint",
   "python:typecheck",
+  "strings:check",
 ]
 
 [tasks.fix]
@@ -88,6 +91,48 @@ description = "Type-check Python with basedpyright"
 run = "basedpyright"
 
 [tasks.test]
-description = "Run the test suite"
+description = "Run the test suite with coverage"
 depends = ["bootstrap:deps"]
 run = "pytest"
+
+[tasks."strings:check"]
+description = "Check strings.json and translations/en.json against each other"
+depends = ["bootstrap:deps"]
+run = "python scripts/check_strings.py"
+
+[tasks.dev]
+description = "Run Home Assistant against the checked-out integration"
+depends = ["bootstrap:deps"]
+run = """
+set -euo pipefail
+link=config/custom_components
+if [ -L "$link" ]; then
+  target=$(readlink "$link")
+  if [ "$target" != "../custom_components" ]; then
+    echo "$link points at $target, not ../custom_components" >&2
+    exit 1
+  fi
+elif [ -e "$link" ]; then
+  echo "$link exists and is not a symlink" >&2
+  exit 1
+else
+  ln -s ../custom_components "$link"
+fi
+if [ ! -f config/configuration.yaml ]; then
+  uv run --no-sync hass --config "$PWD/config" --script ensure_config
+fi
+uv run --no-sync hass --config "$PWD/config" --debug --skip-pip
+"""
+
+[tasks."dev:bootstrap"]
+description = "Onboard the running dev instance and mint an agent token"
+depends = ["bootstrap:deps"]
+run = "python scripts/dev_bootstrap.py"
+
+[tasks.release]
+description = "Bump the manifest version, tag it, and publish a GitHub release"
+run = "python scripts/release.py {{arg(name='version')}}"
+
+[tasks."fixtures:capture"]
+description = "Re-record the SmartHub fixtures from the live portal through the agent-vault identity"
+run = "fnox --no-daemon --non-interactive exec -- python scripts/capture_fixtures.py"

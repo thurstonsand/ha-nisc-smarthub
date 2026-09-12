@@ -52,6 +52,8 @@ Flows:
 - **Reconfigure**: a menu with add rate version, remove newest rate version, billing cycle day, credentials.
 - **Options**: poll interval.
 
+Amended after the second review (2026-09-11): the poll interval is validated as a finite whole number of minutes at or above the minimum, with `invalid_poll_interval` shown against the field. The host field accepts a URL or a bare host and stores the bare host.
+
 ### Rate version
 
 ```python
@@ -82,16 +84,22 @@ Each row is one hour: `state` is the hour's value, `sum` is cumulative from the 
 
 ### Entities
 
-One device per entry: identifiers `(nisc_smarthub, <account>_<location>)`, name from SmartHub's service description, manufacturer derived from the host, model the tariff's display name, serial number the meter, configuration URL the portal.
+One device per entry, `entry_type=service`: identifiers `(nisc_smarthub, <account>_<location>)`, name from SmartHub's service description, model the tariff's display name, serial number the meter, configuration URL the portal.
+
+Amended during Phase 5 (2026-09-11): the manufacturer is the constant `NISC SmartHub` rather than something derived from the host. The host's first label is the co-op's portal slug (`cobbemc`), which title-cases into a name no co-op uses, and the co-op is already named by the model.
 
 Sensors, unique id `<account>_<location>_<key>`:
 
 - `cycle_usage`: kWh, `energy`, `total`, `last_reset` at cycle start
-- `cycle_cost`: USD, `monetary`, `total`, `last_reset` at cycle start; attributes carry the breakdown (energy, fixed, rider, tax, adjustment)
-- `allowance_remaining_<period_slug>`: kWh, `energy`, `measurement`; one per tiered period the tariff declares
+- `cycle_cost`: USD, `monetary`, `total`, `last_reset` at cycle start; attributes carry the breakdown (energy, fixed, rider, tax, adjustment, residual) and the cycle's priced and unpriced hour counts
+- `allowance_remaining_<period_slug>`: kWh, `energy`, `total` with no `last_reset`; one per tiered period the tariff declares
 - `last_poll`, `newest_data_hour`: timestamps, diagnostic category
 
 Values come from the coordinator's last result. Entity properties never touch the network or the recorder.
+
+Amended during Phase 5 (2026-09-11): 2026.9.1 allows only `total` and `total_increasing` beside an `energy` device class, so the allowance sensor takes `total`. It carries no `last_reset`, because the allowance is not an accumulator and declaring a reset point would tell the recorder to add its full value to a sum at every cycle boundary.
+
+Amended after the second review (2026-09-11): the cycle sensors and the allowance sensor carry no state class and no `last_reset` at all. They restate what the five statistics already hold, and a state class would have the recorder build a second, coarser long-term history of the same numbers from their states: a sawtooth for the allowance, and an undercount for the cycle totals because the portal's last day of a cycle arrives after the sensor has moved on to the next. Device classes and units stay so the dashboard formats them.
 
 ### Service actions
 
@@ -117,14 +125,20 @@ nisc_smarthub.unfinalize_cycle:
 
 `finalize_cycle` writes a cycle record and triggers a full reconcile from that cycle's start. A future bill reader calls the same function.
 
+Amended after the second review (2026-09-11): `finalize_cycle` refuses, with a `ServiceValidationError`, a read end after today in the portal's zone, read dates that overlap another recorded cycle, and a cycle whose last hour the portal has not reported yet (`read_end - 1 hour` past `newest_data_hour`). The last check stands in for "at least one priced hour": the last poll's hours only cover its window, so pricing the would-be cycle here would refuse any bill older than the routine window, and a bill that posts after its read date has its whole cycle in the portal by then. `reconcile` refuses a `from` after today, because a request the run can never open would be handed back to every run after it.
+
 ### Repair issues
 
-- Unknown period label, or an hour present in `USAGE` but in no period series: usage written, cost skipped, issue names the label. Fixed by a release; cleared by the next successful run.
+- Unknown period label, or an hour present in `USAGE` but in no period series: usage written, cost skipped, issue names the label. Fixed by a release; cleared by the next successful run whose window reaches the oldest hour the issue was raised for.
 - A release ships a published rate version newer than the newest configured one: issue asks the user to add a version. Never auto-applied.
+
+Amended after review (2026-09-11): the stale-row issue the first draft listed here is gone. A stored hour the poll no longer carries is rewritten to zero instead; see the amendment under decision 9.
 
 ### Diagnostics
 
-The entry dump redacts by key (password, TOTP secret, token) and by value: every occurrence of the account number, location id, meter number, address, customer name, and security hint, statistic ids included. The `billing` response carries the hint answer in plaintext.
+The entry dump redacts by key (password, TOTP secret, email) and by value: every occurrence of the account number, location id, meter number, address, customer name, and security hint, statistic ids included. The `billing` response carries the hint answer in plaintext.
+
+Amended during Phase 5 (2026-09-11): the dump is assembled field by field rather than reflected off the coordinator's dataclasses, so the address, the customer name and the security hint have no way into it; the value walk covers the three identifiers that do appear, the account number, the location id and the meter number, wherever they are spelled, statistic ids and issue placeholders included. The test asserts on all six anyway, so a field that starts carrying one fails rather than leaks.
 
 ### Boundaries
 
@@ -135,6 +149,8 @@ The entry dump redacts by key (password, TOTP secret, token) and by value: every
 **Writer to recorder.** Reads with `statistics_during_period` in the recorder executor, always with the full production signature and `period="hour"`. Writes with `async_add_external_statistics` on the event loop, with concrete lists (never generators) of tz-aware UTC top-of-hour points. Never clears.
 
 **Cycle records to storage.** `helpers.storage.Store` at `.storage/nisc_smarthub.<entry_id>`, version 1: `{"cycles": {"<cycle_start>": {"read_start", "read_end", "service_charge", "pca_factor", "tax", "bill_total", "residual"}}}`.
+
+Amended after the second review (2026-09-11): every client request runs under a 30 s timeout. A transport failure, a timeout, or a body that is not JSON is reported as `<endpoint>: <exception type>` plus the HTTP status when there is one, raised with neither cause nor context, because aiohttp spells the URL, account number and email included, into every exception it raises. `MultipleProviders` and `MultipleMeters` are the two `UnsupportedAccount` shapes; the flow aborts on each by name and the coordinator raises `ConfigEntryError` for them rather than retrying.
 
 ## Call Stacks and Data Flow
 
@@ -156,19 +172,23 @@ async_setup_entry(hass, entry)
 
 ```txt
 NiscSmartHubCoordinator._async_update_data
-  plan = self.plan_window()                       routine | full (flag set by setup, config change, finalize, action)
-  poll = client.poll_hourly(account, location, plan.start, now)      PENDING -> retry -> COMPLETE
-  hours = conform(poll, tariff.periods)          unknown label -> mark cost_skipped, raise repair, keep usage
-  seeds = writer.read_seeds(plan.start)           statistics_during_period([floor, W)) per id, last sum
-    empty and W > floor -> plan = full from floor, seeds = 0, re-poll if needed
-  existing = writer.read_window(plan.start, now)
+  requested = take the pending full request       handed back if the run fails; a request made mid-run waits for the next run
+  plan = plan_window(requested)                    routine | full (set by setup, config change, finalize, action)
+  seeds = writer.read_seeds(plan.start)            statistics_during_period([floor, W)) per owned id, last sum
+    empty and W > floor -> plan = full from floor, seeds = 0
+  poll = client.poll_hourly(account, location, plan.start, now)      one poll per run; PENDING -> retry -> COMPLETE
+  hours = conform(poll, tariff.periods)            unknown label -> keep usage, skip cost, raise repair
   cycles = split_into_cycles(hours, cycle_day, store.finalized_bounds())
   costs = [tariff.price_cycle(c, c.hours, versions, store.actuals(c)) for c in cycles]
-  rows = writer.build_rows(hours, costs, seeds)   cumulative sums per id
-  diff = writer.diff(existing, rows)              tolerance 1e-9 kWh / 1e-6 USD; log revisions
+  existing = writer.read_window(plan.start)
+  rows = writer.build_rows(values, seeds)          cumulative sums per id; a stored hour the poll lacks -> zero row
+  diff = writer.diff(existing, rows)               tolerance 1e-9 kWh / 1e-6 USD; log revisions
   async_add_external_statistics(...) per id for diff rows
-  return CoordinatorData(cycle_to_date, allowance_remaining, last_poll, newest_data_hour, cost_skipped)
+  await recorder.async_block_till_done()           the next run's reads see these rows
+  return CoordinatorData(cycle_to_date, allowance_remaining, last_poll, newest_data_hour)
 ```
+
+Amended after review (2026-09-11): the five statistic ids follow from the tariff, so the writer is handed its series at construction and the seed read happens before the poll; a missing seed promotes the plan and the run still polls once. The recorder queues imports, so the run waits for the commit before it ends, which is what makes the next run's seed and existing-row reads trustworthy. The one exception is the first refresh at startup: the recorder thread does not touch its queue until Home Assistant has started (`recorder/core.py`, `_run` waits in `_wait_startup_or_shutdown`), and entry setup runs before that, so waiting there deadlocks bootstrap. Verified on the local instance before the guard existed. That run skips the wait; its imports drain at startup, ahead of anything a later run queues.
 
 Data shape across the boundaries:
 
@@ -228,9 +248,15 @@ The recorder stores cumulative `sum` per row and derives `change` by subtracting
 
 Without true-ups, "oldest unfinalized cycle to now" is all of history, and the user may never do a true-up. Routine runs cover the cycle containing `now - 7 days` to now, at most two cycles, comfortably past SmartHub's revision horizon. A full pass from the oldest unfinalized cycle or the floor runs on the first run, any rate version or cycle-day change, any finalize or unfinalize, and the `reconcile` action. Every event that can change a past hour's price is on that list.
 
+Amended during Phase 4 (2026-09-11): both tiers open the window at the start of the cycle holding the day they were asked for, so decision 2's whole-cycle invariant survives a `from` the user picked mid-cycle. A failed run keeps its pending full request; only a run that writes drops it.
+
+Amended after the second review (2026-09-11), replacing the Phase 6 amendment: a pass asked for from the history floor opens at the first cycle, walking from the floor, that has no bill; a finalized cycle after an unfinalized one does not hide it. A pass asked for from a day opens at that day's cycle, finalized or not, which is what lets `finalize_cycle` reprice the cycle it was just told about. A finalized cycle inside any window, routine ones included, is priced from its record and diffs to nothing, so the routine tier is no longer clamped away from finalized cycles.
+
 ### 7. Seeds from a range read; a gap promotes the run
 
 There is no "last sum strictly before W" API. The seed is the last row of `statistics_during_period([floor, W))` per id, in the recorder executor. If that read is empty and W is past the floor, there is a hole before the window, and the run promotes itself to a full pass from the floor rather than seeding 0 or failing. Reconciliation over execution.
+
+Amended after the second review (2026-09-11): only the usage series can declare a gap. A cost or per-period series with nothing stored before the window has had nothing to say yet, an unclassified first cycle for instance, and seeds at zero.
 
 ### 8. Diff before write, log revisions
 
@@ -240,9 +266,15 @@ Existing rows in the window are read back and only rows whose state or sum diffe
 
 A zero row is a lie the dashboard shows as a real zero. Sum continuity tolerates absent rows. Smear and tiering use the cycle's nominal hour count from the calendar, so a missing hour's share of fixed charges is absent until the hour arrives.
 
+Amended after review (2026-09-11): an hour that never existed still gets no row. An hour that was stored and then vanished from the poll is different, because the recorder cannot delete a row: leaving it means the dashboard keeps showing kWh and dollars the portal has withdrawn, and the stale-row repair issue the first draft raised for it could only ever point at the problem. The writer now treats every stored row in the window whose hour is absent from the poll, in every owned series, as stale and rewrites it to `state=0.0` with the cumulative sum carried from the preceding row. That is the only continuous shape the recorder allows for a row that has to stay: the derived `change` for the hour becomes zero, later sums stay right, and when the portal reports the hour again the row is an ordinary revision. One WARNING per series names the count and the range on the run that zeroes them. The residual of a finalized cycle is smeared over the priced hours rather than the nominal count for the same reason: it has to land on rows that will exist.
+
+Amended after the second review (2026-09-11): the usage series alone decides which stored hours the portal has withdrawn: every stored usage hour in the window absent from the poll. Every series rewrites those to `state=0.0` with the sum carried through. An hour the portal still reports but that one series has no value for, the cost of an hour the portal has not classified yet, is not withdrawn: that series writes no row for it, leaves whatever it stored alone, and carries the stored value into the sums after it. A poll that arrives without its `TIME_OF_USE` entry therefore leaves the cost history untouched rather than zeroing it. Revisions are logged as one INFO line per series per run with the count and range; the per-hour old and new values are at DEBUG, because a true-up revises every hour of a cycle.
+
 ### 10. Cycle records in a per-entry Store; a service action is the true-up hook
 
 Config in the entry, observed facts in `helpers.storage.Store`. `finalize_cycle` writes actuals and triggers a full pass; the finalized cycle takes the bill's service charge, PCA factor, tax, and read dates as overrides, and the difference to the bill total is smeared as a stored residual, so the cycle's sum equals the bill to the cent and a large residual signals a missing line. Read dates replacing calendar bounds can shift the next unfinalized cycle's start, which is why finalize triggers a full pass. A bill reader, when it exists, calls the same function.
+
+Amended after the second review (2026-09-11): a bill's read dates replace the calendar boundaries nearest to them (ties to the earlier), so a read date a day or two off the calendar, or one day past a clamped month end, moves a boundary and never leaves a sliver cycle beside it. The cycle after a finalized one runs from its read end to the calendar boundary after the one the read end replaced; the cycle before runs to the read start. Calendar boundaries inside a finalized span are swallowed by it. A gap between two bills' read dates is an honest cycle of its own. `finalize_cycle` and `unfinalize_cycle` ask for a pass from the hour before the earlier of the cycle's day and its read start, which lies in the cycle before, because that cycle's end moved too. A record whose residual has never been stored is a bill saved by a run that failed before pricing it; a fresh coordinator asks for a pass from that cycle's start as well as from the floor, and the residual is stored only after the recorder has committed the rows it describes.
 
 ### 11. Coordinator with an entry-owned listener
 
@@ -251,6 +283,10 @@ A `DataUpdateCoordinator` polls only while it has listeners, and the statistics 
 ### 12. Fail loud on unknown labels, but keep usage
 
 An unknown `TIME_OF_USE` label is a tariff definition change. Usage is still written (it needs no mapping), cost is skipped for the run, a repair issue names the label, and the fix is a release. Backfill needs no mechanism: the window rewrite covers the hours on the next successful run, and a cycle cannot finalize without cost.
+
+Amended during Phase 3 (2026-09-11): the live portal never classifies the first hours after the connect date and lags the usage series by an hour at the tail, so those two cases are expected and only logged. An unclassified hour raises the repair only when it sits between classified hours.
+
+Amended after the second review (2026-09-11): the client drops a period label left with no hours inside the requested window, so an unknown label is only ever reported with the hours that carry it.
 
 ### 13. Float money
 
@@ -264,6 +300,8 @@ Per-hour costs are fractions of a cent, the recorder stores float64, and cent-ex
 
 `scripts/capture_fixtures.py` pulls real responses through 1Password-held credentials and applies a fixed replacement map to every string, failing if any real value survives. Recorded fixtures encode what the API returns, including fields nobody reads yet; deterministic replacement keeps identifiers consistent across the config flow, parser, and statistics id tests.
 
+Amended after the second review (2026-09-11): the scrub is default-deny. Identifiers of every account and location the login can see are harvested from `user-data` and replaced by value everywhere; then every scalar survives only if its full path is allowed through or given a fixed fake, and every other scalar becomes a placeholder of its type with its path printed for deliberate allowlisting. Personal attributes are never allowed. `--from-fixtures` proves a policy change against the recorded fixtures without a live capture.
+
 ### 16. Client bundled, seam clean
 
 `custom_components/nisc_smarthub/smarthub/` has no HA imports and an injected session. Core's rule about separate PyPI packages exists so Core does not carry vendor code; with one consumer, the seam is what matters, and it makes extraction mechanical if a second consumer appears.
@@ -275,12 +313,14 @@ Per-hour costs are fractions of a cent, the recorder stores float64, and cent-ex
 - **Partial poll (USAGE without TIME_OF_USE):** usage written, cost skipped, repair issue.
 - **Hour in USAGE but in no period series:** treated as an unknown label.
 - **Newest hours absent:** SmartHub lags about a day; nothing is written for them; `newest_data_hour` shows what arrived.
-- **DST transitions:** hours are aware UTC at the boundary; the tariff's "local midnight" for version selection and the cycle's local bounds are computed in the configured timezone. A test covers a window spanning both transitions.
+- **DST transitions:** hours are aware UTC at the boundary; the tariff's "local midnight" for version selection and the cycle's local bounds are computed in the configured timezone. The portal labels its wall clock as UTC, so the repeated 1am of the fall-back night arrives as two points with the same timestamp; the client reads the second as the second instant. Any other repeated hour is a `ClientError`. How the live portal encodes that night is unverified until 2026-11-01. The wall-clock hour the spring-forward night skips maps to the same instant as the hour after it; a reading there with 0 kWh is dropped and one carrying energy is added to that hour.
 - **Cycle day 31 in a 30-day month:** clamps to the last day.
 - **First cycle:** starts at the connect date, flat $33 and 400 kWh regardless of length; the true-up carries the actual.
 - **Rate version with a future date:** inert until its day; the routine window picks it up.
-- **Rate version added inside a finalized cycle:** the finalized cycle does not reprice; the bill is its truth.
+- **Rate version added inside a finalized cycle:** accepted. The finalized cycle stays at its bill and the version governs from its day in every unfinalized cycle.
 - **Cycle-day change:** a full pass; unfinalized cycles re-split; finalized cycles keep their read-date bounds.
+- **A read date that moves a cycle boundary:** `finalize_cycle` and `unfinalize_cycle` ask for a pass from the earlier of the cycle's calendar day and its read start, because a read date that moved also moved the end of the cycle before it, and that cycle has to be repriced too.
+- **A wrong password:** the portal answers HTTP 200 with `{"status": "FAILURE", "isBusinessUser": false}` and no token, which the client reads as a rejection. Found in Phase 6: before that it was an unreadable shape, so a `ClientError` retried forever and reauth never started.
 - **Every sensor disabled:** the entry-owned listener keeps the coordinator polling.
 - **Two entries for the same location:** the flow aborts on unique id.
 - **Reinstall:** statistic ids are derived from account and location, so a reinstall repairs rather than orphans.
@@ -321,9 +361,9 @@ Per-hour costs are fractions of a cent, the recorder stores float64, and cent-ex
 
 ### `--skip-pip` with a declared closure from day one
 
-- **Status:** Open
-- **Open Issue:** the closure depends on the dev config, which is still moving; orbs make a declared closure valuable.
-- **Next step:** after Phase 2, inventory what `hass` installed on first start and declare it in the dev group.
+- **Status:** Resolved (2026-09-11, Phase 7)
+- **Decision:** the closure is declared. Phase 2 found that a bare uv venv has no `pip`, so `hass` could not install the frontend before the frontend failed to set up, and the instance fell into recovery mode where custom integrations never load. Phase 7 inventoried what `hass` installed at first start under `default_config`, pinned the entries the test plugin does not already carry (the frontend, intents, `habluetooth` at 2026.9.1's pin, and about twenty more) in the dev group, and switched `mise run dev` to `--skip-pip`. A `uv sync` can no longer prune the instance into recovery mode, and an orb snapshot carries everything.
+- **Discussion:** the list is regenerated after a Home Assistant bump by starting once without `--skip-pip` and diffing `uv pip freeze` against the lock; DEV.md carries the recipe.
 
 ### Bill reader against the SmartHub billing API
 
@@ -370,6 +410,7 @@ Tracer bullets: each phase lands a narrow, complete path through every layer it 
   - Files: `config_flow.py`, `store.py`, `services.yaml`, `__init__.py`, `tests/test_config_flow.py`, `tests/test_store.py`, `tests/test_finalize.py`.
   - Work: reconfigure menu (add version, remove newest, cycle day, credentials) with `async_update_reload_and_abort` and full-pass triggers; reauth; options with poll interval; `CycleStore` v1; `finalize_cycle` and `unfinalize_cycle` with overrides, residual, read-date bounds, and full pass from the cycle start.
   - Validation: flow coverage for reauth, reconfigure, options, identity mismatch; a finalize test where the cycle's cost sum equals `bill_total` to the cent and the next cycle starts at `read_end`; unfinalize restores the estimate.
+  - Amended during Phase 6 (2026-09-11): the options flow writes its own options and schedules the entry's reload itself, instead of an update listener doing it. 2026.9 reports an integration that has an update listener and calls `async_update_reload_and_abort`, and removes the combination in 2026.12 (`config_entries.py`, the `report_usage` call inside `async_update_reload_and_abort`), so the reconfigure steps keep that helper and no listener exists for the options flow to lean on. Cycle records store read dates as calendar days, the shape the bill and the action state them in, and conform to local midnight on load.
 
 - [ ] Phase 7: CI, orbs, docs, first pre-release
   - Goal: the repository is installable through HACS and workable in an orb.

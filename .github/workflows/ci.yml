@@ -26,7 +26,33 @@ jobs:
       - name: Bootstrap
         run: mise run bootstrap
 
-      # `mise run test` joins once the suite exists; pytest exits 5 on an empty
-      # collection, which would fail the job for the wrong reason.
       - name: Check
         run: mise run check
+
+      - name: Test
+        run: mise run test
+
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Hassfest
+        uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # `brands` wants the domain registered in home-assistant/brands, which is
+      # for integrations headed to the default store, and this one is installed
+      # as a custom repository. `topics` is a repository setting; drop it from
+      # the list once the repository has some.
+      - name: HACS validation
+        uses: hacs/action@main
+        with:
+          category: integration
+          ignore: brands topics

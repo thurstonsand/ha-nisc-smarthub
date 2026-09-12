@@ -1,0 +1,21 @@
+root = true
+env = "exec"
+if_missing = "error"
+prompt_auth = false
+
+[daemon]
+enabled = false
+
+[providers.agent]
+type = "1password"
+token = { secret = "FNOX_HOST_OP_TOKEN" }
+auth_command = ""
+
+[secrets]
+SMARTHUB_HOST = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/SmartHub/portal host" }
+SMARTHUB_EMAIL = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/username" }
+SMARTHUB_PASSWORD = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/password" }
+SMARTHUB_TOTP_URI = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/one-time password" }
+SMARTHUB_ACCOUNT = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/SmartHub/account number" }
+SMARTHUB_LOCATION = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/SmartHub/service location id" }
+SMARTHUB_METER = { provider = "agent", value = "op://agent/4l6swgjzetxapzc65weiadfdwi/SmartHub/meter" }

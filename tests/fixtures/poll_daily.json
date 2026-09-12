@@ -1,0 +1,512 @@
+{
+  "data": {
+    "ELECTRIC": [
+      {
+        "accountNumber": "900000001",
+        "baseSeries": {
+          "color": "scrubbed",
+          "data": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 47.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 53.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 57.04
+            }
+          ],
+          "dataGrouping": {
+            "enabled": false,
+            "smoothed": false
+          },
+          "fillOpacity": 0.0,
+          "lineWidth": 0,
+          "marker": {
+            "enabled": false
+          },
+          "name": "scrubbed",
+          "turboThreshold": 0,
+          "type": "scrubbed"
+        },
+        "baseUsageParameters": {
+          "accountNumber": "900000001",
+          "endDateTime": 1788494400000,
+          "includeDemand": false,
+          "industries": [
+            "scrubbed"
+          ],
+          "screen": "scrubbed",
+          "serviceLocationNumber": "70001",
+          "startDateTime": 1788235200000,
+          "timeFrame": "DAILY",
+          "userId": "member@example.com"
+        },
+        "connectDate": "August 28, 2026",
+        "editedSeries": {},
+        "endDateTime": 1788494400000,
+        "estimatedSeries": {},
+        "hasDaily": false,
+        "hasHourly": false,
+        "industry": "scrubbed",
+        "meterToChartData": {
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='null', rateName='null', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001', color='#4A92DB', maxReadDate=1788494400000, minReadDate=1788235200000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 47.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 53.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 57.04
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 47.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 53.44
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 57.04
+            }
+          ]
+        },
+        "meters": [
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "seriesId": "1N0000000001",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          }
+        ],
+        "series": [
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788220800000,
+                "y": 47.06
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788307200000,
+                "y": 53.44
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788393600000,
+                "y": 57.04
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "isNet": false,
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001",
+            "stack": "scrubbed",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0,
+            "zIndex": 0
+          }
+        ],
+        "serviceLocationNumber": "70001",
+        "startDateTime": 1788235200000,
+        "timeFrame": "DAILY",
+        "type": "USAGE",
+        "unitOfMeasure": "KWH",
+        "xToOrderedInterval": {
+          "1788220800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788307200000,
+              "start": 1788220800000
+            }
+          },
+          "1788307200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788393600000,
+              "start": 1788307200000
+            }
+          },
+          "1788393600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788480000000,
+              "start": 1788393600000
+            }
+          }
+        }
+      },
+      {
+        "accountNumber": "900000001",
+        "baseSeries": {
+          "color": "scrubbed",
+          "data": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 47.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 53.43
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 57.029999999999994
+            }
+          ],
+          "dataGrouping": {
+            "enabled": false,
+            "smoothed": false
+          },
+          "fillOpacity": 0.0,
+          "lineWidth": 0,
+          "marker": {
+            "enabled": false
+          },
+          "name": "scrubbed",
+          "turboThreshold": 0,
+          "type": "scrubbed"
+        },
+        "connectDate": "August 28, 2026",
+        "editedSeries": {},
+        "endDateTime": 1788480000000,
+        "estimatedSeries": {},
+        "hasDaily": false,
+        "hasHourly": false,
+        "industry": "scrubbed",
+        "meterToChartData": {
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='Off Peak', rateName='Off Peak', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001 - Off Peak', color='#FFC846', maxReadDate=1788480000000, minReadDate=1788220800000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 16.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 18.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 21.32
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 16.13
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 18.82
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 21.32
+            }
+          ],
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='Off Peak', rateName='Super Off Pk', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001 - Super Off Pk', color='#48A23F', maxReadDate=1788480000000, minReadDate=1788220800000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 5.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 7.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 7.65
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 5.63
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 7.33
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 7.65
+            }
+          ],
+          "Meter{serviceLocationNumber='70001', accountNumber='900000001', industry=ELECTRIC, meterNumber='1N0000000001', channel=1, flowDirection=FORWARD, rate='On Peak', rateName='On Peak', unitOfMeasure=KWH, meterLocation='9000001', isParentMeter=false, parentMeters=[], subMeterType=null, isNetMeter=false, visible=true, meterName='1N0000000001', seriesId='1N0000000001 - On Peak', color='#E36F1E', maxReadDate=1788480000000, minReadDate=1788220800000}": [
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 25.3
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 27.28
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 28.06
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788220800000,
+              "y": 25.3
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788307200000,
+              "y": 27.28
+            },
+            {
+              "enableDrilldown": false,
+              "x": 1788393600000,
+              "y": 28.06
+            }
+          ]
+        },
+        "meters": [
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "rate": "scrubbed",
+            "rateName": "Off Peak",
+            "seriesId": "1N0000000001 - Off Peak",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          },
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "rate": "scrubbed",
+            "rateName": "On Peak",
+            "seriesId": "1N0000000001 - On Peak",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          },
+          {
+            "accountNumber": "900000001",
+            "channel": 0,
+            "color": "scrubbed",
+            "flowDirection": "scrubbed",
+            "industry": "scrubbed",
+            "isNetMeter": false,
+            "isParentMeter": false,
+            "maxReadDate": 0,
+            "meterLocation": "scrubbed",
+            "meterName": "scrubbed",
+            "meterNumber": "1N0000000001",
+            "minReadDate": 0,
+            "parentMeters": [],
+            "rate": "scrubbed",
+            "rateName": "Super Off Pk",
+            "seriesId": "1N0000000001 - Super Off Pk",
+            "serviceLocationNumber": "70001",
+            "unitOfMeasure": "KWH",
+            "visible": false
+          }
+        ],
+        "series": [
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788220800000,
+                "y": 16.13
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788307200000,
+                "y": 18.82
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788393600000,
+                "y": 21.32
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001 - Off Peak",
+            "rateName": "Off Peak",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0
+          },
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788220800000,
+                "y": 25.3
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788307200000,
+                "y": 27.28
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788393600000,
+                "y": 28.06
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001 - On Peak",
+            "rateName": "On Peak",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0
+          },
+          {
+            "channel": 0,
+            "color": "scrubbed",
+            "data": [
+              {
+                "enableDrilldown": false,
+                "x": 1788220800000,
+                "y": 5.63
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788307200000,
+                "y": 7.33
+              },
+              {
+                "enableDrilldown": false,
+                "x": 1788393600000,
+                "y": 7.65
+              }
+            ],
+            "dataGrouping": {
+              "enabled": false,
+              "smoothed": false
+            },
+            "meterNumber": "1N0000000001",
+            "name": "1N0000000001 - Super Off Pk",
+            "rateName": "Super Off Pk",
+            "turboThreshold": 0,
+            "type": "scrubbed",
+            "visible": false,
+            "yAxis": 0
+          }
+        ],
+        "serviceLocationNumber": "70001",
+        "startDateTime": 1788220800000,
+        "timeFrame": "DAILY",
+        "type": "TIME_OF_USE",
+        "unitOfMeasure": "KWH",
+        "xToOrderedInterval": {
+          "1788220800000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788307200000,
+              "start": 1788220800000
+            }
+          },
+          "1788307200000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788393600000,
+              "start": 1788307200000
+            }
+          },
+          "1788393600000": {
+            "createTickDrillDownLink": false,
+            "interval": {
+              "end": 1788480000000,
+              "start": 1788393600000
+            }
+          }
+        }
+      }
+    ]
+  },
+  "status": "COMPLETE"
+}

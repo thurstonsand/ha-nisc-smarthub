@@ -2,14 +2,49 @@
 name = "ha-nisc-smarthub"
 version = "0.0.0"
 description = "Home Assistant integration for NISC SmartHub electric co-op portals: usage and cost statistics for the Energy dashboard"
-requires-python = ">=3.14"
+requires-python = ">=3.14.2"
 dependencies = []
 
 [dependency-groups]
 dev = [
-  "ruff>=0.11.7",
+  "ruff>=0.16.3",
   "basedpyright>=1.31.7",
   "pytest>=9.0.2",
+  "pytest-cov>=7.0.0",
+  "pyotp>=2.9.0",
+  "homeassistant==2026.9.1",
+  "pytest-homeassistant-custom-component==0.13.364",
+  # Pinned by the test plugin, and imported directly by the snapshot tests.
+  "syrupy==6.0.0",
+
+  # The runtime closure of the dev config's `default_config`, at the versions
+  # Home Assistant 2026.9.1 pins, so `mise run dev` runs with `--skip-pip` and a
+  # `uv sync` never leaves the instance in recovery mode. Only the entries the
+  # test plugin does not already pull in are listed; DEV.md has the command that
+  # regenerates this list after a Home Assistant bump.
+  "PyTurboJPEG==1.8.3",
+  "aiodhcpwatcher==1.2.7",
+  "aiodiscover==3.3.2",
+  "aiousbwatcher==1.1.2",
+  "async-upnp-client==0.48.1",
+  "av==17.0.1",
+  "cached-ipaddress==1.1.2",
+  "dbus-fast==5.0.22",
+  "file-read-backwards==2.0.0",
+  "gazetteer-matcher==1.1.0",
+  "go2rtc-client==0.4.0",
+  "ha-ffmpeg==3.2.2",
+  # The test plugin's resolution floats this to 7.0.0, which the bluetooth
+  # integration in 2026.9.1 does not expect.
+  "habluetooth==6.26.11",
+  "hassil==3.12.0",
+  "home-assistant-frontend==20260826.6",
+  "home-assistant-intents==2026.8.28",
+  "mutagen==1.48.1",
+  "openai==2.45.0",
+  "pymicro-vad==1.0.1",
+  "pyspeex-noise==1.0.2",
+  "serialx==1.10.0",
 ]
 
 [tool.ruff]
@@ -20,24 +55,169 @@ target-version = "py314"
 include = ["*.py", "*.pyi", "**/pyproject.toml"]
 extend-exclude = [".venv", ".git", "build", "config"]
 
+# The lint selections below are Home Assistant Core 2026.9.1's, harvested whole
+# except for its monorepo-only entries. Deviations are marked "not Core".
 [tool.ruff.lint]
 select = [
-  "E",   # pycodestyle errors
-  "F",   # pyflakes
-  "I",   # isort
-  "UP",  # pyupgrade
-  "B",   # flake8-bugbear
-  "C4",  # flake8-comprehensions
-  "SIM", # flake8-simplify
-  "RUF", # ruff-specific rules
+  "A001",   # Variable {name} is shadowing a Python builtin
+  "ASYNC",  # flake8-async
+  "B",      # flake8-bugbear
+  "BLE",
+  "C",      # complexity
+  "C4",     # flake8-comprehensions (not Core: kept from this repo's set)
+  "COM818", # Trailing comma on bare tuple prohibited
+  "D",      # docstrings
+  "DTZ003", # Use datetime.now(tz=) instead of datetime.utcnow()
+  "DTZ004", # Use datetime.fromtimestamp(ts, tz=) instead of datetime.utcfromtimestamp(ts)
+  "DTZ011", # Use datetime.now(tz=).date() instead of date.today()
+  "E",      # pycodestyle
+  "F",      # pyflakes/autoflake
+  "F541",   # f-string without any placeholders
+  "FLY",    # flynt
+  "FURB",   # refurb
+  "G",      # flake8-logging-format
+  "I",      # isort
+  "INP",    # flake8-no-pep420
+  "ISC",    # flake8-implicit-str-concat
+  "ICN001", # import concentions; {name} should be imported as {asname}
+  "LOG",    # flake8-logging
+  "N804",   # First argument of a class method should be named cls
+  "N805",   # First argument of a method should be named self
+  "N806",   # Variable {name} in function should be snake_case
+  "N815",   # Variable {name} in class scope should not be mixedCase
+  "PERF",   # Perflint
+  "PGH",    # pygrep-hooks
+  "PIE",    # flake8-pie
+  "PL",     # pylint
+  "PT",     # flake8-pytest-style
+  "PTH",    # flake8-pathlib
+  "PYI",    # flake8-pyi
+  "RET",    # flake8-return
+  "RSE",    # flake8-raise
+  "RUF",    # Ruff-specific rules (see `ignore` for exclusions)
+  "S107",   # Possible hardcoded password assigned to function default
+  "S102",   # Use of exec detected
+  "S103",   # bad-file-permissions
+  "S108",   # hardcoded-temp-file
+  "S301",   # suspicious-pickle-usage
+  "S306",   # suspicious-mktemp-usage
+  "S307",   # suspicious-eval-usage
+  "S313",   # suspicious-xmlc-element-tree-usage
+  "S314",   # suspicious-xml-element-tree-usage
+  "S315",   # suspicious-xml-expat-reader-usage
+  "S316",   # suspicious-xml-expat-builder-usage
+  "S317",   # suspicious-xml-sax-usage
+  "S318",   # suspicious-xml-mini-dom-usage
+  "S319",   # suspicious-xml-pull-dom-usage
+  "S601",   # paramiko-call
+  "S602",   # subprocess-popen-with-shell-equals-true
+  "S604",   # call-with-shell-equals-true
+  "S608",   # hardcoded-sql-expression
+  "S609",   # unix-command-wildcard-injection
+  "SIM",    # flake8-simplify
+  "SLF",    # flake8-self
+  "SLOT",   # flake8-slots
+  "T100",   # Trace found: {name} used
+  "T20",    # flake8-print
+  "TC",     # flake8-type-checking
+  "TID",    # Tidy imports
+  "TRY",    # tryceratops
+  "UP",     # pyupgrade
+  "UP031",  # Use format specifiers instead of percent format
+  "UP032",  # Use f-string instead of `format` call
+  "W",      # pycodestyle
 ]
+
 ignore = [
-  "E501", # line too long (handled by line-length)
+  "ASYNC109", # Async function definition with a `timeout` parameter Use `asyncio.timeout` instead
+  "ASYNC110", # Use `asyncio.Event` instead of awaiting `asyncio.sleep` in a `while` loop
+  "ASYNC240", # Use an async function for entering the file system
+  "B008",     # Do not perform function call in argument defaults; commonly used in Home Assistant (e.g. cv.* validators)
+  "B019",     # Use of functools.lru_cache or functools.cache on methods can lead to memory leaks
+  "D202",     # No blank lines allowed after function docstring
+  "D203",     # 1 blank line required before class docstring
+  "D213",     # Multi-line docstring summary should start at the second line
+  "D406",     # Section name should end with a newline
+  "D407",     # Section name underlining
+  "D417",     # Missing argument descriptions in docstring - to allow documenting only non-obvious parameters
+  "E501",     # line too long
+
+  "PLC1901", # {existing} can be simplified to {replacement} as an empty string is falsey; too many false positives
+  "PLR0911", # Too many return statements ({returns} > {max_returns})
+  "PLR0912", # Too many branches ({branches} > {max_branches})
+  "PLR0913", # Too many arguments to function call ({c_args} > {max_args})
+  "PLR0915", # Too many statements ({statements} > {max_statements})
+  "PLR0917", # Too many positional arguments defined for a function ({p_args} > {max_args})
+  "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable
+  "PLW0108", # Unnecessary lambda wrapping a function call; can often be replaced by the function itself
+  "PLW1641", # __eq__ without __hash__
+  "PLW2901", # Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
+  "PT011",   # pytest.raises({exception}) is too broad, set the `match` parameter or use a more specific exception
+  "PT018",   # Assertion should be broken down into multiple parts
+  "RUF001",  # String contains ambiguous unicode character.
+  "RUF012",  # Mutable class attributes should be annotated with typing.ClassVar
+  "RUF015",  # Prefer next(...) over single element slice
+  "RUF043",  # Pattern passed to match= contains metacharacters but is neither escaped nor raw
+  "SIM102",  # Use a single if statement instead of nested if statements
+  "SIM103",  # Return the condition {condition} directly
+  "SIM108",  # Use ternary operator {contents} instead of if-else-block
+  "SIM115",  # Use context handler for opening files
+
+  # Moving imports into type-checking blocks can mess with pytest.patch()
+  "TC001", # Move application import {} into a type-checking block
+  "TC002", # Move third-party import {} into a type-checking block
+  "TC003", # Move standard library import {} into a type-checking block
+  # Quotes for typing.cast generally not necessary, only for performance critical paths
+  "TC006", # Add quotes to type expression in typing.cast()
+
+  "TRY003", # Avoid specifying long messages outside the exception class
+  "TRY400", # Use `logging.exception` instead of `logging.error`
+
+  "UP047", # Non PEP 696 generic function
+  "UP049", # Avoid private type parameter names
+
+  # May conflict with the formatter, https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+  "W191",
+  "E111",
+  "E114",
+  "E117",
+  "D206",
+  "D300",
+  "Q",
+  "COM812",
+  "COM819",
+
+  "FURB116",
+
+  # Disabled to implement in follow up PRs after ruff 0.16 bump
+  "ISC004",
+  "LOG004",
 ]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"async_timeout".msg = "use asyncio.timeout instead"
+"pytz".msg = "use zoneinfo instead"
+"__future__.annotations".msg = "It should not be needed because Home Assistant requires Python 3.14+"
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-sort-within-sections = true
+known-first-party = ["custom_components"]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
+# The capture script is a standalone entry point, and printing is how it reports.
+"scripts/*" = ["INP001", "T20"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 25
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.format]
 quote-style = "double"
@@ -52,8 +232,25 @@ reportMissingTypeStubs = "error"
 reportUnusedImport = "warning"
 reportUnusedVariable = "warning"
 
+# Home Assistant's test plugin ships no type information, so every helper it
+# hands a test is Unknown. Its flow results are total=False TypedDicts that
+# every assertion has to index. Strict typing still applies to everything
+# shipped.
+[[tool.basedpyright.executionEnvironments]]
+root = "tests"
+extraPaths = ["."]
+reportUnknownArgumentType = "none"
+reportUnknownMemberType = "none"
+reportUnknownVariableType = "none"
+reportMissingTypeStubs = "none"
+reportTypedDictNotRequiredAccess = "none"
+
 [tool.pytest.ini_options]
 minversion = "7.0"
+asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "-ra -q --tb=short --strict-markers"
+addopts = "-ra -q --tb=short --strict-markers --cov=custom_components --cov-report=term-missing --cov-fail-under=95"
 filterwarnings = ["error"]
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:"]

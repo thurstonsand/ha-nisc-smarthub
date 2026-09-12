@@ -1,0 +1,9 @@
+{
+  "expiration": 1789174514,
+  "expiresIn": 299,
+  "isBusinessUser": false,
+  "isSecondaryRegistration": false,
+  "primaryUsername": "member@example.com",
+  "status": "SUCCESS",
+  "username": "member@example.com"
+}

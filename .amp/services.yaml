@@ -1,0 +1,10 @@
+services:
+  home-assistant:
+    command: mise run dev
+    port: 8123
+    health: /
+    agent: control
+    portal:
+      url: /
+      title: Home Assistant
+      description: The dev instance running this checkout. Sign in as dev / development.

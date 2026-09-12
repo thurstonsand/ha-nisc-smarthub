@@ -1,0 +1,364 @@
+[
+  {
+    "accountBillingMap": {
+      "900000001": {
+        "accountSummary": {
+          "account": "900000001",
+          "accountStatus": "scrubbed",
+          "addressMap": {
+            "MAIN": {
+              "city": "scrubbed",
+              "country": "scrubbed",
+              "lineOne": "scrubbed",
+              "state": "scrubbed",
+              "zip4": "scrubbed",
+              "zipCode": "scrubbed"
+            }
+          },
+          "personalInfo": {
+            "customerSSN": "scrubbed",
+            "displayName": "scrubbed",
+            "email": "scrubbed",
+            "ethnicGroup": "scrubbed",
+            "firstName": "scrubbed",
+            "isIndividual": false,
+            "isIndividualAdditional": false,
+            "lastName": "scrubbed",
+            "miscEmail": "scrubbed"
+          }
+        },
+        "billingCycle": "3",
+        "envelopeGroup": "scrubbed",
+        "hasUnbilledUsage": false,
+        "invoiceGroup": "scrubbed",
+        "numberOfBills": 0,
+        "paymentExtensions": [],
+        "serviceBillingMap": {
+          "ELEC": {
+            "providerBillingMap": {
+              "COBB": {
+                "billingSummary": {
+                  "accountReceivableCounter": 0,
+                  "accountType": "scrubbed",
+                  "agingDetails": {
+                    "currentDelinquentAmount": 0.0,
+                    "currentLateCharge": 0.0,
+                    "ninetyDelinquentAmount": 0.0,
+                    "ninetyLateCharge": 0.0,
+                    "past30DaysDue": 0.0,
+                    "past60DaysDue": 0.0,
+                    "past90DaysDue": 0.0,
+                    "pastDue": 0.0,
+                    "sixtyDelinquentAmount": 0.0,
+                    "sixtyLateCharge": 0.0,
+                    "thirtyDelinquentAmount": 0.0,
+                    "thirtyLateCharge": 0.0,
+                    "totalDue": 0.0
+                  },
+                  "allowCheckPayments": false,
+                  "allowCreditCardPayments": false,
+                  "billInsertsExist": false,
+                  "consecutive90DayBalance": 0,
+                  "consecutiveDelinquentBills": 0,
+                  "delinquentActions": "scrubbed",
+                  "eligibleForReconnect": false,
+                  "gatewayLocationId": "scrubbed",
+                  "lastPaymentAmount": 0.0,
+                  "latePayment": false,
+                  "past30DaysDue": 0.0,
+                  "past60DaysDue": 0.0,
+                  "past90DaysDue": 0.0,
+                  "pastDue": 0.0,
+                  "paymentAssistanceCarryover": 0.0,
+                  "prepaidAverageDailyAmount": 0.0,
+                  "reconnectFee": 0.0,
+                  "reconnectMinimumDue": 0.0,
+                  "totalDue": 0.0,
+                  "uncollectableAmount": 0.0,
+                  "uncollectableInterest": 0.0
+                },
+                "connectDate": 1787889600000,
+                "creditRating": {
+                  "creditRatingHistory": {
+                    "202510": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202511": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202512": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202601": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202602": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202603": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202604": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202605": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202606": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202607": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202608": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    },
+                    "202609": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
+                    }
+                  },
+                  "level": "scrubbed",
+                  "score": 0
+                },
+                "depositSummary": [],
+                "hasGenerator": false,
+                "medicalNecessity": "scrubbed",
+                "outagePriority": "scrubbed",
+                "primaryRateSchedule": "NiteFlex On Peak",
+                "primaryRateScheduleId": "NFON",
+                "providerSummary": {
+                  "provider": "scrubbed",
+                  "providerDescription": "scrubbed"
+                },
+                "readRoute": "scrubbed",
+                "revenueClass": "RESIDENTIAL",
+                "revenueClassId": "scrubbed",
+                "roundUpSettings": [
+                  {
+                    "allowAdditionalMonthlyContribution": "scrubbed",
+                    "determineProviderCalculateCharge": "scrubbed",
+                    "provider": "scrubbed",
+                    "roundUpBudgetCalculation": "scrubbed"
+                  }
+                ],
+                "roundUpSummary": [
+                  {
+                    "additionalAmountNextBillOnly": 0.0,
+                    "additionalMonthlyContribution": 0.0,
+                    "previousYearToDateContribution": 0,
+                    "provider": "scrubbed",
+                    "recentContribution": 0.0,
+                    "status": false,
+                    "yearToDateContribution": 0.0
+                  }
+                ],
+                "serviceLocationMap": {
+                  "70001": {
+                    "address": {
+                      "city": "scrubbed",
+                      "lineOne": "scrubbed",
+                      "state": "GA",
+                      "zipCode": "scrubbed"
+                    },
+                    "description": "Example Premise",
+                    "industryServiceStatusMap": {
+                      "ELECTRIC": "scrubbed"
+                    },
+                    "isDefault": false,
+                    "isDisconnectedForNonPayment": false,
+                    "location": "scrubbed",
+                    "meters": {
+                      "1N0000000001": {
+                        "id": "1N0000000001",
+                        "meterPosition": 0,
+                        "meterType": "TIME_OF_DAY_KWH_DEMAND",
+                        "rateSchedule": "NFON",
+                        "status": "ACTIVE"
+                      }
+                    },
+                    "primaryRateSchedule": "NiteFlex On Peak",
+                    "primaryRateScheduleId": "NFON",
+                    "revenueClass": "RESIDENTIAL",
+                    "revenueClassId": "scrubbed",
+                    "serviceLocation": "70001",
+                    "taxable": true,
+                    "tvaCode": "scrubbed"
+                  }
+                },
+                "serviceLocationStatusMap": {
+                  "70001": "scrubbed"
+                },
+                "status": "scrubbed",
+                "useDeposits": false
+              }
+            },
+            "serviceLocationStatusMap": {
+              "70001": "scrubbed"
+            },
+            "serviceSummary": {
+              "industry": "scrubbed",
+              "service": "scrubbed",
+              "serviceDescription": "Example Premise"
+            }
+          }
+        },
+        "serviceLocationMap": {
+          "70001": {
+            "address": {
+              "city": "scrubbed",
+              "lineOne": "scrubbed",
+              "state": "GA",
+              "zipCode": "scrubbed"
+            },
+            "description": "Example Premise",
+            "industryServiceStatusMap": {
+              "ELECTRIC": "scrubbed"
+            },
+            "isDefault": false,
+            "location": "scrubbed",
+            "serviceLocation": "70001"
+          }
+        }
+      }
+    },
+    "customerSummary": {
+      "accounts": [
+        "900000001"
+      ],
+      "address": {
+        "city": "scrubbed",
+        "country": "scrubbed",
+        "lineOne": "scrubbed",
+        "phones": {
+          "MOBILE": [
+            {
+              "isPrimary": false,
+              "listingType": "scrubbed",
+              "number": "scrubbed",
+              "type": "scrubbed"
+            }
+          ]
+        },
+        "phonesAdditional": {},
+        "state": "scrubbed",
+        "zip4": "scrubbed",
+        "zipCode": "scrubbed"
+      },
+      "addressMap": {
+        "MAIN": {
+          "city": "scrubbed",
+          "country": "scrubbed",
+          "lineOne": "scrubbed",
+          "state": "scrubbed",
+          "zip4": "scrubbed",
+          "zipCode": "scrubbed"
+        }
+      },
+      "allowEcheck": false,
+      "customer": "scrubbed",
+      "customerSSN": "scrubbed",
+      "displayName": "scrubbed",
+      "email": "scrubbed",
+      "ethnicGroup": "scrubbed",
+      "firstName": "scrubbed",
+      "hintAnswer": "scrubbed",
+      "hintQuestion": "scrubbed",
+      "isDefault": false,
+      "isIndividual": false,
+      "isIndividualAdditional": false,
+      "keyCustomer": "scrubbed",
+      "lastName": "scrubbed",
+      "miscEmail": "scrubbed",
+      "registrationLevel": "scrubbed",
+      "suspendUser": false,
+      "users": [
+        "member@example.com"
+      ]
+    },
+    "email": "member@example.com"
+  }
+]

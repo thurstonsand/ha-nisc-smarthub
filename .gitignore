@@ -16,9 +16,14 @@ __pycache__/
 AGENTS.local.md
 CLAUDE.local.md
 
-# Local Home Assistant dev instance (the dev-loop ticket decides what, if
-# anything, under config/ is tracked)
-config/
+# Local Home Assistant dev instance: its configuration is tracked, its
+# database, logs, storage, and agent token are not.
+config/*
+!config/configuration.yaml
 
-# Amp orb runtime state
-/.amp/portals/*
+# Amp writes portal state here when it starts a declared service.
+.amp/portals/
+
+# coverage
+.coverage
+htmlcov/

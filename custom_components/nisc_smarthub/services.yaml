@@ -1,0 +1,67 @@
+reconcile:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: nisc_smarthub
+    from:
+      required: false
+      selector:
+        date:
+
+finalize_cycle:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: nisc_smarthub
+    cycle_start:
+      required: true
+      selector:
+        date:
+    read_start:
+      required: true
+      selector:
+        date:
+    read_end:
+      required: true
+      selector:
+        date:
+    service_charge:
+      required: true
+      selector:
+        number:
+          step: any
+          mode: box
+    pca_factor:
+      required: true
+      selector:
+        number:
+          step: any
+          mode: box
+    tax:
+      required: true
+      selector:
+        number:
+          step: any
+          mode: box
+    bill_total:
+      required: true
+      selector:
+        number:
+          step: any
+          mode: box
+
+unfinalize_cycle:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: nisc_smarthub
+    cycle_start:
+      required: true
+      selector:
+        date:

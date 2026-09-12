@@ -1,0 +1,84 @@
+# serializer version: 1
+# name: test_the_dump_matches_its_snapshot
+  dict({
+    'cycle_records': dict({
+    }),
+    'data': dict({
+      'allowance_remaining': dict({
+        'super_off_peak': 379.39,
+      }),
+      'cycle': dict({
+        'end': '2026-09-28T00:00:00-04:00',
+        'partial': False,
+        'start': '2026-08-28T00:00:00-04:00',
+      }),
+      'cycle_cost': dict({
+        'adjustment': 0.0,
+        'energy': 15.51275,
+        'fixed': 3.1935483870967745,
+        'residual': 0.0,
+        'rider': 0.0,
+        'tax': 1.449738125,
+        'total': 20.156036512096776,
+      }),
+      'cycle_priced_hours': 72,
+      'cycle_unpriced_hours': 0,
+      'cycle_usage': 157.55,
+      'last_poll': '2026-09-04T12:00:00+00:00',
+      'meter': '**REDACTED_meter**',
+      'newest_data_hour': '2026-09-04T03:00:00+00:00',
+    }),
+    'entry': dict({
+      'data': dict({
+        'account': '**REDACTED_account**',
+        'cycle_day': 28,
+        'email': '**REDACTED**',
+        'host': 'example.smarthub.coop',
+        'location': '**REDACTED_location**',
+        'password': '**REDACTED**',
+        'rate_versions': list([
+          dict({
+            'effective_from': '2026-01-01',
+            'off_peak_rate': 0.075,
+            'on_peak_rate': 0.14,
+            'pca_factor': 0.0,
+            'recurring_adjustment': 0.0,
+            'sales_tax_rate': 0.0775,
+            'service_charge': 33.0,
+            'super_off_peak_allowance': 400.0,
+            'super_off_peak_rate': 0.05,
+          }),
+        ]),
+        'tariff': 'niteflex',
+        'totp_secret': '**REDACTED**',
+      }),
+      'minor_version': 1,
+      'options': dict({
+      }),
+      'version': 1,
+    }),
+    'issues': list([
+    ]),
+    'last_update_success': True,
+    'statistic_ids': list([
+      'nisc_smarthub:**REDACTED_account**_**REDACTED_location**_usage',
+      'nisc_smarthub:**REDACTED_account**_**REDACTED_location**_usage_on_peak',
+      'nisc_smarthub:**REDACTED_account**_**REDACTED_location**_usage_off_peak',
+      'nisc_smarthub:**REDACTED_account**_**REDACTED_location**_usage_super_off_peak',
+      'nisc_smarthub:**REDACTED_account**_**REDACTED_location**_cost',
+    ]),
+    'tariff': 'niteflex',
+    'window_plan': dict({
+      'cycles': list([
+        dict({
+          'end': '2026-09-28T00:00:00-04:00',
+          'partial': False,
+          'start': '2026-08-28T00:00:00-04:00',
+        }),
+      ]),
+      'end': '2026-09-04T12:00:00+00:00',
+      'start': '2026-08-28T00:00:00-04:00',
+      'tier': 'full',
+    }),
+  })
+# ---

@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
+# Install the agent-vault identity Amp supplies, then onboard the dev instance
+# once it is up, so the portal opens on a dashboard instead of the onboarding
+# wizard and the agent has a token to query with.
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-"$HOME/.local/bin/mise" trust --yes "$repo_root/mise.toml" >/dev/null
+cd "$(dirname "$0")/.."
+
+if [ -n "${OP_SERVICE_ACCOUNT_TOKEN:-}" ]; then
+  /usr/bin/env python3 scripts/enroll_identity.py
+  unset OP_SERVICE_ACCOUNT_TOKEN
+fi
+
+if [ -f config/.agent-token ]; then
+  exit 0
+fi
+
+if ! curl -fsS --max-time 2 http://127.0.0.1:8123/ >/dev/null 2>&1; then
+  exit 0
+fi
+
+export PATH="$HOME/.local/bin:$PATH"
+mise run dev:bootstrap
