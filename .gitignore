@@ -5,9 +5,6 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 
-# mise task stamps
-.mise/
-
 # macOS
 .DS_Store
 

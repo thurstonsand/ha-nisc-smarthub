@@ -33,12 +33,9 @@ quiet = true
 
 [tasks."bootstrap:hooks"]
 description = "Install git hooks"
-run = [
-  "hk install --mise --quiet",
-  "mkdir -p .mise && touch .mise/hooks",
-]
+run = "hk install --mise --quiet"
 sources = ["mise.toml", "hk.pkl"]
-outputs = [".mise/hooks"]
+outputs = { auto = true }
 quiet = true
 
 [tasks.check]
