@@ -1304,7 +1304,7 @@ dev = [
     { name = "habluetooth", specifier = "==6.26.11" },
     { name = "hassil", specifier = "==3.12.0" },
     { name = "home-assistant-frontend", specifier = "==20260826.6" },
-    { name = "home-assistant-intents", specifier = "==2026.8.28" },
+    { name = "home-assistant-intents", specifier = "==2026.9.30" },
     { name = "homeassistant", specifier = "==2026.9.4" },
     { name = "mutagen", specifier = "==1.48.1" },
     { name = "openai", specifier = "==2.45.0" },
@@ -1421,11 +1421,11 @@ wheels = [
 
 [[package]]
 name = "home-assistant-intents"
-version = "2026.8.28"
+version = "2026.9.30"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/31/5f/ea4f5605a5f62ae7ac8b292e9d0a826cc6a9d8aa5cb9d0d22cc80cd8a7c5/home_assistant_intents-2026.8.28.tar.gz", hash = "sha256:d69d2070d933614a5263a9d83ac388d1ffb7056f85231ec15751bc5afa14e298", size = 659210, upload-time = "2026-08-28T20:46:04.709Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/05/69/127364fa2eb713a402135c91b3e21312109647819218f620447073e82a9b/home_assistant_intents-2026.9.30.tar.gz", hash = "sha256:5eaf9fa2522a17ca06e7876034be81156bc7db9dd2f7d742e80327555aee8b63", size = 731222, upload-time = "2026-09-30T13:16:22.011Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fa/8a/ae294a45985b272482fc7ce0c0299fbe2cb8364d36b3ce1a4667b541d718/home_assistant_intents-2026.8.28-py3-none-any.whl", hash = "sha256:0bbdf1992e87868404614ff9433e92780dfd53561d7db19f6651415d17cdc2dd", size = 680976, upload-time = "2026-08-28T20:46:03.073Z" },
+    { url = "https://files.pythonhosted.org/packages/30/83/126748fafcf3d14dd977f8b979b0fdbd6bca68f480905f72ed8b4f374143/home_assistant_intents-2026.9.30-py3-none-any.whl", hash = "sha256:eb15c4559337e531924ccf527b3e38c06057fa1e8c97c2acc701f70fcd401b86", size = 752171, upload-time = "2026-09-30T13:16:20.315Z" },
 ]
 
 [[package]]
