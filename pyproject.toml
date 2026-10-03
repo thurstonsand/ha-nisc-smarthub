@@ -22,7 +22,7 @@ dev = [
   # `uv sync` never leaves the instance in recovery mode. Only the entries the
   # test plugin does not already pull in are listed; DEV.md has the command that
   # regenerates this list after a Home Assistant bump.
-  "PyTurboJPEG==1.8.3",
+  "PyTurboJPEG==2.5.0",
   "aiodhcpwatcher==1.2.7",
   "aiodiscover==3.3.2",
   "aiousbwatcher==1.1.2",
