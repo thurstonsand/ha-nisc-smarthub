@@ -1316,7 +1316,7 @@ dev = [
     { name = "openai", specifier = "==3.24.0" },
     { name = "pymicro-vad", specifier = "==2.1.0" },
     { name = "pyotp", specifier = ">=2.9.0" },
-    { name = "pyspeex-noise", specifier = "==1.0.2" },
+    { name = "pyspeex-noise", specifier = "==2.0.1" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
     { name = "pytest-homeassistant-custom-component", specifier = "==0.13.367" },
@@ -2440,9 +2440,13 @@ wheels = [
 
 [[package]]
 name = "pyspeex-noise"
-version = "1.0.2"
+version = "2.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ee/1d/7d2ebb8f73c2b2e929b4ba5370b35dbc91f37268ea53f4b6acd9afa532cb/pyspeex_noise-1.0.2.tar.gz", hash = "sha256:56a888ca2ef7fdea2316aa7fad3636d2fcf5f4450f3a0db58caa7c10a614b254", size = 49882, upload-time = "2024-08-27T17:00:34.859Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/e8/306f0f33710ec1cc4215df174066469ffa7e18654562d205986fffae1d3e/pyspeex_noise-2.0.1.tar.gz", hash = "sha256:607b3faf8cd11edf01620fa0e05f7d98ed5027aee637ffe28534321eed1a610a", size = 50714, upload-time = "2026-06-04T20:56:38.124Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5c/42/f6d912bc4ed49912bac7908306e3e09fa90d489845c5758629a7156462fb/pyspeex_noise-2.0.1-cp39-abi3-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:e9770a7807d3f67b54dea95ac89288a8ca222feb1f9351acd411edb2b8c0fd03", size = 137902, upload-time = "2026-06-04T20:56:35.317Z" },
+    { url = "https://files.pythonhosted.org/packages/4e/a8/44214e9554f29bd1b00b4455c62219b8cc2910d118167f2138c0d2b2f284/pyspeex_noise-2.0.1-cp39-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:bbcc365556bd184ab3da17276dbfadb21485dcd013496889006eb31ffb341c06", size = 145654, upload-time = "2026-06-04T20:56:36.704Z" },
+]
 
 [[package]]
 name = "pytest"
