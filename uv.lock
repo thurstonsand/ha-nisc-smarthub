@@ -1318,7 +1318,7 @@ dev = [
     { name = "ha-ffmpeg", specifier = "==3.2.2" },
     { name = "habluetooth", specifier = "==6.26.11" },
     { name = "hassil", specifier = "==3.12.1" },
-    { name = "home-assistant-frontend", specifier = "==20260826.6" },
+    { name = "home-assistant-frontend", specifier = "==20260930.0" },
     { name = "home-assistant-intents", specifier = "==2026.9.30" },
     { name = "homeassistant", specifier = "==2026.9.4" },
     { name = "mutagen", specifier = "==1.48.1" },
@@ -1427,11 +1427,11 @@ wheels = [
 
 [[package]]
 name = "home-assistant-frontend"
-version = "20260826.6"
+version = "20260930.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a9/b4/ec31351b93f77da519b97d4340072cc42a7aa9e84230b952b31cc93776e8/home_assistant_frontend-20260826.6.tar.gz", hash = "sha256:a8ada996c40b9c3b1651f5aa5070dda789d8ed9b2ff15d17bbce3d8e422f5311", size = 128398275, upload-time = "2026-09-04T10:51:22.026Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c2/68/57f9a6fbdee0b14e1750076dc85f21a8e15a834f8566329ddacce2c18c2e/home_assistant_frontend-20260930.0.tar.gz", hash = "sha256:1355cc0a8acbed6fb5d47f2cec2600e930735a3f1d56db7e917b02469c5ba91d", size = 110184541, upload-time = "2026-09-30T14:42:44.644Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d3/20/41d8e2033a0d7dabefe36f984b2b419d0cf3644ab0b17352679a5449e151/home_assistant_frontend-20260826.6-py3-none-any.whl", hash = "sha256:4bab7be76bbff2e83cfa9eeae8bc22a3dd121dc784eec2de442c32594833fe92", size = 128409090, upload-time = "2026-09-04T10:51:13.307Z" },
+    { url = "https://files.pythonhosted.org/packages/6a/91/95cbb427e1cc2ef0b195a1af4a90935cfc85796e726d6b064ba9235b371b/home_assistant_frontend-20260930.0-py3-none-any.whl", hash = "sha256:59766b1697e155bb0adc311bd415f5f697e10c60c9e808211f861cb6199a63c8", size = 110930433, upload-time = "2026-09-30T14:42:36.321Z" },
 ]
 
 [[package]]
