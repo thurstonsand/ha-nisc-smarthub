@@ -1308,7 +1308,7 @@ dev = [
     { name = "homeassistant", specifier = "==2026.9.4" },
     { name = "mutagen", specifier = "==1.48.1" },
     { name = "openai", specifier = "==2.45.0" },
-    { name = "pymicro-vad", specifier = "==1.0.1" },
+    { name = "pymicro-vad", specifier = "==1.0.2" },
     { name = "pyotp", specifier = ">=2.9.0" },
     { name = "pyspeex-noise", specifier = "==1.0.2" },
     { name = "pytest", specifier = ">=9.0.2" },
@@ -2246,9 +2246,9 @@ crypto = [
 
 [[package]]
 name = "pymicro-vad"
-version = "1.0.1"
+version = "1.0.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2e/0f/a92acea368e2b37fbc706f6d049f04557497d981316a2f428b26f14666a9/pymicro_vad-1.0.1.tar.gz", hash = "sha256:60e0508b338b694c7ad71c633c0da6fcd2678a88abb8e948b80fa68934965111", size = 135575, upload-time = "2024-07-31T20:04:04.619Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/70/753b17d9f5dc2c6317d91f576126e2481abbdcf98496caf2129fdb782869/pymicro_vad-1.0.2.tar.gz", hash = "sha256:b386ff00fad76e29fa145a8af472cde9e1275c2716ef5c350e7a143b8d97f507", size = 135577, upload-time = "2024-07-31T22:00:19.939Z" }
 
 [[package]]
 name = "pynacl"
