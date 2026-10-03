@@ -29,7 +29,7 @@ dev = [
   "async-upnp-client==0.48.1",
   "av==17.0.1",
   "cached-ipaddress==1.1.2",
-  "dbus-fast==5.0.22",
+  "dbus-fast==5.2.0",
   "file-read-backwards==2.0.0",
   "gazetteer-matcher==1.1.0",
   "go2rtc-client==0.4.0",
