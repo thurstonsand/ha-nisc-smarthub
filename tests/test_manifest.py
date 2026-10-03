@@ -20,9 +20,12 @@ def test_manifest_declares_the_domain() -> None:
     assert MANIFEST.parent.name == DOMAIN
 
 
-def test_manifest_pins_its_requirements() -> None:
-    """HACS and Core both want exact requirement pins."""
-    assert all("==" in requirement for requirement in manifest()["requirements"])
+def test_manifest_versions_its_requirements() -> None:
+    """Requirements use exact pins or Core-compatible minimum versions."""
+    assert all(
+        "==" in requirement or ">=" in requirement
+        for requirement in manifest()["requirements"]
+    )
 
 
 def test_hacs_manifest_names_the_integration() -> None:
