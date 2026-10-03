@@ -15,7 +15,7 @@ dev = [
   "homeassistant==2026.9.1",
   "pytest-homeassistant-custom-component==0.13.364",
   # Pinned by the test plugin, and imported directly by the snapshot tests.
-  "syrupy==6.0.0",
+  "syrupy==6.1.1",
 
   # The runtime closure of the dev config's `default_config`, at the versions
   # Home Assistant 2026.9.1 pins, so `mise run dev` runs with `--skip-pip` and a
