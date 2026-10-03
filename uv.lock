@@ -1051,11 +1051,11 @@ wheels = [
 
 [[package]]
 name = "file-read-backwards"
-version = "2.0.0"
+version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/91/7d/70e25cf8d8d181f2bf87da51db3eeeb984e0cb24dbb31ecbf7670727c306/file_read_backwards-2.0.0.tar.gz", hash = "sha256:fd50d9089b412147ea3c6027e2ad905f977002db2918cf315d64eed23d6d6eb8", size = 21088, upload-time = "2018-03-28T02:00:43.887Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/53/804f4321dd72e2953c6d5875e9d07d79415a1f8055d5197b92d6d97da19a/file_read_backwards-3.2.0.tar.gz", hash = "sha256:5478d305ebaeaae8fe3c6585a24dfc3262170224450acc9321398f0d26cdd109", size = 21824, upload-time = "2025-04-21T18:06:33.318Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/53/cc/d015aacff2ae5566e81379b2146674c6bf364c50d562add9ae292a9284dc/file_read_backwards-2.0.0-py2.py3-none-any.whl", hash = "sha256:78684aafc0471e9e0f62a8662361bfaf70ade3d38333d7f166fd8024a028b1d1", size = 9029, upload-time = "2018-03-28T02:00:43.035Z" },
+    { url = "https://files.pythonhosted.org/packages/31/7e/4a844e232df643bdccef71819f32b3ba8bd716b4c9c3cbf39a3a579f694a/file_read_backwards-3.2.0-py2.py3-none-any.whl", hash = "sha256:15b261b3b65cd1452f5a66fad3e81e3fd15b1ba2c0e3a224ef0ba0f6392ec1a9", size = 7914, upload-time = "2025-04-21T18:06:31.606Z" },
 ]
 
 [[package]]
@@ -1312,7 +1312,7 @@ dev = [
     { name = "basedpyright", specifier = ">=1.31.7" },
     { name = "cached-ipaddress", specifier = "==1.1.2" },
     { name = "dbus-fast", specifier = "==5.2.0" },
-    { name = "file-read-backwards", specifier = "==2.0.0" },
+    { name = "file-read-backwards", specifier = "==3.2.0" },
     { name = "gazetteer-matcher", specifier = "==1.2.0" },
     { name = "go2rtc-client", specifier = "==0.4.0" },
     { name = "ha-ffmpeg", specifier = "==3.2.2" },
