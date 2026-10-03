@@ -52,6 +52,12 @@
       "enabled": false
     },
     {
+      "description": "Home Assistant owns this exact pin; regenerate the runtime closure when updating Home Assistant instead of updating it independently.",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["habluetooth"],
+      "enabled": false
+    },
+    {
       "description": "hk is pinned twice, once as a mise tool and once in the two package URLs at the top of hk.pkl, and the two have to move together or hk runs one version while validating its config against another.",
       "matchDatasources": ["github-releases"],
       "matchPackageNames": ["jdx/hk"],

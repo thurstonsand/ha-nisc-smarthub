@@ -2,7 +2,7 @@
 
 ## Setup
 
-`mise trust` then enter the directory. The `enter` hook syncs the uv venv and installs hk's pre-commit hooks. The venv carries Home Assistant 2026.9.1, its test plugin, and the runtime closure of the dev configuration, so a fresh clone runs the instance without `hass` installing anything for itself.
+`mise trust` then enter the directory. The `enter` hook syncs the uv venv and installs hk's pre-commit hooks. The venv carries Home Assistant 2026.9.4, its test plugin, and the runtime closure of the dev configuration, so a fresh clone runs the instance without `hass` installing anything for itself.
 
 ## Commands
 
@@ -46,7 +46,7 @@ config/              local dev instance; only configuration.yaml is tracked
 
 `mise run dev` creates the `config/custom_components -> ../custom_components` symlink if it is missing, refuses to touch anything else sitting at that path, and runs `hass --config config --debug --skip-pip` in the foreground. Restart after any Python, manifest, or translation change: reloading the entry does not reimport the modules.
 
-`--skip-pip` works because the dev group in `pyproject.toml` declares the runtime closure of `default_config` at the versions 2026.9.1 pins, the frontend included. After a Home Assistant bump, regenerate that list: start the instance once without `--skip-pip`, then diff `uv pip freeze` against `uv.lock` and pin what `hass` installed. A `uv sync` that prunes something the instance needs shows up as recovery mode at the next start, where custom integrations never load.
+`--skip-pip` works because the dev group in `pyproject.toml` declares the runtime closure of `default_config` at the versions 2026.9.4 pins, the frontend included. After a Home Assistant bump, regenerate that list: start the instance once without `--skip-pip`, then diff `uv pip freeze` against `uv.lock` and pin what `hass` installed. A `uv sync` that prunes something the instance needs shows up as recovery mode at the next start, where custom integrations never load.
 
 With the instance running, `mise run dev:bootstrap` creates the owner `dev` / `development` over the onboarding API and writes a long-lived token to `config/.agent-token`. It is a no-op once that file exists. Inspect the instance with that token over REST (`/api/config`, `/api/config/config_entries/entry`) or the WebSocket API (`recorder/list_statistic_ids`, `recorder/statistics_during_period`, `energy/save_prefs`). The onboarding API is internal; when a Home Assistant upgrade breaks `scripts/dev_bootstrap.py`, fix the script.
 
@@ -57,7 +57,7 @@ Set the instance's timezone to the portal's before configuring the entry. The cl
 {"type": "config/core/update", "time_zone": "America/New_York", "currency": "USD"}
 ```
 
-Pointing the Energy dashboard at the entry's statistics is one `energy/save_prefs` call. The grid source schema in 2026.9.1 is flat, and it is strict: `cost_adjustment_day` is required, `name` and `stat_power` are refused when sent as `null`, and everything else takes an explicit `null`.
+Pointing the Energy dashboard at the entry's statistics is one `energy/save_prefs` call. The grid source schema in 2026.9.4 is flat, and it is strict: `cost_adjustment_day` is required, `name` and `stat_power` are refused when sent as `null`, and everything else takes an explicit `null`.
 
 ```json
 {"type": "energy/save_prefs", "energy_sources": [{"type": "grid", "stat_energy_from": "nisc_smarthub:<account>_<location>_usage", "stat_energy_to": null, "stat_cost": "nisc_smarthub:<account>_<location>_cost", "entity_energy_price": null, "number_energy_price": null, "stat_compensation": null, "entity_energy_price_export": null, "number_energy_price_export": null, "cost_adjustment_day": 0.0}], "device_consumption": []}
