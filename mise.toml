@@ -1,7 +1,7 @@
 [tools]
 python = "3.14"
 uv = "0.12.12"
-hk = "1.56.1"
+hk = "1.58.1"
 markdownlint-cli2 = "0.23.2"
 fnox = "1.35.1"
 "1password-cli" = "2.39.0"
