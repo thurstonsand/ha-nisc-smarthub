@@ -27,7 +27,7 @@ dev = [
   "aiodiscover==3.3.2",
   "aiousbwatcher==1.1.2",
   "async-upnp-client==0.48.1",
-  "av==17.0.1",
+  "av==17.1.0",
   "cached-ipaddress==1.1.2",
   "dbus-fast==5.0.22",
   "file-read-backwards==2.0.0",
