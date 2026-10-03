@@ -31,7 +31,7 @@ dev = [
   "cached-ipaddress==1.1.2",
   "dbus-fast==5.0.22",
   "file-read-backwards==2.0.0",
-  "gazetteer-matcher==1.1.0",
+  "gazetteer-matcher==1.2.0",
   "go2rtc-client==0.4.0",
   "ha-ffmpeg==3.2.2",
   # The test plugin's resolution floats this to 7.0.0, which the bluetooth
