@@ -13,7 +13,7 @@ dev = [
   "pytest-cov>=7.0.0",
   "pyotp>=2.9.0",
   "homeassistant==2026.9.1",
-  "pytest-homeassistant-custom-component==0.13.364",
+  "pytest-homeassistant-custom-component==0.13.368",
   # Pinned by the test plugin, and imported directly by the snapshot tests.
   "syrupy==6.0.0",
 
