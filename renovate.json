@@ -36,6 +36,18 @@
       "groupName": "mise tools"
     },
     {
+      "description": "Home Assistant, its pytest plugin, Syrupy, and the manifest's pyotp requirement have exact interdependent versions and must remain installable together.",
+      "matchManagers": ["homeassistant-manifest", "pep621"],
+      "matchPackageNames": [
+        "homeassistant",
+        "pytest-homeassistant-custom-component",
+        "pyotp",
+        "syrupy"
+      ],
+      "groupName": "Home Assistant dependency set",
+      "groupSlug": "home-assistant-dependency-set"
+    },
+    {
       "description": "hk is pinned twice, once as a mise tool and once in the two package URLs at the top of hk.pkl, and the two have to move together or hk runs one version while validating its config against another.",
       "matchDatasources": ["github-releases"],
       "matchPackageNames": ["jdx/hk"],
