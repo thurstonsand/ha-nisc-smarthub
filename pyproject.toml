@@ -41,7 +41,7 @@ dev = [
   "home-assistant-frontend==20260930.0",
   "home-assistant-intents==2026.9.30",
   "mutagen==1.48.1",
-  "openai==2.45.0",
+  "openai==3.24.0",
   "pymicro-vad==1.0.1",
   "pyspeex-noise==1.0.2",
   "serialx==1.11.0",
