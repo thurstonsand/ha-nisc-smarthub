@@ -52,9 +52,36 @@
       "enabled": false
     },
     {
-      "description": "Home Assistant owns this exact pin; regenerate the runtime closure when updating Home Assistant instead of updating it independently.",
+      "description": "Home Assistant owns these exact pins, the runtime closure of the dev config's default_config; regenerate them when updating Home Assistant instead of updating them independently.",
       "matchManagers": ["pep621"],
-      "matchPackageNames": ["habluetooth"],
+      "matchPackageNames": [
+        "aiodhcpwatcher",
+        "aiodiscover",
+        "aiousbwatcher",
+        "async-upnp-client",
+        "av",
+        "bleak-retry-connector",
+        "cached-ipaddress",
+        "dbus-fast",
+        "file-read-backwards",
+        "gazetteer-matcher",
+        "go2rtc-client",
+        "ha-ffmpeg",
+        "habluetooth",
+        "hassil",
+        "home-assistant-frontend",
+        "home-assistant-intents",
+        "infrared-protocols",
+        "matter-ble-proxy",
+        "matter-python-client",
+        "mutagen",
+        "openai",
+        "pymicro-vad",
+        "pyspeex-noise",
+        "pyturbojpeg",
+        "rf-protocols",
+        "serialx"
+      ],
       "enabled": false
     },
     {
