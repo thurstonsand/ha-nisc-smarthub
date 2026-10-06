@@ -3,7 +3,7 @@ python = "3.14"
 uv = "0.12.23"
 hk = "2.5.0"
 markdownlint-cli2 = "0.23.3"
-fnox = "1.38.1"
+fnox = "1.39.0"
 "1password-cli" = "2.39.0"
 
 [settings]
