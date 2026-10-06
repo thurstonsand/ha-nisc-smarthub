@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14.2"
 
 [[package]]
@@ -1319,7 +1319,7 @@ dev = [
     { name = "ha-ffmpeg", specifier = "==3.2.2" },
     { name = "habluetooth", specifier = "==6.26.11" },
     { name = "hassil", specifier = "==3.12.1" },
-    { name = "home-assistant-frontend", specifier = "==20260930.0" },
+    { name = "home-assistant-frontend", specifier = "==20260930.1" },
     { name = "home-assistant-intents", specifier = "==2026.9.30" },
     { name = "homeassistant", specifier = "==2026.9.4" },
     { name = "mutagen", specifier = "==1.48.1" },
@@ -1428,11 +1428,11 @@ wheels = [
 
 [[package]]
 name = "home-assistant-frontend"
-version = "20260930.0"
+version = "20260930.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c2/68/57f9a6fbdee0b14e1750076dc85f21a8e15a834f8566329ddacce2c18c2e/home_assistant_frontend-20260930.0.tar.gz", hash = "sha256:1355cc0a8acbed6fb5d47f2cec2600e930735a3f1d56db7e917b02469c5ba91d", size = 110184541, upload-time = "2026-09-30T14:42:44.644Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/74/a1/c02b016ea38eaf8f6f25c73a93921b1cd89493a65241d62d8f83bbb93f81/home_assistant_frontend-20260930.1.tar.gz", hash = "sha256:79068071bad6d7a5368beaaf1a39921a74051b682b328bddbb2b320fdb546e15", size = 110222720, upload-time = "2026-10-05T09:18:24.808Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6a/91/95cbb427e1cc2ef0b195a1af4a90935cfc85796e726d6b064ba9235b371b/home_assistant_frontend-20260930.0-py3-none-any.whl", hash = "sha256:59766b1697e155bb0adc311bd415f5f697e10c60c9e808211f861cb6199a63c8", size = 110930433, upload-time = "2026-09-30T14:42:36.321Z" },
+    { url = "https://files.pythonhosted.org/packages/06/4d/229b26bb354b7cf33d3756fe83174507edbaf16dcc570aa9807ec692cd44/home_assistant_frontend-20260930.1-py3-none-any.whl", hash = "sha256:212c21e16950d13fa58772e2121afdf10e3dc2c694c8e085f2c4893b250b3ca6", size = 110968288, upload-time = "2026-10-05T09:18:17.927Z" },
 ]
 
 [[package]]
