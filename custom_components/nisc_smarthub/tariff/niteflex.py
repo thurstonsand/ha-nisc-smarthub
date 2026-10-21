@@ -7,8 +7,8 @@ and the 7.75% Fulton County rate are transcribed from
 Department of Revenue rate chart.
 """
 
-from collections.abc import Sequence
-from dataclasses import dataclass, replace
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from datetime import date, tzinfo
 
 from .base import (
@@ -16,7 +16,9 @@ from .base import (
     CycleActuals,
     HourCost,
     HourUsage,
+    Parameter,
     Period,
+    PricedCycle,
     RateVersion,
     Tariff,
     TariffSource,
@@ -28,10 +30,24 @@ ON_PEAK = "on_peak"
 OFF_PEAK = "off_peak"
 SUPER_OFF_PEAK = "super_off_peak"
 
+ON_PEAK_RATE = "on_peak_rate"
+OFF_PEAK_RATE = "off_peak_rate"
+SUPER_OFF_PEAK_RATE = "super_off_peak_rate"
+SUPER_OFF_PEAK_ALLOWANCE = "super_off_peak_allowance"
+SERVICE_CHARGE = "service_charge"
+PCA_FACTOR = "pca_factor"
+SALES_TAX_RATE = "sales_tax_rate"
+RECURRING_ADJUSTMENT = "recurring_adjustment"
+TAX = "tax"
+
 
 @dataclass(frozen=True, kw_only=True)
 class NiteFlexTariff(Tariff):
     """Three periods, one allowance, one service charge, one rider."""
+
+    def governs_cycle(self, version: RateVersion, cycle: Cycle) -> bool:
+        """Say whether the version is in effect from the cycle's first local day."""
+        return version.effective_from <= cycle.start.astimezone(_zone(cycle)).date()
 
     def price_cycle(
         self,
@@ -39,27 +55,21 @@ class NiteFlexTariff(Tariff):
         hours: Sequence[HourUsage],
         versions: Sequence[RateVersion],
         actuals: CycleActuals | None,
-    ) -> list[HourCost]:
+    ) -> PricedCycle:
         """Price one whole cycle, oldest hour first.
 
         The Super Off-Peak allowance is consumed chronologically across the
         cycle and sized by the version governing the cycle's first priced hour,
         because it is a per-cycle quantity and a mid-cycle rate change does not
         restart it. Rates follow the version governing each hour's own local
-        day. Fixed charges are smeared over the cycle's nominal hours, so an
-        hour the portal has not reported yet leaves its share unbilled. The
-        residual of a finalized cycle is smeared over the priced hours instead,
-        because those are the rows that will exist and the bill has to add up
-        across them.
+        day, from local midnight on its `effective_from`. Fixed charges are
+        smeared over the cycle's nominal hours, so an hour the portal has not
+        reported yet leaves its share unbilled.
         """
         zone = _zone(cycle)
         priced = _priced(hours)
         if not priced:
-            if actuals is not None:
-                raise ValueError(
-                    "a finalized cycle with no priced hours cannot carry its bill"
-                )
-            return []
+            return PricedCycle(costs=[], allowance_remaining={})
 
         opening = version_for(versions, priced[0].start.astimezone(zone).date())
         if opening is None:
@@ -68,8 +78,9 @@ class NiteFlexTariff(Tariff):
                 f"{priced[0].start.astimezone(zone).date().isoformat()}"
             )
         hourly = nominal_hours(cycle)
+        bill = None if actuals is None else actuals.values
 
-        allowance = opening.super_off_peak_allowance
+        allowance = opening.values[SUPER_OFF_PEAK_ALLOWANCE]
         costs: list[HourCost] = []
         for hour in priced:
             # Every hour after the opening one is at or after it, so a version
@@ -78,53 +89,39 @@ class NiteFlexTariff(Tariff):
             assert version is not None
             free = min(allowance, hour.by_period.get(SUPER_OFF_PEAK, 0.0))
             allowance -= free
-            costs.append(_components(hour, version, free, hourly, actuals))
-
-        if actuals is None:
-            return costs
-        residual = (actuals.bill_total - sum(cost.total for cost in costs)) / len(costs)
-        return [replace(cost, residual=residual) for cost in costs]
-
-    def allowance_remaining(
-        self,
-        cycle: Cycle,
-        hours: Sequence[HourUsage],
-        versions: Sequence[RateVersion],
-    ) -> dict[str, float]:
-        """Return the Super Off-Peak kWh still free in this cycle."""
-        priced = _priced(hours)
-        if not priced:
-            return {}
-        opening = version_for(versions, priced[0].start.astimezone(_zone(cycle)).date())
-        if opening is None:
-            return {}
+            costs.append(_components(hour, version.values, free, hourly, bill))
         used = sum(hour.by_period.get(SUPER_OFF_PEAK, 0.0) for hour in priced)
-        return {SUPER_OFF_PEAK: max(opening.super_off_peak_allowance - used, 0.0)}
+        return PricedCycle(
+            costs=costs,
+            allowance_remaining={
+                SUPER_OFF_PEAK: max(
+                    opening.values[SUPER_OFF_PEAK_ALLOWANCE] - used, 0.0
+                )
+            },
+        )
 
 
 def _components(
     hour: HourUsage,
-    version: RateVersion,
+    rates: Mapping[str, float],
     free: float,
     hourly: int,
-    actuals: CycleActuals | None,
+    bill: Mapping[str, float] | None,
 ) -> HourCost:
-    service_charge = (
-        version.service_charge if actuals is None else actuals.service_charge
-    )
-    pca_factor = version.pca_factor if actuals is None else actuals.pca_factor
+    service_charge = rates[SERVICE_CHARGE] if bill is None else bill[SERVICE_CHARGE]
+    pca_factor = rates[PCA_FACTOR] if bill is None else bill[PCA_FACTOR]
 
     energy = (
-        hour.by_period.get(ON_PEAK, 0.0) * version.on_peak_rate
-        + hour.by_period.get(OFF_PEAK, 0.0) * version.off_peak_rate
-        + (hour.by_period.get(SUPER_OFF_PEAK, 0.0) - free) * version.super_off_peak_rate
+        hour.by_period.get(ON_PEAK, 0.0) * rates[ON_PEAK_RATE]
+        + hour.by_period.get(OFF_PEAK, 0.0) * rates[OFF_PEAK_RATE]
+        + (hour.by_period.get(SUPER_OFF_PEAK, 0.0) - free) * rates[SUPER_OFF_PEAK_RATE]
     )
     fixed = service_charge / hourly
     rider = pca_factor * (hour.total - free)
     tax = (
-        version.sales_tax_rate * (energy + fixed + rider)
-        if actuals is None
-        else actuals.tax / hourly
+        rates[SALES_TAX_RATE] * (energy + fixed + rider)
+        if bill is None
+        else bill[TAX] / hourly
     )
     return HourCost(
         start=hour.start,
@@ -132,7 +129,7 @@ def _components(
         fixed=fixed,
         rider=rider,
         tax=tax,
-        adjustment=version.recurring_adjustment / hourly,
+        adjustment=rates[RECURRING_ADJUSTMENT] / hourly,
         residual=0.0,
     )
 
@@ -158,19 +155,37 @@ NITEFLEX = NiteFlexTariff(
         Period(label="Off Peak", slug=OFF_PEAK),
         Period(label="Super Off Pk", slug=SUPER_OFF_PEAK),
     ),
-    tiered_periods=(SUPER_OFF_PEAK,),
-    rate_schedule_codes=("NFON", "NFOFF", "NFSOF"),
+    allowances=(SUPER_OFF_PEAK,),
+    portal_hosts=("cobbemc.smarthub.coop",),
+    rate_schedule_codes=("NFON:COBB", "NFOFF:COBB", "NFSOF:COBB"),
+    rate_parameters=(
+        Parameter(key=ON_PEAK_RATE, signed=False),
+        Parameter(key=OFF_PEAK_RATE, signed=False),
+        Parameter(key=SUPER_OFF_PEAK_RATE, signed=False),
+        Parameter(key=SUPER_OFF_PEAK_ALLOWANCE, signed=False),
+        Parameter(key=SERVICE_CHARGE, signed=False),
+        Parameter(key=PCA_FACTOR, signed=True),
+        Parameter(key=SALES_TAX_RATE, signed=False),
+        Parameter(key=RECURRING_ADJUSTMENT, signed=True),
+    ),
+    bill_parameters=(
+        Parameter(key=SERVICE_CHARGE, signed=False),
+        Parameter(key=PCA_FACTOR, signed=True),
+        Parameter(key=TAX, signed=False),
+    ),
     published_versions=(
         RateVersion(
             effective_from=date(2026, 1, 1),
-            on_peak_rate=0.14,
-            off_peak_rate=0.075,
-            super_off_peak_rate=0.05,
-            super_off_peak_allowance=400.0,
-            service_charge=33.0,
-            pca_factor=0.0,
-            sales_tax_rate=0.0775,
-            recurring_adjustment=0.0,
+            values={
+                ON_PEAK_RATE: 0.14,
+                OFF_PEAK_RATE: 0.075,
+                SUPER_OFF_PEAK_RATE: 0.05,
+                SUPER_OFF_PEAK_ALLOWANCE: 400.0,
+                SERVICE_CHARGE: 33.0,
+                PCA_FACTOR: 0.0,
+                SALES_TAX_RATE: 0.0775,
+                RECURRING_ADJUSTMENT: 0.0,
+            },
         ),
     ),
 )

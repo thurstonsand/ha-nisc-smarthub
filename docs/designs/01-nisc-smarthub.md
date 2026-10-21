@@ -52,6 +52,8 @@ Flows:
 - **Reconfigure**: a menu with add rate version, remove newest rate version, billing cycle day, credentials.
 - **Options**: poll interval.
 
+Amended for the tariff framework (2026-10-21): the tariff is no longer a dropdown in step 3. It is the one tariff whose `portal_hosts` include the entry's host and whose qualified `rate_schedule_codes` (`NFON:COBB`) the location's active schedules include; none aborts with the codes and the host, and two is an error rather than registry order. Step 3 and add-rate-version render the matched tariff's rate parameters, under form keys prefixed with the tariff key (`niteflex_on_peak_rate`), so each schedule's fields carry their own labels and descriptions in `strings.json`. `tests/tariff/test_registry.py` fails when a shipped tariff's field has no strings.
+
 Amended after the second review (2026-09-11): the poll interval is validated as a finite whole number of minutes at or above the minimum, with `invalid_poll_interval` shown against the field. The host field accepts a URL or a bare host and stores the bare host.
 
 ### Rate version
@@ -71,6 +73,8 @@ class RateVersion:
 ```
 
 The fields are NiteFlex's. The list is append-only; the tariff prices each hour under the newest version whose `effective_from` is at or before the hour's local day. Future-dated versions are inert until their day.
+
+Amended for the tariff framework (2026-10-21), prompted by [issue #37](https://github.com/thurstonsand/ha-nisc-smarthub/issues/37): a rate version is `effective_from` plus a mapping of the numbers its tariff declares as rate parameters, each with whether it may go negative. Every declared parameter is required and an undeclared one is refused, the same way for the form, entry data, and the published versions, which are checked when the tariff is defined. Entry data stores a version flat, `{"effective_from": ..., <parameter>: <number>, ...}`, which is the shape it already had, so existing entries load unchanged. Which hours a version governs is the tariff's rule, not this record's: "from local midnight on its day, future-dated inert until then" is NiteFlex's. A tariff billed on a bills-rendered basis prices a whole cycle under the version in effect when the cycle ends, so a future-dated version can already govern the open cycle's estimate. Setup asks the tariff whether the first version alone prices every hour of the account's first cycle (`governs_cycle`), so a bills-rendered schedule may date it after the connect day but before the first bill; NiteFlex still requires it in effect on the connect day.
 
 ### Statistics
 
@@ -125,6 +129,8 @@ nisc_smarthub.unfinalize_cycle:
 
 `finalize_cycle` writes a cycle record and triggers a full reconcile from that cycle's start. A future bill reader calls the same function.
 
+Amended for the tariff framework (2026-10-21): `service_charge`, `pca_factor`, and `tax` are NiteFlex's bill lines, not the action's. The action takes `config_entry_id`, `cycle_start`, `read_start`, `read_end`, and `bill_total`, and every other key is a bill line conformed against the entry's tariff before anything is stored: a missing line, one the tariff does not read, a negative quantity, or a non-finite number is a `ServiceValidationError` (`bill_line_*`). `services.yaml` lists the union of the shipped tariffs' bill lines as optional fields, each description naming the tariffs that read it, because the action's schema is static. NiteFlex callers send exactly what they sent before.
+
 Amended after the second review (2026-09-11): `finalize_cycle` refuses, with a `ServiceValidationError`, a read end after today in the portal's zone, read dates that overlap another recorded cycle, and a cycle whose last hour the portal has not reported yet (`read_end - 1 hour` past `newest_data_hour`). The last check stands in for "at least one priced hour": the last poll's hours only cover its window, so pricing the would-be cycle here would refuse any bill older than the routine window, and a bill that posts after its read date has its whole cycle in the portal by then. `reconcile` refuses a `from` after today, because a request the run can never open would be handed back to every run after it.
 
 ### Repair issues
@@ -146,9 +152,13 @@ Amended during Phase 5 (2026-09-11): the dump is assembled field by field rather
 
 **Coordinator to tariff.** `Tariff.price_cycle(cycle: Cycle, hours: Sequence[HourUsage], versions: Sequence[RateVersion], actuals: CycleActuals | None) -> list[HourCost]`. `Cycle` is start, end, partial flag. `HourUsage` is start plus kWh per period. `HourCost` is energy, fixed, rider, tax, adjustment, residual, with `total` derived. A tariff also declares `key`, `display_name`, `source` (`TIME_OF_USE` or `USAGE`), `periods` (labels and slugs), `tiered_periods`, `rate_schedule_codes`, and `published_versions`. The tariff owns tiering, smearing, and proration; the writer owns nothing tariff-specific.
 
+Amended for the tariff framework (2026-10-21): `price_cycle` returns a `PricedCycle`, the hourly costs and the kWh left in each allowance the tariff declares, so versions are chosen once per cycle and `allowance_remaining` is gone as a second method. The residual moved out of the tariff into the shared `settle(costs, bill_total)`, which the coordinator applies to a finalized cycle. `CycleActuals` is read dates, `bill_total`, and a mapping of the tariff's bill lines. A tariff declares `allowances` (slugs, one sensor each) instead of `tiered_periods`, `portal_hosts`, qualified `rate_schedule_codes`, `rate_parameters`, and `bill_parameters`; a tariff priced from `USAGE` names no periods, which the definition enforces. `source` is now read: the client is polled with `time_of_use` only for a time-of-use tariff and otherwise never parses the `TIME_OF_USE` entry, and the unclassified-hour repair only runs for one. The six cost components are categories every bill line falls into, not NiteFlex's lines; the cost sensor labels them fixed charges, riders, taxes, and adjustments. `tests/test_tariff_boundary.py` holds a test-only flat tariff, priced from usage under the version in effect on the day a cycle ends, through setup, statistics, finalize, and its refusals, with no shared code naming it. NiteFlex's hourly costs were bit-identical across the refactor over eight scenarios, and every recorder row matched across setup, finalize, and a rate change.
+
 **Writer to recorder.** Reads with `statistics_during_period` in the recorder executor, always with the full production signature and `period="hour"`. Writes with `async_add_external_statistics` on the event loop, with concrete lists (never generators) of tz-aware UTC top-of-hour points. Never clears.
 
 **Cycle records to storage.** `helpers.storage.Store` at `.storage/nisc_smarthub.<entry_id>`, version 1: `{"cycles": {"<cycle_start>": {"read_start", "read_end", "service_charge", "pca_factor", "tax", "bill_total", "residual"}}}`.
+
+Amended for the tariff framework (2026-10-21): every key of a record beside `read_start`, `read_end`, `bill_total`, and `residual` is a bill line, conformed through the entry's tariff on load, so the stored shape is unchanged and still version 1. A record missing a line its tariff reads fails the load instead of pricing as if the line were zero.
 
 Amended after the second review (2026-09-11): every client request runs under a 30 s timeout. A transport failure, a timeout, or a body that is not JSON is reported as `<endpoint>: <exception type>` plus the HTTP status when there is one, raised with neither cause nor context, because aiohttp spells the URL, account number and email included, into every exception it raises. `MultipleProviders` and `MultipleMeters` are the two `UnsupportedAccount` shapes; the flow aborts on each by name and the coordinator raises `ConfigEntryError` for them rather than retrying.
 

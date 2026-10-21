@@ -26,7 +26,7 @@ from custom_components.nisc_smarthub.smarthub import (
 
 FIXTURES: Final = Path(__file__).parent / "fixtures"
 
-HOST: Final = "example.smarthub.coop"
+HOST: Final = "cobbemc.smarthub.coop"
 EMAIL: Final = "member@example.com"
 PASSWORD: Final = "hunter2"
 TOTP_SECRET: Final = "JBSWY3DPEHPK3PXP"

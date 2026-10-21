@@ -4,13 +4,14 @@ from datetime import date
 from typing import Any
 
 from homeassistant.core import HomeAssistant
+import pytest
 
 from custom_components.nisc_smarthub.store import (
     CycleStore,
     async_remove_records,
     store_key,
 )
-from custom_components.nisc_smarthub.tariff import CycleActuals
+from custom_components.nisc_smarthub.tariff import NITEFLEX, CycleActuals, InvalidValue
 
 from . import recordings
 
@@ -19,23 +20,21 @@ ENTRY_ID = "01JABCDEF0123456789"
 AUGUST = date(2026, 8, 28)
 
 
-def actuals(**overrides: Any) -> CycleActuals:
+def actuals(bill_total: float = 25.0) -> CycleActuals:
     """Return one bill's values, read dates at local midnight."""
-    fields: dict[str, Any] = {
-        "read_start": recordings.CONNECT_DATE,
-        "read_end": recordings.CONNECT_DATE.replace(month=9, day=25),
-        "service_charge": 33.0,
-        "pca_factor": 0.012,
-        "tax": 1.5,
-        "bill_total": 25.0,
-        **overrides,
-    }
-    return CycleActuals(**fields)
+    return CycleActuals(
+        read_start=recordings.CONNECT_DATE,
+        read_end=recordings.CONNECT_DATE.replace(month=9, day=25),
+        bill_total=bill_total,
+        values={"service_charge": 33.0, "pca_factor": 0.012, "tax": 1.5},
+    )
 
 
 def store(hass: HomeAssistant) -> CycleStore:
     """Return a store over the test entry's records."""
-    return CycleStore(hass, entry_id=ENTRY_ID, zone=recordings.PORTAL_ZONE)
+    return CycleStore(
+        hass, entry_id=ENTRY_ID, zone=recordings.PORTAL_ZONE, tariff=NITEFLEX
+    )
 
 
 async def test_a_store_with_no_file_holds_no_records(hass: HomeAssistant) -> None:
@@ -110,8 +109,37 @@ async def test_read_dates_come_back_as_local_midnight(
     assert span.end == recordings.CONNECT_DATE.replace(month=9, day=25)
     assert span.partial is False
     assert loaded.days_by_start() == {recordings.CONNECT_DATE: AUGUST}
-    assert loaded.actuals_by_start()[recordings.CONNECT_DATE].service_charge == 33.0
+    assert loaded.actuals_by_start()[recordings.CONNECT_DATE].values == {
+        "service_charge": 33.0,
+        "pca_factor": 0.0,
+        "tax": 1.5,
+    }
     assert loaded.records[AUGUST].residual is None
+
+
+async def test_a_record_its_tariff_cannot_read_fails_the_load(
+    hass: HomeAssistant, hass_storage: dict[str, Any]
+) -> None:
+    """A bill missing a line its tariff prices with is not a bill to price from."""
+    hass_storage[store_key(ENTRY_ID)] = {
+        "version": 1,
+        "minor_version": 1,
+        "key": store_key(ENTRY_ID),
+        "data": {
+            "cycles": {
+                "2026-08-28": {
+                    "read_start": "2026-08-28",
+                    "read_end": "2026-09-25",
+                    "service_charge": 33,
+                    "bill_total": 25,
+                    "residual": None,
+                }
+            }
+        },
+    }
+
+    with pytest.raises(InvalidValue, match="pca_factor"):
+        await store(hass).async_load()
 
 
 async def test_a_residual_that_has_not_moved_is_not_rewritten(

@@ -1,7 +1,6 @@
 """The NISC SmartHub integration."""
 
 from datetime import date, datetime, timedelta
-import math
 
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_CONFIG_ENTRY_ID, CONF_HOST, Platform
@@ -17,11 +16,9 @@ from .const import (
     ATTR_BILL_TOTAL,
     ATTR_CYCLE_START,
     ATTR_FROM,
-    ATTR_PCA_FACTOR,
     ATTR_READ_END,
     ATTR_READ_START,
-    ATTR_SERVICE_CHARGE,
-    ATTR_TAX,
+    CONF_TARIFF,
     DOMAIN,
     SERVICE_FINALIZE_CYCLE,
     SERVICE_RECONCILE,
@@ -31,7 +28,7 @@ from .coordinator import NiscSmartHubCoordinator
 from .cycles import local_midnight
 from .smarthub import SmartHubClient
 from .store import CycleStore, async_remove_records
-from .tariff import CycleActuals
+from .tariff import TARIFFS, CycleActuals, InvalidValue, Parameter, conform_values
 
 type NiscSmartHubConfigEntry = ConfigEntry[NiscSmartHubCoordinator]
 
@@ -48,18 +45,22 @@ RECONCILE_SCHEMA = vol.Schema(
     }
 )
 
+# Every key past the envelope is a bill line, and which lines a bill has is the
+# entry's tariff's to say, so they are checked once the entry is known.
 FINALIZE_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
         vol.Required(ATTR_CYCLE_START): cv.date,
         vol.Required(ATTR_READ_START): cv.date,
         vol.Required(ATTR_READ_END): cv.date,
-        vol.Required(ATTR_SERVICE_CHARGE): vol.Coerce(float),
-        vol.Required(ATTR_PCA_FACTOR): vol.Coerce(float),
-        vol.Required(ATTR_TAX): vol.Coerce(float),
         vol.Required(ATTR_BILL_TOTAL): vol.Coerce(float),
-    }
+    },
+    extra=vol.ALLOW_EXTRA,
 )
+FINALIZE_ENVELOPE = frozenset(
+    {ATTR_CONFIG_ENTRY_ID, ATTR_CYCLE_START, ATTR_READ_START, ATTR_READ_END}
+)
+BILL_TOTAL = Parameter(key=ATTR_BILL_TOTAL, signed=True)
 
 UNFINALIZE_SCHEMA = vol.Schema(
     {
@@ -67,8 +68,6 @@ UNFINALIZE_SCHEMA = vol.Schema(
         vol.Required(ATTR_CYCLE_START): cv.date,
     }
 )
-
-BILL_FIELDS = (ATTR_SERVICE_CHARGE, ATTR_PCA_FACTOR, ATTR_TAX, ATTR_BILL_TOTAL)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -105,6 +104,7 @@ async def _async_reconcile(call: ServiceCall) -> None:
 async def _async_finalize_cycle(call: ServiceCall) -> None:
     """Freeze one cycle to its posted bill and reprice it from there."""
     coordinator = _coordinator(call)
+    bill_total, values = _bill(coordinator, call)
     day: date = call.data[ATTR_CYCLE_START]
     _require_cycle(coordinator, day)
     read_start = _midnight(call.data[ATTR_READ_START])
@@ -150,10 +150,8 @@ async def _async_finalize_cycle(call: ServiceCall) -> None:
         CycleActuals(
             read_start=read_start,
             read_end=read_end,
-            service_charge=_finite(call, ATTR_SERVICE_CHARGE),
-            pca_factor=_finite(call, ATTR_PCA_FACTOR),
-            tax=_finite(call, ATTR_TAX),
-            bill_total=_finite(call, ATTR_BILL_TOTAL),
+            bill_total=bill_total,
+            values=values,
         ),
     )
     await _async_run(coordinator)
@@ -212,15 +210,30 @@ def _require_cycle(coordinator: NiscSmartHubCoordinator, day: date) -> None:
         )
 
 
-def _finite(call: ServiceCall, field: str) -> float:
-    value: float = call.data[field]
-    if not math.isfinite(value):
+def _bill(
+    coordinator: NiscSmartHubCoordinator, call: ServiceCall
+) -> tuple[float, dict[str, float]]:
+    """Conform the bill's total and the lines the entry's tariff asks for."""
+    lines = {
+        key: value
+        for key, value in call.data.items()
+        if key not in FINALIZE_ENVELOPE and key != ATTR_BILL_TOTAL
+    }
+    try:
+        total = conform_values(
+            (BILL_TOTAL,), {ATTR_BILL_TOTAL: call.data[ATTR_BILL_TOTAL]}
+        )
+        values = coordinator.tariff.bill_values(lines)
+    except InvalidValue as err:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
-            translation_key="not_a_finite_number",
-            translation_placeholders={"field": field, "value": str(value)},
-        )
-    return value
+            translation_key=f"bill_line_{err.reason}",
+            translation_placeholders={
+                "field": err.field,
+                "tariff": coordinator.tariff.display_name,
+            },
+        ) from err
+    return total[ATTR_BILL_TOTAL], values
 
 
 def _midnight(day: date) -> datetime:
@@ -235,7 +248,12 @@ async def async_setup_entry(
     client = SmartHubClient(
         async_get_clientsession(hass), entry.data[CONF_HOST], local_zone
     )
-    store = CycleStore(hass, entry_id=entry.entry_id, zone=local_zone)
+    store = CycleStore(
+        hass,
+        entry_id=entry.entry_id,
+        zone=local_zone,
+        tariff=TARIFFS[entry.data[CONF_TARIFF]],
+    )
     await store.async_load()
     coordinator = NiscSmartHubCoordinator(hass, entry, client, local_zone, store)
     await coordinator.async_config_entry_first_refresh()

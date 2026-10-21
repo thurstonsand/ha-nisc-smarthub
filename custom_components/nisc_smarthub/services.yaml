@@ -29,26 +29,26 @@ finalize_cycle:
       required: true
       selector:
         date:
-    service_charge:
+    bill_total:
       required: true
+      selector:
+        number:
+          step: any
+          mode: box
+    service_charge:
+      required: false
       selector:
         number:
           step: any
           mode: box
     pca_factor:
-      required: true
+      required: false
       selector:
         number:
           step: any
           mode: box
     tax:
-      required: true
-      selector:
-        number:
-          step: any
-          mode: box
-    bill_total:
-      required: true
+      required: false
       selector:
         number:
           step: any

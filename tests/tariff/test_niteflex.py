@@ -13,11 +13,12 @@ from custom_components.nisc_smarthub.tariff import (
     CycleActuals,
     HourCost,
     HourUsage,
+    InvalidValue,
     RateVersion,
     nominal_hours,
-    rate_version_from_data,
     rate_version_to_data,
-    tariff_for_codes,
+    settle,
+    tariff_for,
 )
 from custom_components.nisc_smarthub.tariff.niteflex import (
     OFF_PEAK,
@@ -36,6 +37,24 @@ SAMPLE_END = datetime(2026, 9, 10, tzinfo=ZONE)
 SAMPLE_SUPER_OFF_PEAK = 109.4
 SAMPLE_OFF_PEAK = 207.3
 SAMPLE_ON_PEAK = 267.4
+
+
+def rates(effective_from: date | None = None, **overrides: float) -> RateVersion:
+    """Return the published version with some of its numbers changed."""
+    return RateVersion(
+        effective_from=effective_from or PUBLISHED.effective_from,
+        values={**PUBLISHED.values, **overrides},
+    )
+
+
+def bill(start: datetime, end: datetime) -> CycleActuals:
+    """Return a posted bill for a cycle."""
+    return CycleActuals(
+        read_start=start.astimezone(UTC),
+        read_end=end.astimezone(UTC),
+        bill_total=112.00,
+        values={"service_charge": 31.90, "pca_factor": 0.004, "tax": 7.42},
+    )
 
 
 def slug_at(hour: int) -> str:
@@ -110,7 +129,7 @@ def test_the_thirteen_day_sample_prices_as_the_research_computed_it() -> None:
 
     costs = NITEFLEX.price_cycle(
         cycle(SAMPLE_START, SAMPLE_END, partial=True), hours, [PUBLISHED], None
-    )
+    ).costs
 
     summed = totals(costs)
     assert len(costs) == 312
@@ -140,25 +159,23 @@ def test_the_allowance_runs_out_inside_an_hour() -> None:
         one_hour(start.astimezone(UTC) + 3 * HOUR, SUPER_OFF_PEAK, 50.0),
     ]
 
-    costs = NITEFLEX.price_cycle(
+    priced = NITEFLEX.price_cycle(
         cycle(start, datetime(2026, 10, 1, tzinfo=ZONE)), hours, [PUBLISHED], None
     )
 
-    assert [cost.energy for cost in costs] == [
+    assert [cost.energy for cost in priced.costs] == [
         pytest.approx(0.0),
         pytest.approx(0.0),
         pytest.approx(50.0 * 0.05),
         pytest.approx(50.0 * 0.05),
     ]
-    assert NITEFLEX.allowance_remaining(
-        cycle(start, datetime(2026, 10, 1, tzinfo=ZONE)), hours, [PUBLISHED]
-    ) == {SUPER_OFF_PEAK: 0.0}
+    assert priced.allowance_remaining == {SUPER_OFF_PEAK: 0.0}
 
 
 def test_a_rider_skips_the_allowance_it_covered() -> None:
     """The PCA is charged on every kWh the allowance did not cover."""
     start = datetime(2026, 9, 1, tzinfo=ZONE)
-    version = replace(PUBLISHED, pca_factor=0.01, super_off_peak_allowance=100.0)
+    version = rates(pca_factor=0.01, super_off_peak_allowance=100.0)
     hours = [
         one_hour(start.astimezone(UTC), SUPER_OFF_PEAK, 150.0),
         one_hour(start.astimezone(UTC) + 13 * HOUR, ON_PEAK, 10.0),
@@ -166,7 +183,7 @@ def test_a_rider_skips_the_allowance_it_covered() -> None:
 
     costs = NITEFLEX.price_cycle(
         cycle(start, datetime(2026, 10, 1, tzinfo=ZONE)), hours, [version], None
-    )
+    ).costs
 
     assert costs[0].rider == pytest.approx(0.01 * 50.0)
     assert costs[1].rider == pytest.approx(0.01 * 10.0)
@@ -175,7 +192,7 @@ def test_a_rider_skips_the_allowance_it_covered() -> None:
 def test_a_version_governs_from_local_midnight_on_its_day() -> None:
     """A mid-cycle rate change prices the days on each side under its own rates."""
     start = datetime(2026, 12, 15, tzinfo=ZONE)
-    newer = replace(PUBLISHED, effective_from=date(2027, 1, 1), on_peak_rate=0.16)
+    newer = rates(date(2027, 1, 1), on_peak_rate=0.16)
     hours = [
         one_hour(datetime(2026, 12, 31, 13, tzinfo=ZONE).astimezone(UTC), ON_PEAK, 1.0),
         one_hour(datetime(2027, 1, 1, 13, tzinfo=ZONE).astimezone(UTC), ON_PEAK, 1.0),
@@ -186,7 +203,7 @@ def test_a_version_governs_from_local_midnight_on_its_day() -> None:
         hours,
         [PUBLISHED, newer],
         None,
-    )
+    ).costs
 
     assert costs[0].energy == pytest.approx(0.14)
     assert costs[1].energy == pytest.approx(0.16)
@@ -214,7 +231,7 @@ def test_the_fall_back_cycle_smears_over_an_extra_hour() -> None:
         [one_hour(start.astimezone(UTC), SUPER_OFF_PEAK, 1.0)],
         [PUBLISHED],
         None,
-    )
+    ).costs
 
     assert costs[0].fixed == pytest.approx(33.0 / 745)
 
@@ -227,15 +244,13 @@ def test_an_unclassified_hour_costs_nothing_and_spends_no_allowance() -> None:
         one_hour(start.astimezone(UTC) + HOUR, SUPER_OFF_PEAK, 100.0),
     ]
 
-    costs = NITEFLEX.price_cycle(
+    priced = NITEFLEX.price_cycle(
         cycle(start, datetime(2026, 10, 1, tzinfo=ZONE)), hours, [PUBLISHED], None
     )
 
-    assert [cost.start for cost in costs] == [start.astimezone(UTC) + HOUR]
-    assert costs[0].energy == pytest.approx(0.0)
-    assert NITEFLEX.allowance_remaining(
-        cycle(start, datetime(2026, 10, 1, tzinfo=ZONE)), hours, [PUBLISHED]
-    ) == {SUPER_OFF_PEAK: 300.0}
+    assert [cost.start for cost in priced.costs] == [start.astimezone(UTC) + HOUR]
+    assert priced.costs[0].energy == pytest.approx(0.0)
+    assert priced.allowance_remaining == {SUPER_OFF_PEAK: 300.0}
 
 
 def test_a_cycle_with_nothing_classified_prices_nothing() -> None:
@@ -243,21 +258,10 @@ def test_a_cycle_with_nothing_classified_prices_nothing() -> None:
     start = datetime(2026, 9, 1, tzinfo=ZONE)
     empty = cycle(start, datetime(2026, 10, 1, tzinfo=ZONE))
 
-    assert NITEFLEX.price_cycle(empty, [], [PUBLISHED], None) == []
-    assert NITEFLEX.allowance_remaining(empty, [], [PUBLISHED]) == {}
+    priced = NITEFLEX.price_cycle(empty, [], [PUBLISHED], None)
 
-
-def test_a_cycle_with_no_version_reports_no_allowance() -> None:
-    """Nothing is known about an allowance before the first rate version."""
-    start = datetime(2025, 12, 1, tzinfo=ZONE)
-    hours = [one_hour(start.astimezone(UTC), SUPER_OFF_PEAK, 1.0)]
-
-    assert (
-        NITEFLEX.allowance_remaining(
-            cycle(start, datetime(2026, 1, 1, tzinfo=ZONE)), hours, [PUBLISHED]
-        )
-        == {}
-    )
+    assert priced.costs == []
+    assert priced.allowance_remaining == {}
 
 
 def test_a_finalized_cycle_adds_up_to_its_bill_over_the_hours_it_has() -> None:
@@ -272,16 +276,12 @@ def test_a_finalized_cycle_adds_up_to_its_bill_over_the_hours_it_has() -> None:
     hours = spread(start, end, {SUPER_OFF_PEAK: 210.0, OFF_PEAK: 300.0, ON_PEAK: 290.0})
     del hours[100]
     assert len(hours) == 719
-    actuals = CycleActuals(
-        read_start=start.astimezone(UTC),
-        read_end=end.astimezone(UTC),
-        service_charge=31.90,
-        pca_factor=0.004,
-        tax=7.42,
-        bill_total=112.00,
-    )
+    actuals = bill(start, end)
 
-    costs = NITEFLEX.price_cycle(cycle(start, end), hours, [PUBLISHED], actuals)
+    costs = settle(
+        NITEFLEX.price_cycle(cycle(start, end), hours, [PUBLISHED], actuals).costs,
+        actuals.bill_total,
+    )
 
     summed = totals(costs)
     assert len(costs) == 719
@@ -295,17 +295,11 @@ def test_a_finalized_cycle_with_nothing_priced_cannot_carry_its_bill() -> None:
     """A bill total with no row to land on is a caller's mistake, not a zero."""
     start = datetime(2026, 9, 1, tzinfo=ZONE)
     end = datetime(2026, 10, 1, tzinfo=ZONE)
-    actuals = CycleActuals(
-        read_start=start.astimezone(UTC),
-        read_end=end.astimezone(UTC),
-        service_charge=31.90,
-        pca_factor=0.004,
-        tax=7.42,
-        bill_total=112.00,
-    )
+    actuals = bill(start, end)
+    priced = NITEFLEX.price_cycle(cycle(start, end), [], [PUBLISHED], actuals)
 
     with pytest.raises(ValueError, match="no priced hours"):
-        NITEFLEX.price_cycle(cycle(start, end), [], [PUBLISHED], actuals)
+        settle(priced.costs, actuals.bill_total)
 
 
 def test_a_naive_cycle_is_refused() -> None:
@@ -316,10 +310,26 @@ def test_a_naive_cycle_is_refused() -> None:
         NITEFLEX.price_cycle(naive, [], [PUBLISHED], None)
 
 
-def test_the_rate_schedule_codes_pick_the_tariff() -> None:
-    """SmartHub qualifies its codes with the co-op that issued them."""
-    assert tariff_for_codes(["NFON:COBB", "NFOFF:COBB", "NFSOF:COBB"]) is NITEFLEX
-    assert tariff_for_codes(["RES:COBB"]) is None
+NITEFLEX_CODES = ["NFON:COBB", "NFOFF:COBB", "NFSOF:COBB"]
+
+
+@pytest.mark.parametrize(
+    ("host", "codes", "expected"),
+    [
+        pytest.param("cobbemc.smarthub.coop", NITEFLEX_CODES, NITEFLEX, id="cobb"),
+        pytest.param("CobbEMC.SmartHub.coop", NITEFLEX_CODES, NITEFLEX, id="host_case"),
+        pytest.param("cobbemc.smarthub.coop", ["RES:COBB"], None, id="other_schedule"),
+        pytest.param(
+            "cobbemc.smarthub.coop", ["NFON", "NFOFF", "NFSOF"], None, id="unqualified"
+        ),
+        pytest.param("other.smarthub.coop", NITEFLEX_CODES, None, id="other_portal"),
+    ],
+)
+def test_the_portal_and_its_qualified_codes_pick_the_tariff(
+    host: str, codes: list[str], expected: object
+) -> None:
+    """A code's qualifier names a provider, which only the portal makes unique."""
+    assert tariff_for(host, codes) is expected
 
 
 def test_a_rate_version_survives_a_trip_through_entry_data() -> None:
@@ -327,7 +337,51 @@ def test_a_rate_version_survives_a_trip_through_entry_data() -> None:
     stored = rate_version_to_data(PUBLISHED)
 
     assert stored["effective_from"] == "2026-01-01"
-    assert rate_version_from_data(stored) == PUBLISHED
+    assert stored["on_peak_rate"] == 0.14
+    assert NITEFLEX.rate_version_from_data(stored) == PUBLISHED
+
+
+@pytest.mark.parametrize(
+    ("change", "field", "reason"),
+    [
+        pytest.param({"on_peak_rate": None}, "on_peak_rate", "missing", id="missing"),
+        pytest.param({"demand_rate": 9.0}, "demand_rate", "unexpected", id="unknown"),
+        pytest.param(
+            {"service_charge": -1.0}, "service_charge", "negative_number", id="negative"
+        ),
+        pytest.param(
+            {"sales_tax_rate": float("nan")}, "sales_tax_rate", "not_a_number", id="nan"
+        ),
+        pytest.param(
+            {"off_peak_rate": "cheap"}, "off_peak_rate", "not_a_number", id="text"
+        ),
+    ],
+)
+def test_a_rate_version_that_is_not_niteflex_is_refused(
+    change: dict[str, object], field: str, reason: str
+) -> None:
+    """Every declared number is required, finite, and signed only if a rider."""
+    stored: dict[str, object] = {**rate_version_to_data(PUBLISHED), **change}
+    stored = {key: value for key, value in stored.items() if value is not None}
+
+    with pytest.raises(InvalidValue) as refused:
+        NITEFLEX.rate_version_from_data(stored)
+
+    assert (refused.value.field, refused.value.reason) == (field, reason)
+
+
+def test_a_rider_and_an_adjustment_may_be_negative() -> None:
+    """A credit is a price too."""
+    stored = {
+        **rate_version_to_data(PUBLISHED),
+        "pca_factor": -0.002,
+        "recurring_adjustment": -5.0,
+    }
+
+    version = NITEFLEX.rate_version_from_data(stored)
+
+    assert version.values["pca_factor"] == -0.002
+    assert version.values["recurring_adjustment"] == -5.0
 
 
 def test_the_period_labels_match_the_portal_case_insensitively() -> None:
@@ -338,17 +392,7 @@ def test_the_period_labels_match_the_portal_case_insensitively() -> None:
 
 def test_the_newest_published_version_is_the_seed() -> None:
     """Setup seeds the entry from the newest version the package ships."""
-    older = RateVersion(
-        effective_from=date(2025, 1, 1),
-        on_peak_rate=0.13,
-        off_peak_rate=0.07,
-        super_off_peak_rate=0.05,
-        super_off_peak_allowance=400.0,
-        service_charge=30.0,
-        pca_factor=0.0,
-        sales_tax_rate=0.0775,
-        recurring_adjustment=0.0,
-    )
+    older = rates(date(2025, 1, 1), on_peak_rate=0.13, service_charge=30.0)
     tariff = replace(NITEFLEX, published_versions=(older, PUBLISHED))
 
     assert tariff.newest_published_version() is PUBLISHED
@@ -358,10 +402,10 @@ def test_a_recurring_adjustment_is_smeared_and_untaxed() -> None:
     """A standing credit lands outside the tax base, by the hour."""
     start = datetime(2026, 9, 1, tzinfo=ZONE)
     end = datetime(2026, 10, 1, tzinfo=ZONE)
-    version = replace(PUBLISHED, recurring_adjustment=-15.0)
+    version = rates(recurring_adjustment=-15.0)
     hours = [one_hour(start.astimezone(UTC), ON_PEAK, 2.0)]
 
-    costs = NITEFLEX.price_cycle(cycle(start, end), hours, [version], None)
+    costs = NITEFLEX.price_cycle(cycle(start, end), hours, [version], None).costs
 
     hourly = nominal_hours(cycle(start, end))
     assert costs[0].adjustment == pytest.approx(-15.0 / hourly)

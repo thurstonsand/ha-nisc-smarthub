@@ -33,7 +33,7 @@
         'account': '**REDACTED_account**',
         'cycle_day': 28,
         'email': '**REDACTED**',
-        'host': 'example.smarthub.coop',
+        'host': 'cobbemc.smarthub.coop',
         'location': '**REDACTED_location**',
         'password': '**REDACTED**',
         'rate_versions': list([

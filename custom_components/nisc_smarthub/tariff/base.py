@@ -2,19 +2,23 @@
 
 A tariff is stateless: it is handed a whole cycle, the hours that arrived in it,
 the rate versions that govern them, and the bill's actuals once there is a bill.
-Tiering, the service-charge smear, and proration live behind `price_cycle`, so
-nothing downstream carries a tariff's vocabulary.
+Tiering, the service-charge smear, proration, and which version governs which
+hour live behind `price_cycle`, so nothing downstream carries a tariff's
+vocabulary. What a tariff's rate versions and bills hold is declared as
+parameters, and the shared code stores, validates, and asks for them by those
+declarations alone.
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime
 from enum import StrEnum
 import math
 from typing import Any
 
 HOUR_SECONDS = 3600
+EFFECTIVE_FROM = "effective_from"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -42,42 +46,33 @@ class Period:
 
 
 @dataclass(frozen=True, kw_only=True)
-class RateVersion:
-    """One dated set of a tariff's numbers.
+class Parameter:
+    """One number a rate version or a bill hands a tariff.
 
-    The version governs every hour from local midnight on `effective_from`,
-    mid-cycle included, which is how the schedule states its own effective date.
+    A rate, an allowance, a charge, or a tax is a quantity and cannot go
+    negative; a rider or an adjustment is a signed correction.
+    """
+
+    key: str
+    signed: bool
+
+
+@dataclass(frozen=True, kw_only=True)
+class RateVersion:
+    """One dated set of a tariff's numbers, keyed by its rate parameters.
+
+    Which hours the version governs is the tariff's rule, not the version's.
     """
 
     effective_from: date
-    on_peak_rate: float
-    off_peak_rate: float
-    super_off_peak_rate: float
-    super_off_peak_allowance: float
-    service_charge: float
-    pca_factor: float
-    sales_tax_rate: float
-    recurring_adjustment: float
+    values: Mapping[str, float]
 
 
-# A rate, an allowance, a charge, or a tax rate is a quantity; the two riders
-# are signed corrections. The split decides which fields may go negative.
-NON_NEGATIVE_FIELDS = (
-    "on_peak_rate",
-    "off_peak_rate",
-    "super_off_peak_rate",
-    "super_off_peak_allowance",
-    "service_charge",
-    "sales_tax_rate",
-)
-SIGNED_FIELDS = ("pca_factor", "recurring_adjustment")
+class InvalidValue(ValueError):
+    """A number handed to a tariff that does not describe a price.
 
-
-class InvalidRateVersion(ValueError):
-    """A rate version the user typed does not describe a price.
-
-    `field` is the offending input and `reason` a translation key the form
-    shows against it.
+    `field` is the offending key and `reason` a translation key: `missing`,
+    `unexpected`, `not_a_number`, or `negative_number`.
     """
 
     def __init__(self, field: str, reason: str) -> None:
@@ -87,38 +82,42 @@ class InvalidRateVersion(ValueError):
         self.reason = reason
 
 
-def validate_rate_version(data: dict[str, Any]) -> RateVersion:
-    """Conform one form's rate fields into a version, or refuse them.
+def conform_values(
+    parameters: Sequence[Parameter], values: Mapping[str, Any]
+) -> dict[str, float]:
+    """Return exactly the declared parameters as finite numbers, or refuse.
 
-    Every number has to be finite; the quantities also have to be zero or
-    more. The effective date is left to the caller, who knows what it has to
-    be compared against.
+    Every declared parameter is required, an undeclared key is refused, and a
+    quantity has to be zero or more.
     """
-    for field in NON_NEGATIVE_FIELDS:
-        value = _finite(data, field)
-        if value < 0:
-            raise InvalidRateVersion(field, "negative_number")
-    for field in SIGNED_FIELDS:
-        _finite(data, field)
-    return rate_version_from_data(data)
-
-
-def _finite(data: dict[str, Any], field: str) -> float:
-    try:
-        value = float(data[field])
-    except (KeyError, TypeError, ValueError) as err:
-        raise InvalidRateVersion(field, "not_a_number") from err
-    if not math.isfinite(value):
-        raise InvalidRateVersion(field, "not_a_number")
-    return value
+    declared = {parameter.key for parameter in parameters}
+    for key in values:
+        if key not in declared:
+            raise InvalidValue(key, "unexpected")
+    conformed: dict[str, float] = {}
+    for parameter in parameters:
+        if parameter.key not in values:
+            raise InvalidValue(parameter.key, "missing")
+        try:
+            value = float(values[parameter.key])
+        except (TypeError, ValueError) as err:
+            raise InvalidValue(parameter.key, "not_a_number") from err
+        if not math.isfinite(value):
+            raise InvalidValue(parameter.key, "not_a_number")
+        if not parameter.signed and value < 0:
+            raise InvalidValue(parameter.key, "negative_number")
+        conformed[parameter.key] = value
+    return conformed
 
 
 @dataclass(frozen=True, kw_only=True)
 class HourUsage:
     """One hour of metered usage, split the way the utility classified it.
 
-    `by_period` is empty when the hour arrived in the usage series but landed
-    in no period this tariff knows. Such an hour is worth kWh and no dollars.
+    For a tariff priced from time of use, `by_period` is empty when the hour
+    arrived in the usage series but landed in no period the tariff knows, and
+    such an hour is worth kWh and no dollars. For a tariff priced from usage
+    it is always empty, and `total` is what it prices.
     """
 
     start: datetime
@@ -128,19 +127,21 @@ class HourUsage:
 
 @dataclass(frozen=True, kw_only=True)
 class CycleActuals:
-    """The values a posted bill supplies for one cycle."""
+    """What a posted bill says about one cycle.
+
+    The read dates and the total are every bill's; `values` holds the lines the
+    tariff declares as bill parameters, which replace its estimates.
+    """
 
     read_start: datetime
     read_end: datetime
-    service_charge: float
-    pca_factor: float
-    tax: float
     bill_total: float
+    values: Mapping[str, float]
 
 
 @dataclass(frozen=True, kw_only=True)
 class CostComponents:
-    """A cost split the way the bill itemizes it."""
+    """A cost split into the categories every bill's lines fall into."""
 
     energy: float
     fixed: float
@@ -186,16 +187,63 @@ class HourCost(CostComponents):
 
 
 @dataclass(frozen=True, kw_only=True)
+class PricedCycle:
+    """One cycle priced: a cost per priced hour, oldest first, and what is left.
+
+    `allowance_remaining` holds the kWh still unspent in each allowance the
+    tariff declares, and is empty when nothing in the cycle was priced.
+    """
+
+    costs: list[HourCost]
+    allowance_remaining: dict[str, float]
+
+
+def settle(costs: Sequence[HourCost], bill_total: float) -> list[HourCost]:
+    """Return a finalized cycle's costs with the residual that makes up its bill.
+
+    The residual is smeared over the priced hours, because those are the rows
+    that will exist and the bill has to add up across them.
+    """
+    if not costs:
+        raise ValueError("a finalized cycle with no priced hours cannot carry its bill")
+    residual = (bill_total - sum(cost.total for cost in costs)) / len(costs)
+    return [replace(cost, residual=residual) for cost in costs]
+
+
+@dataclass(frozen=True, kw_only=True)
 class Tariff(ABC):
-    """One rate schedule, executable."""
+    """One rate schedule, executable.
+
+    A location is priced under it when its portal is one of `portal_hosts` and
+    its active rate schedules include every one of `rate_schedule_codes`,
+    qualifier and all. A tariff priced from time of use names its periods; one
+    priced from usage has none.
+    """
 
     key: str
     display_name: str
     source: TariffSource
     periods: tuple[Period, ...]
-    tiered_periods: tuple[str, ...]
+    allowances: tuple[str, ...]
+    portal_hosts: tuple[str, ...]
     rate_schedule_codes: tuple[str, ...]
+    rate_parameters: tuple[Parameter, ...]
+    bill_parameters: tuple[Parameter, ...]
     published_versions: tuple[RateVersion, ...]
+
+    def __post_init__(self) -> None:
+        """Refuse a definition the shared code could not price with."""
+        if (self.source is TariffSource.USAGE) != (not self.periods):
+            raise ValueError(
+                f"{self.key}: a tariff names periods exactly when it is priced "
+                "from time of use"
+            )
+        for version in self.published_versions:
+            conform_values(self.rate_parameters, version.values)
+
+    @abstractmethod
+    def governs_cycle(self, version: RateVersion, cycle: Cycle) -> bool:
+        """Say whether a version, standing alone, prices every hour of a cycle."""
 
     @abstractmethod
     def price_cycle(
@@ -204,17 +252,11 @@ class Tariff(ABC):
         hours: Sequence[HourUsage],
         versions: Sequence[RateVersion],
         actuals: CycleActuals | None,
-    ) -> list[HourCost]:
-        """Return one cost per priced hour, oldest first."""
+    ) -> PricedCycle:
+        """Price one whole cycle, with the bill's values once it has posted.
 
-    @abstractmethod
-    def allowance_remaining(
-        self,
-        cycle: Cycle,
-        hours: Sequence[HourUsage],
-        versions: Sequence[RateVersion],
-    ) -> dict[str, float]:
-        """Return the kWh left in each tiered period's allowance."""
+        The residual is left at zero; `settle` owns it.
+        """
 
     def slug_for_label(self, label: str) -> str | None:
         """Return the slug of the period the portal calls `label`."""
@@ -227,6 +269,25 @@ class Tariff(ABC):
     def newest_published_version(self) -> RateVersion:
         """Return the newest version the package ships for this tariff."""
         return max(self.published_versions, key=lambda one: one.effective_from)
+
+    def rate_version_from_data(self, data: Mapping[str, Any]) -> RateVersion:
+        """Conform one stored or typed rate version, or refuse it."""
+        values = {key: value for key, value in data.items() if key != EFFECTIVE_FROM}
+        if EFFECTIVE_FROM not in data:
+            raise InvalidValue(EFFECTIVE_FROM, "missing")
+        return RateVersion(
+            effective_from=date.fromisoformat(data[EFFECTIVE_FROM]),
+            values=conform_values(self.rate_parameters, values),
+        )
+
+    def bill_values(self, values: Mapping[str, Any]) -> dict[str, float]:
+        """Conform the lines a bill supplies for this tariff, or refuse them."""
+        return conform_values(self.bill_parameters, values)
+
+
+def rate_version_to_data(version: RateVersion) -> dict[str, Any]:
+    """Return a rate version in the shape config entry data stores."""
+    return {EFFECTIVE_FROM: version.effective_from.isoformat(), **version.values}
 
 
 def nominal_hours(cycle: Cycle) -> int:
@@ -245,33 +306,3 @@ def version_for(versions: Sequence[RateVersion], day: date) -> RateVersion | Non
     if not governing:
         return None
     return max(governing, key=lambda one: one.effective_from)
-
-
-def rate_version_to_data(version: RateVersion) -> dict[str, Any]:
-    """Return a rate version in the shape config entry data stores."""
-    return {
-        "effective_from": version.effective_from.isoformat(),
-        "on_peak_rate": version.on_peak_rate,
-        "off_peak_rate": version.off_peak_rate,
-        "super_off_peak_rate": version.super_off_peak_rate,
-        "super_off_peak_allowance": version.super_off_peak_allowance,
-        "service_charge": version.service_charge,
-        "pca_factor": version.pca_factor,
-        "sales_tax_rate": version.sales_tax_rate,
-        "recurring_adjustment": version.recurring_adjustment,
-    }
-
-
-def rate_version_from_data(data: dict[str, Any]) -> RateVersion:
-    """Return the rate version one config entry record describes."""
-    return RateVersion(
-        effective_from=date.fromisoformat(data["effective_from"]),
-        on_peak_rate=float(data["on_peak_rate"]),
-        off_peak_rate=float(data["off_peak_rate"]),
-        super_off_peak_rate=float(data["super_off_peak_rate"]),
-        super_off_peak_allowance=float(data["super_off_peak_allowance"]),
-        service_charge=float(data["service_charge"]),
-        pca_factor=float(data["pca_factor"]),
-        sales_tax_rate=float(data["sales_tax_rate"]),
-        recurring_adjustment=float(data["recurring_adjustment"]),
-    )

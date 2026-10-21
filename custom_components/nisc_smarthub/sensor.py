@@ -18,7 +18,6 @@ from . import NiscSmartHubConfigEntry
 from .const import CURRENCY_UNIT
 from .coordinator import NiscSmartHubCoordinator, SmartHubData
 from .entity import NiscSmartHubEntity
-from .tariff import Period
 
 # Read-only platform: the coordinator already serializes the fetch.
 PARALLEL_UPDATES = 0
@@ -87,16 +86,16 @@ SENSORS: tuple[NiscSmartHubSensorEntityDescription, ...] = (
 )
 
 
-def allowance_description(period: Period) -> NiscSmartHubSensorEntityDescription:
-    """Describe the sensor for one tiered period's remaining allowance."""
-    key = f"allowance_remaining_{period.slug}"
+def allowance_description(allowance: str) -> NiscSmartHubSensorEntityDescription:
+    """Describe the sensor for one allowance's remaining kWh."""
+    key = f"allowance_remaining_{allowance}"
     return NiscSmartHubSensorEntityDescription(
         key=key,
         translation_key=key,
         device_class=SensorDeviceClass.ENERGY,
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         suggested_display_precision=2,
-        value_fn=lambda data: data.allowance_remaining.get(period.slug),
+        value_fn=lambda data: data.allowance_remaining.get(allowance),
     )
 
 
@@ -107,15 +106,13 @@ async def async_setup_entry(
 ) -> None:
     """Set up the sensors of one service location."""
     coordinator = entry.runtime_data
-    tiered = [
-        period
-        for period in coordinator.tariff.periods
-        if period.slug in coordinator.tariff.tiered_periods
-    ]
     async_add_entities(
         NiscSmartHubSensor(coordinator, description)
         for description in SENSORS
-        + tuple(allowance_description(period) for period in tiered)
+        + tuple(
+            allowance_description(allowance)
+            for allowance in coordinator.tariff.allowances
+        )
     )
 
 

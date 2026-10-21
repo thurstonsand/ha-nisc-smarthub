@@ -61,11 +61,11 @@ Skipped when the login reaches exactly one location. Otherwise pick the premise 
 
 ### Step 3, the tariff, the rates, and the cycle
 
-The tariff is preselected from the location's rate schedule codes and can be overridden. The nine rate fields are seeded from the newest rate version this package ships, which is NiteFlex effective 2026-01-01:
+The tariff is the one that matches both the portal and the location's rate schedule codes, qualifier included (`NFON:COBB`), and setup stops when none does. The form asks for that tariff's rate fields, seeded from the newest rate version this package ships. For NiteFlex that is the version effective 2026-01-01, with nine fields:
 
 | Field | Meaning | Seeded value |
 | --- | --- | --- |
-| Rates effective from | The day these numbers took effect. Hours before it keep the rates that applied then. It cannot be later than the account's connect date, because the first version has to price the oldest hour. | 2026-01-01 |
+| Rates effective from | The day these numbers took effect. Hours before it keep the rates that applied then. It cannot be later than the account's connect date, because NiteFlex's first version has to price the oldest hour. | 2026-01-01 |
 | On-peak rate | Dollars per kWh between 1:00 PM and 9:00 PM. | 0.14 |
 | Off-peak rate | Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight. | 0.075 |
 | Super off-peak rate | Dollars per kWh between midnight and 6:00 AM, after the allowance is spent. | 0.05 |
@@ -148,12 +148,14 @@ It recomputes and rewrites; it never clears rows.
 | `cycle_start` | yes | The day the cycle this bill covers starts on, as the integration already has it. |
 | `read_start` | yes | The bill's first read date. It replaces the calendar start of the cycle. |
 | `read_end` | yes | The bill's last read date. The next cycle starts there. |
-| `service_charge` | yes | The fixed charge the bill lists. |
-| `pca_factor` | yes | Dollars per kWh for the rider the bill reveals, signed. |
-| `tax` | yes | The bill's tax line, in dollars. |
 | `bill_total` | yes | What the bill charges. |
+| `service_charge` | NiteFlex | The fixed charge the bill lists. |
+| `pca_factor` | NiteFlex | Dollars per kWh for the rider the bill reveals, signed. |
+| `tax` | NiteFlex | The bill's tax line, in dollars. |
 
-A true-up replaces that cycle's estimated service charge, rider, tax, and calendar bounds with the bill's, reprices every hour in it, and smears the difference between the bill total and the sum of the priced components across the cycle's priced hours as a residual. The cycle's cost statistics then sum to the bill total exactly. A large residual means the tariff is missing a line on your bill, which is worth reporting. A finalized cycle stops repricing: a rate version dated inside it governs only the cycles after it, and a cycle-day change leaves its read-date bounds alone. The read dates replace the calendar boundaries nearest to them, so a bill read a day or two off the cycle day moves the boundary rather than leaving a sliver cycle beside it. Because a read date can move the boundary of the cycle before it, finalizing triggers a full pass from the hour before the earlier of the cycle's calendar start and its read start.
+Beyond the read dates and the total, a bill carries the lines your tariff reads from it, every one of them and nothing else. A line your tariff does not read is refused rather than ignored.
+
+A true-up replaces that cycle's estimated lines, for NiteFlex its service charge, rider, and tax, and its calendar bounds with the bill's, reprices every hour in it, and smears the difference between the bill total and the sum of the priced components across the cycle's priced hours as a residual. The cycle's cost statistics then sum to the bill total exactly. A large residual means the tariff is missing a line on your bill, which is worth reporting. A finalized cycle stops repricing: a rate version dated inside it governs only the cycles after it, and a cycle-day change leaves its read-date bounds alone. The read dates replace the calendar boundaries nearest to them, so a bill read a day or two off the cycle day moves the boundary rather than leaving a sliver cycle beside it. Because a read date can move the boundary of the cycle before it, finalizing triggers a full pass from the hour before the earlier of the cycle's calendar start and its read start.
 
 The action refuses a read end after today, read dates that overlap another recorded cycle, and a cycle whose last hour the portal has not reported yet. Wait for the portal to catch up before finalizing a cycle that just ended.
 
@@ -201,7 +203,7 @@ The integration polls every 6 hours by default. Each run polls once and rewrites
 ## Known limitations
 
 - Bills are not read. The true-up is an action you run with the numbers off your bill.
-- NiteFlex is the only tariff. Flat rates and other co-ops' schedules need a tariff class.
+- NiteFlex is the only tariff. Flat rates and other co-ops' schedules need a tariff module; the shared code is ready for one priced from usage alone, with its own rate fields, bill lines, and rule for which version governs an hour.
 - The first cycle's proration is a guess. It takes the full service charge and the full allowance regardless of its length, because how Cobb EMC prorates a short first cycle is not published. The first bill's true-up corrects it.
 - The fall-back hour of a daylight-saving transition is read as two instants at the same wall clock. How the portal actually encodes that night is unverified until 2026-11-01.
 - HACS custom repository only. This is not in the HACS default store and not in home-assistant/brands, so it has no brand icon in the UI.

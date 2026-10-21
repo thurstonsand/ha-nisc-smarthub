@@ -443,6 +443,7 @@ async def test_poll_waits_for_completion(
         LOCATION,
         datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
         datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+        time_of_use=True,
     )
 
     assert aioclient_mock.call_count == 2
@@ -470,6 +471,7 @@ async def test_poll_gives_up_while_still_pending(
             LOCATION,
             datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
             datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+            time_of_use=True,
         )
 
     assert aioclient_mock.call_count == 5
@@ -487,6 +489,7 @@ async def test_poll_failed_status_is_a_client_error(
             LOCATION,
             datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
             datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+            time_of_use=True,
         )
 
 
@@ -502,6 +505,7 @@ async def test_poll_rejected_token_is_an_auth_error(
             LOCATION,
             datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
             datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+            time_of_use=True,
         )
 
 
@@ -517,6 +521,7 @@ async def test_poll_server_error_is_a_client_error(
             LOCATION,
             datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
             datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+            time_of_use=True,
         )
 
 
@@ -532,6 +537,7 @@ async def test_poll_connection_error_is_a_client_error(
             LOCATION,
             datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
             datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+            time_of_use=True,
         )
 
 
@@ -545,6 +551,7 @@ async def poll_hourly_fixture(
         LOCATION,
         datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
         datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+        time_of_use=True,
     )
 
 
@@ -642,6 +649,7 @@ async def test_daily_poll_totals_match_the_hourly_days(
         LOCATION,
         datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
         datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+        time_of_use=True,
     )
     aioclient_mock.clear_requests()
     hourly = await poll_hourly_fixture(
@@ -689,6 +697,28 @@ async def test_poll_without_a_time_of_use_entry_has_nothing_classified(
     """The portal classifies nothing before it starts, and that is not an error."""
     result = await poll_hourly_fixture(
         logged_in, aioclient_mock, usage_only(fixture("poll_hourly"))
+    )
+
+    assert len(result.usage) == 72
+    assert result.periods == {}
+
+
+async def test_a_poll_without_time_of_use_never_reads_the_classification(
+    logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """A tariff priced from usage alone cannot fail on a split it ignores."""
+    payload = fixture("poll_hourly")
+    for entry in payload["data"]["ELECTRIC"]:
+        if entry["type"] == "TIME_OF_USE":
+            entry["series"][0]["name"] = "Off Peak"
+    aioclient_mock.post(POLL_URL, json=payload)
+
+    result = await logged_in.poll_hourly(
+        ACCOUNT,
+        LOCATION,
+        datetime(2026, 9, 1, tzinfo=PORTAL_ZONE),
+        datetime(2026, 9, 4, tzinfo=PORTAL_ZONE),
+        time_of_use=False,
     )
 
     assert len(result.usage) == 72
@@ -752,6 +782,7 @@ async def test_poll_drops_points_outside_the_window_it_asked_for(
             LOCATION,
             datetime(2026, 9, 2, tzinfo=PORTAL_ZONE),
             datetime(2026, 9, 3, tzinfo=PORTAL_ZONE),
+            time_of_use=True,
         )
 
     assert len(result.usage) == 24
@@ -840,6 +871,7 @@ async def test_the_repeated_hour_of_the_fall_back_night_is_read_in_order(
         LOCATION,
         datetime(2026, 11, 1, tzinfo=PORTAL_ZONE),
         datetime(2026, 11, 2, tzinfo=PORTAL_ZONE),
+        time_of_use=True,
     )
 
     hours = sorted(result.usage)
@@ -875,6 +907,7 @@ async def test_the_spring_forward_night_skips_an_hour(
         LOCATION,
         datetime(2026, 3, 8, tzinfo=PORTAL_ZONE),
         datetime(2026, 3, 9, tzinfo=PORTAL_ZONE),
+        time_of_use=True,
     )
 
     hours = sorted(result.usage)
@@ -908,6 +941,7 @@ async def test_a_duplicate_hour_on_an_ordinary_night_is_rejected(
             LOCATION,
             night.replace(tzinfo=PORTAL_ZONE),
             night.replace(tzinfo=PORTAL_ZONE) + timedelta(days=1),
+            time_of_use=True,
         )
 
 
@@ -946,6 +980,7 @@ async def test_the_hour_the_spring_forward_night_skips_is_a_phantom(
             LOCATION,
             night.replace(tzinfo=PORTAL_ZONE),
             night.replace(tzinfo=PORTAL_ZONE) + timedelta(days=1),
+            time_of_use=True,
         )
 
     assert result.usage == {

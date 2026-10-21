@@ -45,7 +45,8 @@ from .tariff import (
     HourUsage,
     RateVersion,
     Tariff,
-    rate_version_from_data,
+    TariffSource,
+    settle,
     sum_components,
 )
 from .writer import COST_KIND, USAGE_KIND, StatisticsWriter, owned_series, period_kind
@@ -86,6 +87,9 @@ class Unclassified:
     before: int
     after: int
     holes: list[datetime]
+
+
+NOTHING_UNCLASSIFIED: Final = Unclassified(before=0, after=0, holes=[])
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -248,7 +252,8 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
         self._cycle_day: int = entry.data[CONF_CYCLE_DAY]
         self._tariff: Tariff = TARIFFS[entry.data[CONF_TARIFF]]
         self._versions: list[RateVersion] = [
-            rate_version_from_data(one) for one in entry.data[CONF_RATE_VERSIONS]
+            self._tariff.rate_version_from_data(one)
+            for one in entry.data[CONF_RATE_VERSIONS]
         ]
         self._writer = StatisticsWriter(
             hass,
@@ -389,7 +394,11 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
                 plan = self._plan(floor, now, FullRequest(from_floor=False, day=floor))
                 seeds = dict.fromkeys(self.statistic_ids, 0.0)
             poll = await self._client.poll_hourly(
-                self._account, self._location, plan.start, now
+                self._account,
+                self._location,
+                plan.start,
+                now,
+                time_of_use=self._tariff.source is TariffSource.TIME_OF_USE,
             )
         except AuthError as err:
             raise ConfigEntryAuthFailed(str(err)) from err
@@ -461,19 +470,21 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
         for cycle in plan.cycles:
             within = [hour for hour in hours if cycle.start <= hour.start < cycle.end]
             actuals = actuals_by_start.get(cycle.start)
-            priced = self._tariff.price_cycle(cycle, within, self._versions, actuals)
-            costs.update({cost.start: cost.total for cost in priced})
+            cycle_priced = self._tariff.price_cycle(
+                cycle, within, self._versions, actuals
+            )
+            priced = cycle_priced.costs
             if actuals is not None:
+                priced = settle(priced, actuals.bill_total)
                 residuals[days_by_start[cycle.start]] = sum(
                     cost.residual for cost in priced
                 )
+            costs.update({cost.start: cost.total for cost in priced})
             if cycle.start == current.start:
                 breakdown = sum_components(priced)
                 priced_hours = len(priced)
                 unpriced_hours = len(within) - len(priced)
-                allowance = self._tariff.allowance_remaining(
-                    cycle, within, self._versions
-                )
+                allowance = cycle_priced.allowance_remaining
 
         values = {self._writer.by_kind(USAGE_KIND).statistic_id: poll.usage}
         if len(self._tariff.periods) > 1:
@@ -502,7 +513,11 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
             ),
             unknown_labels=unknown_labels,
             unknown_hours=unknown_hours,
-            unclassified=_unclassified(hours, set(unknown_hours)),
+            unclassified=(
+                _unclassified(hours, set(unknown_hours))
+                if self._tariff.source is TariffSource.TIME_OF_USE
+                else NOTHING_UNCLASSIFIED
+            ),
         )
 
     def _split(

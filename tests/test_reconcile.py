@@ -142,7 +142,7 @@ async def test_a_request_made_during_a_run_waits_for_the_next_one(
     polling = asyncio.Event()
     resume = asyncio.Event()
 
-    async def slow_poll(*_args: Any) -> Any:
+    async def slow_poll(*_args: Any, **_kwargs: Any) -> Any:
         polling.set()
         await resume.wait()
         return recordings.poll_result()

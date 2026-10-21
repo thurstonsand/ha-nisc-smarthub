@@ -28,33 +28,31 @@
         }
       },
       "cycle": {
-        "title": "Tariff and billing cycle",
-        "description": "How your usage is priced, and when your bill's cycle starts. The rates are seeded from the schedule this package ships; correct them if yours differ.",
+        "title": "Rates and billing cycle",
+        "description": "This location is billed under {tariff}. Set when your bill's cycle starts and the rates it charges. The rates are seeded from the schedule this package ships; correct them if yours differ.",
         "data": {
-          "tariff": "Rate schedule",
           "cycle_day": "Cycle start day",
-          "effective_from": "Rates effective from",
-          "on_peak_rate": "On-peak rate",
-          "off_peak_rate": "Off-peak rate",
-          "super_off_peak_rate": "Super off-peak rate",
-          "super_off_peak_allowance": "Super off-peak allowance",
-          "service_charge": "Service charge",
-          "pca_factor": "Power cost adjustment",
-          "sales_tax_rate": "Sales tax rate",
-          "recurring_adjustment": "Recurring adjustment"
+          "niteflex_effective_from": "Rates effective from",
+          "niteflex_on_peak_rate": "On-peak rate",
+          "niteflex_off_peak_rate": "Off-peak rate",
+          "niteflex_super_off_peak_rate": "Super off-peak rate",
+          "niteflex_super_off_peak_allowance": "Super off-peak allowance",
+          "niteflex_service_charge": "Service charge",
+          "niteflex_pca_factor": "Power cost adjustment",
+          "niteflex_sales_tax_rate": "Sales tax rate",
+          "niteflex_recurring_adjustment": "Recurring adjustment"
         },
         "data_description": {
-          "tariff": "The published rate schedule your account is billed under.",
           "cycle_day": "The day of the month the billing cycle starts. A day past the end of a short month falls on its last day.",
-          "effective_from": "The day these rates took effect. Hours before it keep the rates that applied then.",
-          "on_peak_rate": "Dollars per kWh between 1:00 PM and 9:00 PM.",
-          "off_peak_rate": "Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight.",
-          "super_off_peak_rate": "Dollars per kWh between midnight and 6:00 AM, once the allowance is spent.",
-          "super_off_peak_allowance": "Free super off-peak kWh per billing cycle.",
-          "service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
-          "pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
-          "sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
-          "recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
+          "niteflex_effective_from": "The day these rates took effect. Every hour from local midnight on that day is priced under them.",
+          "niteflex_on_peak_rate": "Dollars per kWh between 1:00 PM and 9:00 PM.",
+          "niteflex_off_peak_rate": "Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight.",
+          "niteflex_super_off_peak_rate": "Dollars per kWh between midnight and 6:00 AM, once the allowance is spent.",
+          "niteflex_super_off_peak_allowance": "Free super off-peak kWh per billing cycle.",
+          "niteflex_service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
+          "niteflex_pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
+          "niteflex_sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
+          "niteflex_recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
         }
       },
       "reauth_confirm": {
@@ -81,28 +79,28 @@
       },
       "add_rate_version": {
         "title": "Add a rate version",
-        "description": "A dated set of rates. Every hour from its day on is priced under it, and earlier hours keep the rates that applied then. The fields are seeded from your newest version.",
+        "description": "A dated set of {tariff} rates, seeded from your newest version. Which hours it prices is that schedule's rule, stated against the date below.",
         "data": {
-          "effective_from": "Rates effective from",
-          "on_peak_rate": "On-peak rate",
-          "off_peak_rate": "Off-peak rate",
-          "super_off_peak_rate": "Super off-peak rate",
-          "super_off_peak_allowance": "Super off-peak allowance",
-          "service_charge": "Service charge",
-          "pca_factor": "Power cost adjustment",
-          "sales_tax_rate": "Sales tax rate",
-          "recurring_adjustment": "Recurring adjustment"
+          "niteflex_effective_from": "Rates effective from",
+          "niteflex_on_peak_rate": "On-peak rate",
+          "niteflex_off_peak_rate": "Off-peak rate",
+          "niteflex_super_off_peak_rate": "Super off-peak rate",
+          "niteflex_super_off_peak_allowance": "Super off-peak allowance",
+          "niteflex_service_charge": "Service charge",
+          "niteflex_pca_factor": "Power cost adjustment",
+          "niteflex_sales_tax_rate": "Sales tax rate",
+          "niteflex_recurring_adjustment": "Recurring adjustment"
         },
         "data_description": {
-          "effective_from": "The day these rates took effect. A cycle you have finalized stays priced from its bill whatever day this is.",
-          "on_peak_rate": "Dollars per kWh between 1:00 PM and 9:00 PM.",
-          "off_peak_rate": "Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight.",
-          "super_off_peak_rate": "Dollars per kWh between midnight and 6:00 AM, once the allowance is spent.",
-          "super_off_peak_allowance": "Free super off-peak kWh per billing cycle.",
-          "service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
-          "pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
-          "sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
-          "recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
+          "niteflex_effective_from": "NiteFlex prices every hour from local midnight on this day under these rates, and earlier hours keep the rates that applied then. A cycle you have finalized stays priced from its bill whatever day this is.",
+          "niteflex_on_peak_rate": "Dollars per kWh between 1:00 PM and 9:00 PM.",
+          "niteflex_off_peak_rate": "Dollars per kWh between 6:00 AM and 1:00 PM and between 9:00 PM and midnight.",
+          "niteflex_super_off_peak_rate": "Dollars per kWh between midnight and 6:00 AM, once the allowance is spent.",
+          "niteflex_super_off_peak_allowance": "Free super off-peak kWh per billing cycle.",
+          "niteflex_service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
+          "niteflex_pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
+          "niteflex_sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
+          "niteflex_recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
         }
       },
       "remove_rate_version": {
@@ -136,7 +134,7 @@
     "error": {
       "invalid_auth": "The portal rejected the credentials or the two-factor code.",
       "cannot_connect": "The portal could not be reached, or it did not finish the usage poll.",
-      "rate_version_after_connect_date": "The first rate version has to be in effect from the account's connect date, so this date cannot be later than it.",
+      "rate_version_misses_first_cycle": "The first rate version has to price every hour of the account's first billing cycle under this schedule's rules, so this date is too late.",
       "not_a_number": "This has to be a number.",
       "negative_number": "This cannot be negative.",
       "invalid_cycle_day": "The cycle day has to be a whole day of the month, 1 to 31.",
@@ -152,7 +150,7 @@
       "no_service_locations": "This login has no service locations to track.",
       "multiple_providers": "This account is served by more than one provider, which this integration cannot price yet.",
       "multiple_meters": "This service location has more than one meter, which this integration cannot price yet.",
-      "no_matching_tariff": "No tariff in this integration prices the rate schedules on this service location ({codes})."
+      "no_matching_tariff": "No tariff in this integration prices the rate schedules on this service location ({codes}) at {host}."
     }
   },
   "entity": {
@@ -167,16 +165,16 @@
             "name": "Energy"
           },
           "fixed": {
-            "name": "Service charge"
+            "name": "Fixed charges"
           },
           "rider": {
-            "name": "Rider"
+            "name": "Riders"
           },
           "tax": {
-            "name": "Sales tax"
+            "name": "Taxes"
           },
           "adjustment": {
-            "name": "Recurring adjustment"
+            "name": "Adjustments"
           },
           "residual": {
             "name": "Residual"
@@ -233,7 +231,7 @@
     },
     "finalize_cycle": {
       "name": "Finalize a cycle",
-      "description": "Records what a posted bill charged for one billing cycle and reprices it so its cost statistics match the bill to the cent.",
+      "description": "Records what a posted bill charged for one billing cycle and reprices it so its cost statistics match the bill to the cent. Besides the bill total, give the lines your rate schedule reads from a bill; each field says which schedules read it.",
       "fields": {
         "config_entry_id": {
           "name": "Service location",
@@ -251,21 +249,21 @@
           "name": "Read end",
           "description": "The bill's last read date, which is where the next cycle starts."
         },
-        "service_charge": {
-          "name": "Service charge",
-          "description": "The fixed charge the bill lists for this cycle."
-        },
-        "pca_factor": {
-          "name": "Power cost adjustment",
-          "description": "Dollars per kWh for the rider the bill reveals, signed."
-        },
-        "tax": {
-          "name": "Sales tax",
-          "description": "The tax line on the bill, in dollars."
-        },
         "bill_total": {
           "name": "Bill total",
           "description": "What the bill charges. Whatever the priced components do not account for is smeared across the cycle's hours as a residual."
+        },
+        "service_charge": {
+          "name": "Service charge",
+          "description": "The fixed charge the bill lists for this cycle. Read by Cobb EMC NiteFlex."
+        },
+        "pca_factor": {
+          "name": "Power cost adjustment",
+          "description": "Dollars per kWh for the rider the bill reveals, signed. Read by Cobb EMC NiteFlex."
+        },
+        "tax": {
+          "name": "Sales tax",
+          "description": "The tax line on the bill, in dollars. Read by Cobb EMC NiteFlex."
         }
       }
     },
@@ -315,8 +313,17 @@
     "from_in_future": {
       "message": "The day {from} has not happened yet, so there is nothing to recompute from it."
     },
-    "not_a_finite_number": {
-      "message": "The value {value} given for {field} is not a number this can price with."
+    "bill_line_missing": {
+      "message": "{tariff} reads {field} from a bill, and it was not given."
+    },
+    "bill_line_unexpected": {
+      "message": "{tariff} does not read {field} from a bill; leave it out."
+    },
+    "bill_line_not_a_number": {
+      "message": "The value given for {field} is not a number this can price with."
+    },
+    "bill_line_negative_number": {
+      "message": "The value given for {field} cannot be negative under {tariff}."
     }
   },
   "issues": {

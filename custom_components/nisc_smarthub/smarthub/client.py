@@ -162,16 +162,36 @@ class SmartHubClient:
         return _parse(_service_location, data, "service-locations")
 
     async def poll_hourly(
-        self, account: str, location: str, start: datetime, end: datetime
+        self,
+        account: str,
+        location: str,
+        start: datetime,
+        end: datetime,
+        *,
+        time_of_use: bool,
     ) -> PollResult:
-        """Poll one hour-resolution usage window."""
-        return await self._poll("HOURLY", account, location, start, end)
+        """Poll one hour-resolution usage window.
+
+        Without `time_of_use` the response's classification is never read, so
+        a tariff that prices usage alone cannot fail on a split it ignores.
+        """
+        return await self._poll(
+            "HOURLY", account, location, start, end, time_of_use=time_of_use
+        )
 
     async def poll_daily(
-        self, account: str, location: str, start: datetime, end: datetime
+        self,
+        account: str,
+        location: str,
+        start: datetime,
+        end: datetime,
+        *,
+        time_of_use: bool,
     ) -> PollResult:
         """Poll one day-resolution usage window."""
-        return await self._poll("DAILY", account, location, start, end)
+        return await self._poll(
+            "DAILY", account, location, start, end, time_of_use=time_of_use
+        )
 
     async def _request(
         self, endpoint: str, method: str, path: str, **kwargs: Any
@@ -218,6 +238,8 @@ class SmartHubClient:
         location: str,
         start: datetime,
         end: datetime,
+        *,
+        time_of_use: bool,
     ) -> PollResult:
         body = {
             "timeFrame": time_frame,
@@ -247,7 +269,11 @@ class SmartHubClient:
             poll_status = data["status"]
             if poll_status == "COMPLETE":
                 result = _parse(
-                    lambda raw: self._poll_result(raw, time_frame), data, "poll"
+                    lambda raw: self._poll_result(
+                        raw, time_frame, time_of_use=time_of_use
+                    ),
+                    data,
+                    "poll",
                 )
                 return _within(result, start, end)
             if poll_status != "PENDING":
@@ -295,7 +321,9 @@ class SmartHubClient:
             == wall
         )
 
-    def _poll_result(self, data: Any, time_frame: str) -> PollResult:
+    def _poll_result(
+        self, data: Any, time_frame: str, *, time_of_use: bool
+    ) -> PollResult:
         entries = data["data"]["ELECTRIC"]
         usage_entry = _entry(entries, "USAGE")
         meters = usage_entry["meters"]
@@ -313,7 +341,9 @@ class SmartHubClient:
 
         # The portal classifies nothing until it starts classifying, so a poll
         # with no TIME_OF_USE entry at all is a poll with nothing classified.
-        tou_entry = _entry(entries, "TIME_OF_USE", required=False)
+        tou_entry = (
+            _entry(entries, "TIME_OF_USE", required=False) if time_of_use else None
+        )
         periods: dict[str, dict[datetime, float]] = {}
         if tou_entry is not None:
             periods = {

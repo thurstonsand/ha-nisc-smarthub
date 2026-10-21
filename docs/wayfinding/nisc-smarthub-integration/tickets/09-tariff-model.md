@@ -40,4 +40,6 @@ Grilled over two rounds on 2026-09-11 against [bill-anatomy](../research/bill-an
 
 **Flat-rate seam.** A flat tariff declares `source = USAGE` and one period; the writer emits per-period usage statistics only when a tariff has more than one period. Nothing else changes.
 
+Amended 2026-10-21: checked against the code for [issue #37](https://github.com/thurstonsand/ha-nisc-smarthub/issues/37), the seam leaked. Nothing read `source`, so a flat poll raised the unclassified-hour repair on every hour; `RateVersion`, `CycleActuals`, the store, the forms, and `finalize_cycle` held NiteFlex's fields; versions governed from local midnight in shared code; and codes matched with the qualifier stripped. The prefactor in [the design doc](../../../designs/01-nisc-smarthub.md) makes each of those a tariff declaration. A flat tariff names no periods, declares its rate parameters and bill lines, and owns its version rule.
+
 **Out of scope.** One-off per-cycle adjustments (fees, capital credit) beyond what the true-up captures. Whether a shared rate-data source exists is [ticket 15](15-shared-rate-sources.md).

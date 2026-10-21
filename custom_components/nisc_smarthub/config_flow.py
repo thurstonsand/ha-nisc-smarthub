@@ -47,7 +47,12 @@ from .const import (
     DOMAIN,
     MINIMUM_POLL_INTERVAL_MINUTES,
 )
-from .cycles import FIRST_CYCLE_DAY, LAST_CYCLE_DAY, cycle_day_from_input
+from .cycles import (
+    FIRST_CYCLE_DAY,
+    LAST_CYCLE_DAY,
+    cycle_containing,
+    cycle_day_from_input,
+)
 from .smarthub import (
     AuthError,
     ClientError,
@@ -58,14 +63,14 @@ from .smarthub import (
     SmartHubClient,
 )
 from .tariff import (
+    EFFECTIVE_FROM,
     TARIFFS,
-    InvalidRateVersion,
+    InvalidValue,
     RateVersion,
     Tariff,
-    rate_version_from_data,
+    TariffSource,
     rate_version_to_data,
-    tariff_for_codes,
-    validate_rate_version,
+    tariff_for,
 )
 
 VERIFICATION_WINDOW = timedelta(days=3)
@@ -134,17 +139,6 @@ OPTIONS_SCHEMA = vol.Schema(
 
 SELECTION_SEPARATOR = ":"
 
-RATE_FIELDS = (
-    "on_peak_rate",
-    "off_peak_rate",
-    "super_off_peak_rate",
-    "super_off_peak_allowance",
-    "service_charge",
-    "pca_factor",
-    "sales_tax_rate",
-    "recurring_adjustment",
-)
-
 
 def _cycle_day_schema(cycle_day: int) -> vol.Schema:
     """Return a schema asking only for the billing cycle's start day."""
@@ -162,16 +156,28 @@ def _cycle_day_schema(cycle_day: int) -> vol.Schema:
     )
 
 
-def _rate_schema(seed: RateVersion) -> vol.Schema:
-    """Return a schema for one rate version, seeded from another."""
+def form_key(tariff: Tariff, name: str) -> str:
+    """Return the form field one of a tariff's rate inputs is typed into.
+
+    Each tariff's fields carry its key, so every one has its own label and
+    description, stated in that schedule's terms.
+    """
+    return f"{tariff.key}_{name}"
+
+
+def _rate_schema(tariff: Tariff, seed: RateVersion) -> vol.Schema:
+    """Return a schema for one of a tariff's rate versions, seeded from another."""
     fields: dict[Any, Any] = {
         vol.Required(
-            "effective_from", default=seed.effective_from.isoformat()
+            form_key(tariff, EFFECTIVE_FROM), default=seed.effective_from.isoformat()
         ): DateSelector()
     }
-    seeded = rate_version_to_data(seed)
-    for field in RATE_FIELDS:
-        fields[vol.Required(field, default=seeded[field])] = NumberSelector(
+    for parameter in tariff.rate_parameters:
+        fields[
+            vol.Required(
+                form_key(tariff, parameter.key), default=seed.values[parameter.key]
+            )
+        ] = NumberSelector(
             NumberSelectorConfig(step="any", mode=NumberSelectorMode.BOX)
         )
     return vol.Schema(fields)
@@ -179,20 +185,12 @@ def _rate_schema(seed: RateVersion) -> vol.Schema:
 
 def _cycle_schema(tariff: Tariff, seed: RateVersion) -> vol.Schema:
     """Return the billing step's schema, seeded from a published rate version."""
-    fields: dict[Any, Any] = {
-        vol.Required(CONF_TARIFF, default=tariff.key): SelectSelector(
-            SelectSelectorConfig(
-                options=[
-                    SelectOptionDict(value=one.key, label=one.display_name)
-                    for one in TARIFFS.values()
-                ],
-                mode=SelectSelectorMode.DROPDOWN,
-            )
-        ),
-        **_cycle_day_schema(DEFAULT_CYCLE_DAY).schema,
-        **_rate_schema(seed).schema,
-    }
-    return vol.Schema(fields)
+    return vol.Schema(
+        {
+            **_cycle_day_schema(DEFAULT_CYCLE_DAY).schema,
+            **_rate_schema(tariff, seed).schema,
+        }
+    )
 
 
 class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -214,7 +212,7 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
         self._choices: dict[str, str] = {}
         self._account = ""
         self._location = ""
-        self._tariff = next(iter(TARIFFS.values()))
+        self._tariff: Tariff | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -262,15 +260,16 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_cycle(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Take the tariff, its rates, and the cycle day, then prove the poll."""
+        """Take the matched tariff's rates and the cycle day, then prove the poll."""
+        tariff = self._tariff
+        assert tariff is not None
         if user_input is None:
-            return self._show_cycle_form(None, {})
+            return self._show_cycle_form(tariff, None, {})
 
         errors: dict[str, str] = {}
-        version = _validated_version(user_input, errors)
+        version = _validated_version(tariff, user_input, errors)
         cycle_day = _validated_cycle_day(user_input, errors)
         if version is not None and cycle_day is not None:
-            tariff = TARIFFS[user_input[CONF_TARIFF]]
             client = self._new_client(self._credentials[CONF_HOST])
             try:
                 await client.login(
@@ -281,7 +280,11 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
                 billing = await client.billing(self._account)
                 now = dt_util.utcnow()
                 await client.poll_hourly(
-                    self._account, self._location, now - VERIFICATION_WINDOW, now
+                    self._account,
+                    self._location,
+                    now - VERIFICATION_WINDOW,
+                    now,
+                    time_of_use=tariff.source is TariffSource.TIME_OF_USE,
                 )
                 location = await client.service_location(self._location)
             except MultipleProviders:
@@ -293,13 +296,16 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
             except ClientError:
                 errors["base"] = "cannot_connect"
             else:
-                # The first version prices every hour from the floor, so it has
-                # to be in effect on the connect day, read in the portal's zone.
-                connect_day = billing.connect_date.astimezone(
-                    dt_util.get_default_time_zone()
-                ).date()
-                if version.effective_from > connect_day:
-                    errors["effective_from"] = "rate_version_after_connect_date"
+                first_cycle = cycle_containing(
+                    billing.connect_date,
+                    cycle_day=cycle_day,
+                    floor=billing.connect_date,
+                    zone=dt_util.get_default_time_zone(),
+                )
+                if not tariff.governs_cycle(version, first_cycle):
+                    errors[form_key(tariff, EFFECTIVE_FROM)] = (
+                        "rate_version_misses_first_cycle"
+                    )
                 else:
                     return self.async_create_entry(
                         title=location.service_description,
@@ -313,15 +319,23 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
                         },
                     )
 
-        return self._show_cycle_form(user_input, errors)
+        return self._show_cycle_form(tariff, user_input, errors)
 
     def _show_cycle_form(
-        self, user_input: dict[str, Any] | None, errors: dict[str, str]
+        self,
+        tariff: Tariff,
+        user_input: dict[str, Any] | None,
+        errors: dict[str, str],
     ) -> ConfigFlowResult:
-        schema = _cycle_schema(self._tariff, self._tariff.newest_published_version())
+        schema = _cycle_schema(tariff, tariff.newest_published_version())
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
-        return self.async_show_form(step_id="cycle", data_schema=schema, errors=errors)
+        return self.async_show_form(
+            step_id="cycle",
+            data_schema=schema,
+            errors=errors,
+            description_placeholders={"tariff": tariff.display_name},
+        )
 
     async def _async_select(self, selection: str) -> ConfigFlowResult:
         self._account, self._location = selection.split(SELECTION_SEPARATOR)
@@ -329,11 +343,12 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured()
 
         codes = self._premises[selection].active_rate_schedules
-        tariff = tariff_for_codes(codes)
+        host = self._credentials[CONF_HOST]
+        tariff = tariff_for(host, codes)
         if tariff is None:
             return self.async_abort(
                 reason="no_matching_tariff",
-                description_placeholders={"codes": ", ".join(codes)},
+                description_placeholders={"codes": ", ".join(codes), "host": host},
             )
         self._tariff = tariff
         return await self.async_step_cycle()
@@ -386,19 +401,20 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Append a dated set of rates, which every hour from its day reprices under."""
         entry = self._get_reconfigure_entry()
+        tariff = TARIFFS[entry.data[CONF_TARIFF]]
         configured = [
-            rate_version_from_data(one) for one in entry.data[CONF_RATE_VERSIONS]
+            tariff.rate_version_from_data(one) for one in entry.data[CONF_RATE_VERSIONS]
         ]
         newest = max(configured, key=lambda one: one.effective_from)
         seed = replace(newest, effective_from=dt_util.now().date())
         if user_input is None:
-            return self._show_rate_form(seed, None, {})
+            return self._show_rate_form(tariff, seed, None, {})
 
         errors: dict[str, str] = {}
-        version = _validated_version(user_input, errors)
+        version = _validated_version(tariff, user_input, errors)
         if version is not None:
             if any(one.effective_from == version.effective_from for one in configured):
-                errors["effective_from"] = "duplicate_rate_version"
+                errors[form_key(tariff, EFFECTIVE_FROM)] = "duplicate_rate_version"
             else:
                 versions = sorted(
                     [*configured, version], key=lambda one: one.effective_from
@@ -415,7 +431,7 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
                     },
                 )
 
-        return self._show_rate_form(seed, user_input, errors)
+        return self._show_rate_form(tariff, seed, user_input, errors)
 
     async def async_step_remove_rate_version(
         self, user_input: dict[str, Any] | None = None
@@ -499,15 +515,19 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
 
     def _show_rate_form(
         self,
+        tariff: Tariff,
         seed: RateVersion,
         values: dict[str, Any] | None,
         errors: dict[str, str],
     ) -> ConfigFlowResult:
-        schema = _rate_schema(seed)
+        schema = _rate_schema(tariff, seed)
         if values is not None:
             schema = self.add_suggested_values_to_schema(schema, values)
         return self.async_show_form(
-            step_id="add_rate_version", data_schema=schema, errors=errors
+            step_id="add_rate_version",
+            data_schema=schema,
+            errors=errors,
+            description_placeholders={"tariff": tariff.display_name},
         )
 
     async def _async_login(
@@ -596,12 +616,15 @@ def _unique_ids(customers: list[Customer]) -> set[str]:
 
 
 def _validated_version(
-    user_input: dict[str, Any], errors: dict[str, str]
+    tariff: Tariff, user_input: dict[str, Any], errors: dict[str, str]
 ) -> RateVersion | None:
+    names = [EFFECTIVE_FROM, *(parameter.key for parameter in tariff.rate_parameters)]
     try:
-        return validate_rate_version(user_input)
-    except InvalidRateVersion as err:
-        errors[err.field] = err.reason
+        return tariff.rate_version_from_data(
+            {name: user_input[form_key(tariff, name)] for name in names}
+        )
+    except InvalidValue as err:
+        errors[form_key(tariff, err.field)] = err.reason
         return None
 
 

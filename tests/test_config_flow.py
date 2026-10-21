@@ -35,11 +35,7 @@ from custom_components.nisc_smarthub.smarthub import (
     MultipleProviders,
     PollTimeout,
 )
-from custom_components.nisc_smarthub.tariff import (
-    NITEFLEX,
-    TARIFFS,
-    rate_version_to_data,
-)
+from custom_components.nisc_smarthub.tariff import NITEFLEX, rate_version_to_data
 
 from . import recordings
 
@@ -50,9 +46,14 @@ pytestmark = pytest.mark.usefixtures("recorder_mock", "mock_client")
 PUBLISHED = rate_version_to_data(NITEFLEX.newest_published_version())
 
 
-def cycle_input(**overrides: object) -> dict[str, object]:
+def typed(**fields: object) -> dict[str, object]:
+    """Return rate inputs as the NiteFlex form names its fields."""
+    return {f"{NITEFLEX.key}_{name}": value for name, value in fields.items()}
+
+
+def cycle_input(cycle_day: object = 28, **overrides: object) -> dict[str, object]:
     """Return the tariff step's input, published rates and all."""
-    return {CONF_TARIFF: NITEFLEX.key, CONF_CYCLE_DAY: 28, **PUBLISHED, **overrides}
+    return {CONF_CYCLE_DAY: cycle_day, **typed(**{**PUBLISHED, **overrides})}
 
 
 CREDENTIALS = {
@@ -294,18 +295,21 @@ async def test_the_tariff_step_seeds_the_published_rates(hass: HomeAssistant) ->
 
     schema = result["data_schema"]
     seeded = defaults(schema)
-    assert seeded[CONF_TARIFF] == NITEFLEX.key
-    assert seeded["effective_from"] == "2026-01-01"
-    assert seeded["on_peak_rate"] == 0.14
-    assert seeded["off_peak_rate"] == 0.075
-    assert seeded["super_off_peak_rate"] == 0.05
-    assert seeded["super_off_peak_allowance"] == 400.0
-    assert seeded["service_charge"] == 33.0
-    assert seeded["sales_tax_rate"] == 0.0775
-
-    assert schema is not None
-    options = schema.schema[vol.Required(CONF_TARIFF)].config["options"]
-    assert [one["value"] for one in options] == list(TARIFFS)
+    assert seeded == {
+        CONF_CYCLE_DAY: 1,
+        **typed(
+            effective_from="2026-01-01",
+            on_peak_rate=0.14,
+            off_peak_rate=0.075,
+            super_off_peak_rate=0.05,
+            super_off_peak_allowance=400.0,
+            service_charge=33.0,
+            pca_factor=0.0,
+            sales_tax_rate=0.0775,
+            recurring_adjustment=0.0,
+        ),
+    }
+    assert result["description_placeholders"] == {"tariff": "Cobb EMC NiteFlex"}
 
 
 async def test_edited_rates_are_what_the_entry_stores(hass: HomeAssistant) -> None:
@@ -337,7 +341,9 @@ async def test_a_first_version_dated_after_the_connect_date_is_refused(
     )
 
     assert result["type"] is FlowResultType.FORM
-    assert result["errors"] == {"effective_from": "rate_version_after_connect_date"}
+    assert result["errors"] == {
+        "niteflex_effective_from": "rate_version_misses_first_cycle"
+    }
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], cycle_input(effective_from="2026-08-28")
@@ -383,7 +389,7 @@ async def test_a_rate_field_that_is_not_a_price_is_refused(
     )
 
     assert result["type"] is FlowResultType.FORM
-    assert result["errors"] == {field: reason}
+    assert result["errors"] == {f"niteflex_{field}": reason}
     assert mock_client.poll_hourly.call_count == polls
 
 
@@ -415,8 +421,8 @@ async def test_a_rejected_form_keeps_what_was_typed(hass: HomeAssistant) -> None
         for key in schema.schema
         if key.description and "suggested_value" in key.description
     }
-    assert suggested["service_charge"] == 35.0
-    assert suggested["on_peak_rate"] == -1.0
+    assert suggested["niteflex_service_charge"] == 35.0
+    assert suggested["niteflex_on_peak_rate"] == -1.0
 
 
 async def test_a_location_on_an_unknown_rate_schedule_aborts(
@@ -436,7 +442,10 @@ async def test_a_location_on_an_unknown_rate_schedule_aborts(
 
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "no_matching_tariff"
-    assert result["description_placeholders"] == {"codes": "RES:COBB"}
+    assert result["description_placeholders"] == {
+        "codes": "RES:COBB",
+        "host": recordings.HOST,
+    }
 
 
 @pytest.mark.parametrize(
@@ -509,12 +518,12 @@ async def test_a_rate_version_is_added_to_the_configured_ones(
     result = await reconfigure(hass, mock_config_entry, "add_rate_version")
     assert result["step_id"] == "add_rate_version"
     seeded = defaults(result["data_schema"])
-    assert seeded["effective_from"] == "2026-09-11"
-    assert seeded["on_peak_rate"] == PUBLISHED["on_peak_rate"]
+    assert seeded["niteflex_effective_from"] == "2026-09-11"
+    assert seeded["niteflex_on_peak_rate"] == PUBLISHED["on_peak_rate"]
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
-        {**PUBLISHED, "effective_from": "2026-09-01", "on_peak_rate": 0.2},
+        typed(**{**PUBLISHED, "effective_from": "2026-09-01", "on_peak_rate": 0.2}),
     )
     await hass.async_block_till_done()
 
@@ -536,14 +545,14 @@ async def test_a_rate_version_dated_like_another_is_refused(
 
     result = await reconfigure(hass, mock_config_entry, "add_rate_version")
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {**PUBLISHED, "effective_from": "2026-01-01"}
+        result["flow_id"], typed(**{**PUBLISHED, "effective_from": "2026-01-01"})
     )
 
     assert result["type"] is FlowResultType.FORM
-    assert result["errors"] == {"effective_from": "duplicate_rate_version"}
+    assert result["errors"] == {"niteflex_effective_from": "duplicate_rate_version"}
 
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {**PUBLISHED, "effective_from": "2026-02-01"}
+        result["flow_id"], typed(**{**PUBLISHED, "effective_from": "2026-02-01"})
     )
     await hass.async_block_till_done()
     assert result["type"] is FlowResultType.ABORT

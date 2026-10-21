@@ -1,8 +1,8 @@
 """What a posted bill said about one cycle, kept beside the config entry.
 
 Configuration lives in the entry; observed facts live here. A record exists
-only for a finalized cycle: its read dates replace the calendar bounds, its
-service charge, rider factor and tax replace the schedule's estimates, and the
+only for a finalized cycle: its read dates replace the calendar bounds, the
+bill lines its tariff declares replace the schedule's estimates, and the
 residual is what the bill total left over once the components were priced.
 
 Read dates are stored as calendar days and read back as local midnight, because
@@ -20,10 +20,11 @@ from homeassistant.helpers.storage import Store
 
 from .const import DOMAIN
 from .cycles import local_midnight
-from .tariff import Cycle, CycleActuals
+from .tariff import Cycle, CycleActuals, Tariff
 
 STORAGE_VERSION: Final = 1
 RESIDUAL_TOLERANCE: Final = 1e-6
+ENVELOPE: Final = frozenset({"read_start", "read_end", "bill_total", "residual"})
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -53,10 +54,17 @@ async def async_remove_records(hass: HomeAssistant, entry_id: str) -> None:
 class CycleStore:
     """The finalized cycles of one config entry."""
 
-    def __init__(self, hass: HomeAssistant, *, entry_id: str, zone: tzinfo) -> None:
-        """Initialize the store for one entry, reading dates in its zone."""
+    def __init__(
+        self, hass: HomeAssistant, *, entry_id: str, zone: tzinfo, tariff: Tariff
+    ) -> None:
+        """Initialize the store for one entry, reading dates in its zone.
+
+        Stored bill lines are conformed through the tariff on load, so a record
+        written for other lines fails the load rather than pricing wrongly.
+        """
         self._store = Store[dict[str, Any]](hass, STORAGE_VERSION, store_key(entry_id))
         self._zone = zone
+        self._tariff = tariff
         self._records: dict[date, CycleRecord] = {}
 
     async def async_load(self) -> None:
@@ -154,10 +162,10 @@ class CycleStore:
                 read_end=local_midnight(
                     date.fromisoformat(stored["read_end"]), self._zone
                 ),
-                service_charge=float(stored["service_charge"]),
-                pca_factor=float(stored["pca_factor"]),
-                tax=float(stored["tax"]),
                 bill_total=float(stored["bill_total"]),
+                values=self._tariff.bill_values(
+                    {key: value for key, value in stored.items() if key not in ENVELOPE}
+                ),
             ),
             residual=None if residual is None else float(residual),
         )
@@ -174,9 +182,7 @@ def _stored(record: CycleRecord) -> dict[str, Any]:
     return {
         "read_start": actuals.read_start.date().isoformat(),
         "read_end": actuals.read_end.date().isoformat(),
-        "service_charge": actuals.service_charge,
-        "pca_factor": actuals.pca_factor,
-        "tax": actuals.tax,
+        **actuals.values,
         "bill_total": actuals.bill_total,
         "residual": record.residual,
     }

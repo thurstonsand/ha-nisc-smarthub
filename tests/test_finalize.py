@@ -59,8 +59,11 @@ async def portal_timezone(hass: HomeAssistant) -> None:
 
 
 def bill(**overrides: Any) -> dict[str, Any]:
-    """Return one posted bill for the cycle holding the recorded hours."""
-    return {
+    """Return one posted bill for the cycle holding the recorded hours.
+
+    An override of `None` leaves that line off the bill.
+    """
+    fields = {
         "cycle_start": CYCLE_START.isoformat(),
         "read_start": CYCLE_START.isoformat(),
         "read_end": READ_END.isoformat(),
@@ -70,6 +73,7 @@ def bill(**overrides: Any) -> dict[str, Any]:
         "bill_total": BILL_TOTAL,
         **overrides,
     }
+    return {key: value for key, value in fields.items() if value is not None}
 
 
 async def finalize(
@@ -195,10 +199,8 @@ async def test_the_residual_reaches_the_diagnostics(
         "2026-08-28": {
             "read_start": "2026-08-28T00:00:00-04:00",
             "read_end": "2026-09-04T00:00:00-04:00",
-            "service_charge": 33.0,
-            "pca_factor": 0.0,
-            "tax": TAX,
             "bill_total": BILL_TOTAL,
+            "values": {"service_charge": 33.0, "pca_factor": 0.0, "tax": TAX},
             "residual": pytest.approx(BILL_TOTAL - priced, abs=1e-5),
         }
     }
@@ -378,7 +380,10 @@ async def test_a_finalized_cycle_is_reloaded_with_the_entry(
     await async_wait_recording_done(hass)
 
     store = CycleStore(
-        hass, entry_id=mock_config_entry.entry_id, zone=recordings.PORTAL_ZONE
+        hass,
+        entry_id=mock_config_entry.entry_id,
+        zone=recordings.PORTAL_ZONE,
+        tariff=NITEFLEX,
     )
     await store.async_load()
     assert store.actuals_for(CYCLE_START) is not None
@@ -428,6 +433,9 @@ async def test_a_bill_whose_run_failed_is_priced_after_a_reload(
         pytest.param({"read_end": "2026-09-05"}, id="data_stops_before_the_read_end"),
         pytest.param({"bill_total": float("nan")}, id="a_total_that_is_not_a_number"),
         pytest.param({"tax": float("inf")}, id="a_tax_that_is_not_a_number"),
+        pytest.param({"tax": None}, id="a_line_the_tariff_needs_is_missing"),
+        pytest.param({"demand_charge": 4.0}, id="a_line_the_tariff_does_not_read"),
+        pytest.param({"service_charge": -33.0}, id="a_negative_service_charge"),
     ],
 )
 async def test_finalize_refuses_what_it_cannot_price(

@@ -111,10 +111,8 @@ def _records(records: Mapping[date, CycleRecord]) -> dict[str, Any]:
         day.isoformat(): {
             "read_start": record.actuals.read_start.isoformat(),
             "read_end": record.actuals.read_end.isoformat(),
-            "service_charge": record.actuals.service_charge,
-            "pca_factor": record.actuals.pca_factor,
-            "tax": record.actuals.tax,
             "bill_total": record.actuals.bill_total,
+            "values": dict(record.actuals.values),
             "residual": record.residual,
         }
         for day, record in sorted(records.items())
