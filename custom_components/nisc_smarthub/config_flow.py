@@ -213,6 +213,7 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
         self._account = ""
         self._location = ""
         self._tariff: Tariff | None = None
+        self._seed: RateVersion | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -327,7 +328,8 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
         user_input: dict[str, Any] | None,
         errors: dict[str, str],
     ) -> ConfigFlowResult:
-        schema = _cycle_schema(tariff, tariff.newest_published_version())
+        assert self._seed is not None
+        schema = _cycle_schema(tariff, self._seed)
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(
@@ -351,7 +353,32 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
                 description_placeholders={"codes": ", ".join(codes), "host": host},
             )
         self._tariff = tariff
+        self._seed = await self._async_seed(tariff)
         return await self.async_step_cycle()
+
+    async def _async_seed(self, tariff: Tariff) -> RateVersion:
+        """Return the shipped rates in effect when the account connected.
+
+        The first version has to price the oldest hour, so seeding the newest
+        would be refused for an account older than it; the repair for newer
+        published versions offers the rest once the entry exists. The seed is
+        a convenience, so a portal that will not answer leaves the newest, and
+        the step's own submission reports what went wrong.
+        """
+        client = self._new_client(self._credentials[CONF_HOST])
+        try:
+            await client.login(
+                self._credentials[CONF_EMAIL],
+                self._credentials[CONF_PASSWORD],
+                self._credentials[CONF_TOTP_SECRET],
+            )
+            billing = await client.billing(self._account)
+        except ClientError:
+            return tariff.newest_published_version()
+        connect_day = billing.connect_date.astimezone(
+            dt_util.get_default_time_zone()
+        ).date()
+        return tariff.published_version_on(connect_day)
 
     async def async_step_reauth(
         self, entry_data: Mapping[str, Any]
@@ -399,14 +426,27 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_add_rate_version(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Append a dated set of rates, which every hour from its day reprices under."""
+        """Append a dated set of rates, seeded from the next one the package ships.
+
+        With every shipped version configured, the seed is the newest configured
+        one dated today.
+        """
         entry = self._get_reconfigure_entry()
         tariff = TARIFFS[entry.data[CONF_TARIFF]]
         configured = [
             tariff.rate_version_from_data(one) for one in entry.data[CONF_RATE_VERSIONS]
         ]
         newest = max(configured, key=lambda one: one.effective_from)
-        seed = replace(newest, effective_from=dt_util.now().date())
+        unconfigured = [
+            one
+            for one in tariff.published_versions
+            if one.effective_from > newest.effective_from
+        ]
+        seed = (
+            min(unconfigured, key=lambda one: one.effective_from)
+            if unconfigured
+            else replace(newest, effective_from=dt_util.now().date())
+        )
         if user_input is None:
             return self._show_rate_form(tariff, seed, None, {})
 

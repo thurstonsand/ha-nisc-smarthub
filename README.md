@@ -2,21 +2,28 @@
 
 A custom integration for electric co-ops that run the NISC SmartHub member portal. It pulls hourly usage, keeps the utility's own time-of-use classification of every hour, prices it under your rate schedule, and writes usage and dollars into Home Assistant's long-term statistics, so the Energy dashboard shows kWh and cost side by side for a utility that publishes no cost of its own.
 
-One config entry tracks one service location. The first rate schedule it models is Cobb EMC's NiteFlex.
+One config entry tracks one service location. It ships two rate schedules: Cobb EMC's NiteFlex and New Hampshire Electric Co-op's residential schedule B.
 
 ## What you get
 
 - Hourly kWh for the service location, from the account's connect date forward, as an external statistic the Energy dashboard reads as a grid source.
 - Hourly dollars for the same hours, priced from your rate schedule, as the grid source's cost statistic.
-- One kWh statistic per time-of-use period, so a template or a card can show how the day split between on peak, off peak, and super off peak.
-- Sensors for the cycle to date, the remaining super off-peak allowance, and how fresh the data is.
+- On a time-of-use schedule, one kWh statistic per period, so a template or a card can show how the day split between on peak, off peak, and super off peak.
+- Sensors for the cycle to date, any allowance the schedule has left, and how fresh the data is.
 - A true-up action that reprices a whole billing cycle from the bill when it posts, so a finalized cycle's cost statistics match the bill to the cent.
 
 ## Supported accounts
 
 Any co-op that serves its members through a SmartHub portal at `<coop>.smarthub.coop`, as long as the account has two-factor authentication enabled and you can read the TOTP secret. The portal's JSON API is undocumented; the integration speaks the same endpoints the web app does.
 
-Pricing is another matter. The only tariff this package ships is Cobb EMC's NiteFlex, matched by the rate schedule codes `NFON`, `NFOFF`, and `NFSOF` that SmartHub reports for the location. If your location reports other codes, setup aborts and names the codes it saw. Another rate schedule is a new tariff class plus its numbers, which is a code change, not a setting. The seam it plugs into is described in [`docs/designs/01-nisc-smarthub.md`](docs/designs/01-nisc-smarthub.md) under "Coordinator to tariff".
+Pricing is another matter. A tariff is matched by the portal and the rate schedule codes SmartHub reports for the location, qualifier included:
+
+| Tariff | Portal | Codes | Prices |
+| --- | --- | --- | --- |
+| Cobb EMC NiteFlex | `cobbemc.smarthub.coop` | `NFON:COBB`, `NFOFF:COBB`, `NFSOF:COBB` | Three time-of-use periods, a free super off-peak allowance, a $33 service charge, the PCA rider, and 7.75% sales tax. A rate version governs every hour from its day. |
+| NHEC Residential (B) | `nhec.smarthub.coop` | `B:COOP` | Four per-kWh charges and a $29 member charge, with no tax or rider. A whole cycle is priced at the rates in effect when its bill is rendered, and a short first cycle pays the member charge for its days over 30. |
+
+If your location reports other codes, setup aborts and names the codes and the portal it saw. Another rate schedule is a new tariff module plus its numbers, which is a code change, not a setting; NHEC's, in `custom_components/nisc_smarthub/tariff/flat.py`, is a model for any flat-rate schedule. The seam it plugs into is described in [`docs/designs/01-nisc-smarthub.md`](docs/designs/01-nisc-smarthub.md) under "Coordinator to tariff".
 
 Accounts with more than one service location work; each location needs its own entry. An account served by more than one provider is refused, because the integration cannot tell which provider's rates to price it under, and so is a service location with more than one meter, because the portal's series are per meter and adding them up is a guess.
 
@@ -61,7 +68,7 @@ Skipped when the login reaches exactly one location. Otherwise pick the premise 
 
 ### Step 3, the tariff, the rates, and the cycle
 
-The tariff is the one that matches both the portal and the location's rate schedule codes, qualifier included (`NFON:COBB`), and setup stops when none does. The form asks for that tariff's rate fields, seeded from the newest rate version this package ships. For NiteFlex that is the version effective 2026-01-01, with nine fields:
+The tariff is the one that matches both the portal and the location's rate schedule codes, qualifier included (`NFON:COBB`), and setup stops when none does. The form asks for that tariff's rate fields, seeded from the rate version this package ships that was in effect when the account connected; if a newer one exists, a repair offers it once the entry is set up. For NiteFlex that is the version effective 2026-01-01, with nine fields:
 
 | Field | Meaning | Seeded value |
 | --- | --- | --- |
@@ -149,7 +156,7 @@ It recomputes and rewrites; it never clears rows.
 | `read_start` | yes | The bill's first read date. It replaces the calendar start of the cycle. |
 | `read_end` | yes | The bill's last read date. The next cycle starts there. |
 | `bill_total` | yes | What the bill charges. |
-| `service_charge` | NiteFlex | The fixed charge the bill lists. |
+| `service_charge` | NiteFlex, NHEC | The fixed charge the bill lists, NHEC's member service charge. |
 | `pca_factor` | NiteFlex | Dollars per kWh for the rider the bill reveals, signed. |
 | `tax` | NiteFlex | The bill's tax line, in dollars. |
 
@@ -203,7 +210,8 @@ The integration polls every 6 hours by default. Each run polls once and rewrites
 ## Known limitations
 
 - Bills are not read. The true-up is an action you run with the numbers off your bill.
-- NiteFlex is the only tariff. Flat rates and other co-ops' schedules need a tariff module; the shared code is ready for one priced from usage alone, with its own rate fields, bill lines, and rule for which version governs an hour.
+- Two tariffs ship, NiteFlex and NHEC Residential (B). Other co-ops' schedules need a tariff module.
+- NHEC's tariff is built from its published schedule and one member's bills, not tested against a live NHEC login. It takes a cycle's bill to be rendered on the day the cycle ends, so around a February 1 or August 1 rate change an estimate can sit at the wrong version until the bill is finalized.
 - The first cycle's proration is a guess. It takes the full service charge and the full allowance regardless of its length, because how Cobb EMC prorates a short first cycle is not published. The first bill's true-up corrects it.
 - The fall-back hour of a daylight-saving transition is read as two instants at the same wall clock. How the portal actually encodes that night is unverified until 2026-11-01.
 - HACS custom repository only. This is not in the HACS default store and not in home-assistant/brands, so it has no brand icon in the UI.

@@ -23,9 +23,13 @@ from .base import (
     sum_components,
     version_for,
 )
+from .flat import NHEC_RESIDENTIAL, FlatTariff
 from .niteflex import NITEFLEX
 
-TARIFFS: dict[str, Tariff] = {NITEFLEX.key: NITEFLEX}
+TARIFFS: dict[str, Tariff] = {
+    NITEFLEX.key: NITEFLEX,
+    NHEC_RESIDENTIAL.key: NHEC_RESIDENTIAL,
+}
 
 
 def tariff_for(host: str, codes: Iterable[str]) -> Tariff | None:
@@ -50,11 +54,13 @@ def tariff_for(host: str, codes: Iterable[str]) -> Tariff | None:
 
 __all__ = [
     "EFFECTIVE_FROM",
+    "NHEC_RESIDENTIAL",
     "NITEFLEX",
     "TARIFFS",
     "CostComponents",
     "Cycle",
     "CycleActuals",
+    "FlatTariff",
     "HourCost",
     "HourUsage",
     "InvalidValue",

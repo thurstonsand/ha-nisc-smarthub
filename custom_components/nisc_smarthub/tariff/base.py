@@ -270,6 +270,12 @@ class Tariff(ABC):
         """Return the newest version the package ships for this tariff."""
         return max(self.published_versions, key=lambda one: one.effective_from)
 
+    def published_version_on(self, day: date) -> RateVersion:
+        """Return the shipped version in effect on a day, or the oldest one."""
+        return version_for(self.published_versions, day) or min(
+            self.published_versions, key=lambda one: one.effective_from
+        )
+
     def rate_version_from_data(self, data: Mapping[str, Any]) -> RateVersion:
         """Conform one stored or typed rate version, or refuse it."""
         values = {key: value for key, value in data.items() if key != EFFECTIVE_FROM}

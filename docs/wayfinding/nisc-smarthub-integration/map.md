@@ -57,7 +57,7 @@ An accepted design doc in `docs/designs/` with a handoff-safe implementation pla
 ## Out of scope
 
 - Building, releasing, and installing the integration, and the appliance cutover from gagata's (uninstall, repoint the grid source). That is the next effort, seeded by this map's design doc.
-- A flat-rate tariff implementation and any second utility. The design leaves the seam.
+- A flat-rate tariff implementation and any second utility. The design leaves the seam. Amended 2026-10-21: NHEC's flat residential schedule shipped against the reworked seam; see the design doc.
 - Net metering / return-to-grid statistics. gagata's proves the API supports it; not in v1.
 - Submission to the HACS default store.
 - Allowance alerting. The integration exposes the metric; automations are the user's.

@@ -1,19 +1,23 @@
-"""A second tariff, shaped unlike NiteFlex, through every shared surface.
+"""NHEC's flat tariff, shaped unlike NiteFlex, through every shared surface.
 
-The tariff below exists only here. It prices from usage with no periods, has
-no allowance, reads different lines off a bill, and lets the version in effect
-on the day a cycle ends govern the whole cycle. Nothing outside its own
-definition changes for it, which is what keeps a new rate schedule local.
+It prices from usage with no periods, has no allowance, reads different lines
+off a bill, and lets the version in effect on the day a cycle's bill is
+rendered govern the whole cycle. Nothing outside its own module names it,
+which is what keeps a new rate schedule local.
 """
 
-from collections.abc import Generator, Sequence
-from dataclasses import dataclass, replace
-from datetime import date
+from dataclasses import replace
+from datetime import UTC, date, datetime
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
 from homeassistant.components.recorder.statistics import list_statistic_ids
-from homeassistant.config_entries import SOURCE_USER, ConfigEntry, ConfigEntryState
+from homeassistant.config_entries import (
+    SOURCE_RECONFIGURE,
+    SOURCE_USER,
+    ConfigEntry,
+    ConfigEntryState,
+)
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
@@ -34,21 +38,14 @@ from custom_components.nisc_smarthub.const import (
 from custom_components.nisc_smarthub.diagnostics import (
     async_get_config_entry_diagnostics,
 )
+from custom_components.nisc_smarthub.smarthub import ClientError
 from custom_components.nisc_smarthub.tariff import (
+    NHEC_RESIDENTIAL,
     NITEFLEX,
     TARIFFS,
-    Cycle,
-    CycleActuals,
-    HourCost,
-    HourUsage,
-    Parameter,
-    PricedCycle,
     RateVersion,
-    Tariff,
-    TariffSource,
-    nominal_hours,
+    rate_version_to_data,
     tariff_for,
-    version_for,
 )
 
 from . import recordings
@@ -57,86 +54,15 @@ from .test_init import statistic_sums
 
 pytestmark = pytest.mark.usefixtures("recorder_mock")
 
-HOST = "flat.smarthub.coop"
-RECORDED_KWH = 157.55
-
-
-@dataclass(frozen=True, kw_only=True)
-class BillDateFlatTariff(Tariff):
-    """One price per kWh and a member charge, at the rates of the bill's day."""
-
-    def governs_cycle(self, version: RateVersion, cycle: Cycle) -> bool:
-        """Say whether the version is in effect on the day the cycle's bill is."""
-        return version.effective_from <= cycle.end.date()
-
-    def price_cycle(
-        self,
-        cycle: Cycle,
-        hours: Sequence[HourUsage],
-        versions: Sequence[RateVersion],
-        actuals: CycleActuals | None,
-    ) -> PricedCycle:
-        """Price every hour of the cycle under the version in effect when it ends."""
-        bill_day = (cycle.end if actuals is None else actuals.read_end).date()
-        version = version_for(versions, bill_day)
-        assert version is not None
-        rates = version.values
-        bill = rates if actuals is None else actuals.values
-        member = bill["member_charge"]
-        per_kwh = rates["delivery_rate"] + rates["power_rate"]
-        hourly = nominal_hours(cycle)
-        return PricedCycle(
-            costs=[
-                HourCost(
-                    start=hour.start,
-                    energy=hour.total * per_kwh,
-                    fixed=member / hourly,
-                    rider=0.0,
-                    tax=0.0,
-                    adjustment=0.0,
-                    residual=0.0,
-                )
-                for hour in sorted(hours, key=lambda one: one.start)
-            ],
-            allowance_remaining={},
-        )
-
-
-FLAT = BillDateFlatTariff(
-    key="flat",
-    display_name="Example Co-op flat rate",
-    source=TariffSource.USAGE,
-    periods=(),
-    allowances=(),
-    portal_hosts=(HOST,),
-    rate_schedule_codes=("B:FLAT",),
-    rate_parameters=(
-        Parameter(key="delivery_rate", signed=False),
-        Parameter(key="power_rate", signed=False),
-        Parameter(key="member_charge", signed=False),
-    ),
-    bill_parameters=(Parameter(key="member_charge", signed=False),),
-    published_versions=(
-        RateVersion(
-            effective_from=date(2026, 1, 1),
-            values={"delivery_rate": 0.05, "power_rate": 0.10, "member_charge": 30.0},
-        ),
-    ),
+HOST = "nhec.smarthub.coop"
+FEBRUARY, AUGUST = (
+    rate_version_to_data(one) for one in NHEC_RESIDENTIAL.published_versions
 )
 
-PUBLISHED = {
-    "effective_from": "2026-01-01",
-    "delivery_rate": 0.05,
-    "power_rate": 0.10,
-    "member_charge": 30.0,
-}
-
-
-@pytest.fixture(autouse=True)
-def registered() -> Generator[None]:
-    """Ship the flat tariff alongside NiteFlex for the length of a test."""
-    with patch.dict(TARIFFS, {FLAT.key: FLAT}):
-        yield
+# The recorded 157.55 kWh, and 72 of the cycle's 744 hours of the $29 member
+# charge, 2.80645, at each version's per-kWh total.
+AT_FEBRUARY = 157.55 * 0.22053 + 29 * 72 / 744
+AT_AUGUST = 157.55 * 0.24713 + 29 * 72 / 744
 
 
 @pytest.fixture(autouse=True)
@@ -146,14 +72,14 @@ async def portal_timezone(hass: HomeAssistant) -> None:
 
 
 @pytest.fixture
-def flat_portal(mock_client: AsyncMock) -> AsyncMock:
-    """Serve the recorded hours from a flat-rate portal that classifies nothing."""
+def nhec_portal(mock_client: AsyncMock) -> AsyncMock:
+    """Serve the recorded hours from NHEC's portal, which classifies nothing."""
     customers = recordings.customers(recordings.LOCATION)
     location = customers[0].locations[0]
     mock_client.user_data.return_value = [
         replace(
             customers[0],
-            locations=(replace(location, active_rate_schedules=("B:FLAT",)),),
+            locations=(replace(location, active_rate_schedules=("B:COOP",)),),
         )
     ]
     mock_client.poll_hourly.return_value = recordings.poll_result(
@@ -162,12 +88,8 @@ def flat_portal(mock_client: AsyncMock) -> AsyncMock:
     return mock_client
 
 
-async def configure(
-    hass: HomeAssistant,
-    versions: list[dict[str, Any]],
-    effective_from: str = "2026-01-01",
-) -> ConfigEntry:
-    """Walk the setup flow on the flat portal, then store any later versions."""
+async def open_rates(hass: HomeAssistant) -> Any:
+    """Walk the setup flow on NHEC's portal to the rates step."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": SOURCE_USER}
     )
@@ -175,21 +97,29 @@ async def configure(
         result["flow_id"], {**CREDENTIALS, CONF_HOST: HOST}
     )
     assert result["step_id"] == "cycle"
-    assert result["description_placeholders"] == {"tariff": FLAT.display_name}
+    return result
+
+
+async def configure(
+    hass: HomeAssistant,
+    first: dict[str, Any] = FEBRUARY,
+    later: list[dict[str, Any]] | None = None,
+) -> ConfigEntry:
+    """Set an NHEC entry up on one version, then store any later ones."""
+    result = await open_rates(hass)
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {
             "cycle_day": 28,
-            **{f"flat_{key}": value for key, value in PUBLISHED.items()},
-            "flat_effective_from": effective_from,
+            **{f"nhec_residential_{key}": value for key, value in first.items()},
         },
     )
     await hass.async_block_till_done()
     assert result["type"] is FlowResultType.CREATE_ENTRY
     entry: ConfigEntry = result["result"]
-    if versions:
+    if later:
         hass.config_entries.async_update_entry(
-            entry, data=entry.data | {CONF_RATE_VERSIONS: [PUBLISHED, *versions]}
+            entry, data=entry.data | {CONF_RATE_VERSIONS: [first, *later]}
         )
         await hass.config_entries.async_reload(entry.entry_id)
         await hass.async_block_till_done()
@@ -197,39 +127,83 @@ async def configure(
     return entry
 
 
-async def test_setup_offers_only_the_matched_tariffs_fields(
-    hass: HomeAssistant, flat_portal: AsyncMock
-) -> None:
-    """The form is the flat tariff's, and nothing of NiteFlex's survives in it."""
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": SOURCE_USER}
-    )
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {**CREDENTIALS, CONF_HOST: HOST}
-    )
+def seeded(result: Any) -> dict[str, Any]:
+    """Return the rate fields a form is pre-filled with."""
+    return {
+        str(key.schema).removeprefix("nhec_residential_"): key.default()
+        for key in result["data_schema"].schema
+        if str(key.schema).startswith("nhec_residential_")
+    }
 
-    schema = result["data_schema"]
-    assert schema is not None
-    assert sorted(str(key.schema) for key in schema.schema) == [
+
+async def test_setup_offers_only_the_matched_tariffs_fields(
+    hass: HomeAssistant, nhec_portal: AsyncMock
+) -> None:
+    """The form is NHEC's, and nothing of NiteFlex's survives in it."""
+    result = await open_rates(hass)
+
+    assert result["description_placeholders"] == {"tariff": "NHEC Residential (B)"}
+    assert sorted(str(key.schema) for key in result["data_schema"].schema) == [
         "cycle_day",
-        "flat_delivery_rate",
-        "flat_effective_from",
-        "flat_member_charge",
-        "flat_power_rate",
+        "nhec_residential_co_op_power_rate",
+        "nhec_residential_delivery_rate",
+        "nhec_residential_effective_from",
+        "nhec_residential_regional_access_rate",
+        "nhec_residential_service_charge",
+        "nhec_residential_system_benefits_rate",
     ]
 
 
-async def test_a_flat_entry_prices_usage_with_no_classification(
+@pytest.mark.parametrize(
+    ("connect_date", "co_op_power_rate"),
+    [
+        pytest.param(datetime(2026, 3, 21, 4, tzinfo=UTC), 0.11117, id="spring"),
+        pytest.param(recordings.CONNECT_DATE, 0.13968, id="after_august"),
+    ],
+)
+async def test_setup_seeds_the_rates_in_effect_at_the_connect_date(
     hass: HomeAssistant,
-    flat_portal: AsyncMock,
+    nhec_portal: AsyncMock,
+    connect_date: datetime,
+    co_op_power_rate: float,
+) -> None:
+    """A spring member's first cycle predates August's rates, which would be refused."""
+    nhec_portal.billing.return_value = replace(
+        recordings.billing_summary(), connect_date=connect_date
+    )
+
+    result = await open_rates(hass)
+
+    assert seeded(result)["co_op_power_rate"] == co_op_power_rate
+
+
+async def test_a_portal_that_will_not_say_its_connect_date_seeds_the_newest(
+    hass: HomeAssistant, nhec_portal: AsyncMock
+) -> None:
+    """The seed is a convenience; the submission is what reports the failure."""
+    nhec_portal.billing.side_effect = ClientError("no route")
+
+    result = await open_rates(hass)
+
+    assert seeded(result)["effective_from"] == "2026-08-01"
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {"cycle_day": 28, **{f"nhec_residential_{k}": v for k, v in AUGUST.items()}},
+    )
+    assert result["errors"] == {"base": "cannot_connect"}
+
+
+async def test_an_nhec_entry_prices_usage_with_no_classification(
+    hass: HomeAssistant,
+    nhec_portal: AsyncMock,
     entity_registry: er.EntityRegistry,
     issue_registry: ir.IssueRegistry,
 ) -> None:
     """Usage and cost are written, and no hour is an unclassified hole."""
-    entry = await configure(hass, [])
+    entry = await configure(hass, AUGUST)
 
     assert entry.state is ConfigEntryState.LOADED
-    assert entry.data[CONF_TARIFF] == "flat"
+    assert entry.data[CONF_TARIFF] == "nhec_residential"
     written = await get_instance(hass).async_add_executor_job(
         list_statistic_ids, hass, None, None
     )
@@ -237,14 +211,12 @@ async def test_a_flat_entry_prices_usage_with_no_classification(
         recordings.COST_STATISTIC_ID,
         recordings.USAGE_STATISTIC_ID,
     ]
-    assert flat_portal.poll_hourly.call_args.kwargs == {"time_of_use": False}
+    assert nhec_portal.poll_hourly.call_args.kwargs == {"time_of_use": False}
     sums = await statistic_sums(
         hass, recordings.USAGE_STATISTIC_ID, recordings.COST_STATISTIC_ID
     )
-    assert sums[recordings.USAGE_STATISTIC_ID] == pytest.approx(RECORDED_KWH)
-    # 157.55 kWh at 0.05 + 0.10, and 72 of the cycle's 744 hours of the $30
-    # member charge: 23.6325 + 2.90323 = 26.53573.
-    assert sums[recordings.COST_STATISTIC_ID] == pytest.approx(26.53573, abs=1e-5)
+    assert sums[recordings.USAGE_STATISTIC_ID] == pytest.approx(157.55)
+    assert sums[recordings.COST_STATISTIC_ID] == pytest.approx(AT_AUGUST, abs=1e-5)
     assert [one.issue_id for one in issue_registry.issues.values()] == []
     keys = [
         one.unique_id
@@ -253,27 +225,80 @@ async def test_a_flat_entry_prices_usage_with_no_classification(
     assert not any("allowance" in key for key in keys)
 
 
+async def test_an_entry_on_older_rates_is_offered_the_newer_ones(
+    hass: HomeAssistant, nhec_portal: AsyncMock, issue_registry: ir.IssueRegistry
+) -> None:
+    """The repair names August, and adding a version is seeded with it."""
+    entry = await configure(hass, FEBRUARY)
+
+    issue = issue_registry.async_get_issue(
+        DOMAIN, f"newer_rate_version_{entry.entry_id}"
+    )
+    assert issue is not None
+    assert issue.translation_placeholders == {
+        "effective_from": "2026-08-01",
+        "tariff": "NHEC Residential (B)",
+    }
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": SOURCE_RECONFIGURE, "entry_id": entry.entry_id},
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"next_step_id": "add_rate_version"}
+    )
+    assert seeded(result) == AUGUST
+
+
 @pytest.mark.parametrize(
     ("effective_from", "expected"),
     [
-        # Effective before the cycle ends, though after every recorded hour:
-        # 157.55 kWh at 0.05 + 0.20, plus the same 2.90323 of member charge.
-        pytest.param("2026-09-15", 42.29073, id="before_the_bill"),
-        pytest.param("2026-09-28", 42.29073, id="on_the_bill_day"),
-        pytest.param("2026-09-29", 26.53573, id="after_the_bill"),
+        pytest.param("2026-09-15", AT_AUGUST, id="before_the_bill"),
+        pytest.param("2026-09-28", AT_AUGUST, id="on_the_bill_day"),
+        pytest.param("2026-09-29", AT_FEBRUARY, id="after_the_bill"),
     ],
 )
 async def test_the_version_on_the_bill_day_governs_the_whole_cycle(
-    hass: HomeAssistant, flat_portal: AsyncMock, effective_from: str, expected: float
+    hass: HomeAssistant, nhec_portal: AsyncMock, effective_from: str, expected: float
 ) -> None:
-    """A tariff decides which version governs an hour, not the shared code."""
+    """Every recorded hour precedes the version, and it still prices them."""
     entry = await configure(
-        hass, [{**PUBLISHED, "effective_from": effective_from, "power_rate": 0.20}]
+        hass, FEBRUARY, [{**AUGUST, "effective_from": effective_from}]
     )
 
     sums = await statistic_sums(hass, recordings.COST_STATISTIC_ID)
     assert entry.state is ConfigEntryState.LOADED
     assert sums[recordings.COST_STATISTIC_ID] == pytest.approx(expected, abs=1e-5)
+
+
+async def test_a_first_version_may_date_after_the_connect_date(
+    hass: HomeAssistant, nhec_portal: AsyncMock
+) -> None:
+    """The first cycle's bill is what the first version has to be in effect for."""
+    entry = await configure(hass, {**AUGUST, "effective_from": "2026-09-15"})
+
+    assert entry.state is ConfigEntryState.LOADED
+    sums = await statistic_sums(hass, recordings.COST_STATISTIC_ID)
+    assert sums[recordings.COST_STATISTIC_ID] == pytest.approx(AT_AUGUST, abs=1e-5)
+
+
+async def test_a_first_version_after_the_first_bill_is_refused(
+    hass: HomeAssistant, nhec_portal: AsyncMock
+) -> None:
+    """Nothing would price the first cycle, so the form says so."""
+    result = await open_rates(hass)
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            "cycle_day": 28,
+            **{f"nhec_residential_{k}": v for k, v in AUGUST.items()},
+            "nhec_residential_effective_from": "2026-09-29",
+        },
+    )
+
+    assert result["errors"] == {
+        "nhec_residential_effective_from": "rate_version_misses_first_cycle"
+    }
 
 
 def finalize_call(entry: ConfigEntry, **lines: float) -> dict[str, Any]:
@@ -288,81 +313,78 @@ def finalize_call(entry: ConfigEntry, **lines: float) -> dict[str, Any]:
     }
 
 
-async def test_a_flat_bill_is_finalized_with_its_own_lines(
-    hass: HomeAssistant, flat_portal: AsyncMock
+async def test_an_nhec_bill_is_finalized_with_its_own_lines(
+    hass: HomeAssistant, nhec_portal: AsyncMock
 ) -> None:
     """The bill's lines are the tariff's, and the cycle adds up to the bill."""
-    entry = await configure(hass, [])
+    entry = await configure(hass, FEBRUARY)
 
     await hass.services.async_call(
         DOMAIN,
         SERVICE_FINALIZE_CYCLE,
-        finalize_call(entry, member_charge=29.0),
+        finalize_call(entry, service_charge=25.0),
         blocking=True,
     )
     await async_wait_recording_done(hass)
 
     sums = await statistic_sums(hass, recordings.COST_STATISTIC_ID)
     assert sums[recordings.COST_STATISTIC_ID] == pytest.approx(40.0, abs=1e-6)
-    # The bill's $29, not the schedule's $30, smeared over 72 of the 168 hours
-    # to the read end: 23.6325 + 29 * 72 / 168 = 36.06107, and 40 - 36.06107.
+    # The bill's $25, not the schedule's $29, over 72 of the 168 hours to the
+    # read end: 157.55 * 0.22053 + 25 * 72 / 168 = 45.45879, and 40 - 45.45879.
     records = (await async_get_config_entry_diagnostics(hass, entry))["cycle_records"]
-    assert records["2026-08-28"]["values"] == {"member_charge": 29.0}
-    assert records["2026-08-28"]["residual"] == pytest.approx(3.93893, abs=1e-5)
+    assert records["2026-08-28"]["values"] == {"service_charge": 25.0}
+    assert records["2026-08-28"]["residual"] == pytest.approx(-5.45879, abs=1e-5)
 
 
-async def test_a_flat_bill_refuses_niteflex_lines(
-    hass: HomeAssistant, flat_portal: AsyncMock
+async def test_an_nhec_bill_refuses_niteflex_lines(
+    hass: HomeAssistant, nhec_portal: AsyncMock
 ) -> None:
     """A line this tariff does not read is a mistake, not something to ignore."""
-    entry = await configure(hass, [])
+    entry = await configure(hass, FEBRUARY)
 
     with pytest.raises(ServiceValidationError) as refused:
         await hass.services.async_call(
             DOMAIN,
             SERVICE_FINALIZE_CYCLE,
-            finalize_call(entry, member_charge=29.0, pca_factor=0.01),
+            finalize_call(entry, service_charge=29.0, pca_factor=0.01),
             blocking=True,
         )
 
     assert refused.value.translation_key == "bill_line_unexpected"
     assert refused.value.translation_placeholders == {
         "field": "pca_factor",
-        "tariff": FLAT.display_name,
+        "tariff": "NHEC Residential (B)",
     }
     diagnostics = await async_get_config_entry_diagnostics(hass, entry)
     assert diagnostics["cycle_records"] == {}
 
 
-async def test_a_bill_date_tariff_may_date_its_first_version_after_the_connect_date(
-    hass: HomeAssistant, flat_portal: AsyncMock
-) -> None:
-    """The first cycle's bill is what the first version has to be in effect for."""
-    entry = await configure(hass, [], effective_from="2026-09-15")
-
-    assert entry.state is ConfigEntryState.LOADED
-    sums = await statistic_sums(hass, recordings.COST_STATISTIC_ID)
-    assert sums[recordings.COST_STATISTIC_ID] == pytest.approx(26.53573, abs=1e-5)
-
-
 def test_a_usage_tariff_cannot_name_periods() -> None:
     """Periods only mean something to a tariff priced from time of use."""
     with pytest.raises(ValueError, match="names periods"):
-        replace(FLAT, periods=NITEFLEX.periods)
+        replace(NHEC_RESIDENTIAL, periods=NITEFLEX.periods)
+
+
+def test_a_flat_tariff_sums_only_declared_rates() -> None:
+    """A per-kWh line has to be a rate the form asks for."""
+    with pytest.raises(ValueError, match="undeclared"):
+        replace(NHEC_RESIDENTIAL, energy_rates=("demand_rate",))
 
 
 def test_two_tariffs_matching_one_location_is_an_error() -> None:
     """Registry order never decides which rate schedule a member is billed under."""
-    twin = replace(FLAT, key="twin")
+    twin = replace(NHEC_RESIDENTIAL, key="twin")
     with (
         patch.dict(TARIFFS, {twin.key: twin}),
         pytest.raises(ValueError, match="all match"),
     ):
-        tariff_for(HOST, ["B:FLAT"])
+        tariff_for(HOST, ["B:COOP"])
 
 
 def test_a_published_version_has_to_conform() -> None:
     """A shipped default is held to the same rules as a typed one."""
-    broken = RateVersion(effective_from=date(2026, 1, 1), values={"power_rate": 0.1})
+    broken = RateVersion(
+        effective_from=date(2026, 8, 1), values={"co_op_power_rate": 0.1}
+    )
     with pytest.raises(ValueError, match="missing"):
-        replace(FLAT, published_versions=(broken,))
+        replace(NHEC_RESIDENTIAL, published_versions=(broken,))

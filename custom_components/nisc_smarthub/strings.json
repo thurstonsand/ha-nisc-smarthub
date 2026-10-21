@@ -40,7 +40,13 @@
           "niteflex_service_charge": "Service charge",
           "niteflex_pca_factor": "Power cost adjustment",
           "niteflex_sales_tax_rate": "Sales tax rate",
-          "niteflex_recurring_adjustment": "Recurring adjustment"
+          "niteflex_recurring_adjustment": "Recurring adjustment",
+          "nhec_residential_effective_from": "Rates effective from",
+          "nhec_residential_service_charge": "Member service charge",
+          "nhec_residential_delivery_rate": "Delivery charge",
+          "nhec_residential_system_benefits_rate": "System benefits charge",
+          "nhec_residential_regional_access_rate": "Regional access charge",
+          "nhec_residential_co_op_power_rate": "Co-op power charge"
         },
         "data_description": {
           "cycle_day": "The day of the month the billing cycle starts. A day past the end of a short month falls on its last day.",
@@ -52,7 +58,13 @@
           "niteflex_service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
           "niteflex_pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
           "niteflex_sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
-          "niteflex_recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
+          "niteflex_recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state.",
+          "nhec_residential_effective_from": "NHEC bills a whole cycle at the rates in effect when the bill is rendered, so these rates price every cycle that ends on or after this day.",
+          "nhec_residential_service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours. A first cycle shorter than a month pays it for its days over 30.",
+          "nhec_residential_delivery_rate": "Dollars per kWh for distribution.",
+          "nhec_residential_system_benefits_rate": "Dollars per kWh for the electric assistance and energy efficiency programs.",
+          "nhec_residential_regional_access_rate": "Dollars per kWh for transmission. NHEC adjusts it around February 1 and August 1.",
+          "nhec_residential_co_op_power_rate": "Dollars per kWh for the electricity itself. NHEC adjusts it around February 1 and August 1."
         }
       },
       "reauth_confirm": {
@@ -79,7 +91,7 @@
       },
       "add_rate_version": {
         "title": "Add a rate version",
-        "description": "A dated set of {tariff} rates, seeded from your newest version. Which hours it prices is that schedule's rule, stated against the date below.",
+        "description": "A dated set of {tariff} rates, seeded from the next version this package ships that you have not added yet, or else from your newest version. Which hours it prices is that schedule's rule, stated against the date below.",
         "data": {
           "niteflex_effective_from": "Rates effective from",
           "niteflex_on_peak_rate": "On-peak rate",
@@ -89,7 +101,13 @@
           "niteflex_service_charge": "Service charge",
           "niteflex_pca_factor": "Power cost adjustment",
           "niteflex_sales_tax_rate": "Sales tax rate",
-          "niteflex_recurring_adjustment": "Recurring adjustment"
+          "niteflex_recurring_adjustment": "Recurring adjustment",
+          "nhec_residential_effective_from": "Rates effective from",
+          "nhec_residential_service_charge": "Member service charge",
+          "nhec_residential_delivery_rate": "Delivery charge",
+          "nhec_residential_system_benefits_rate": "System benefits charge",
+          "nhec_residential_regional_access_rate": "Regional access charge",
+          "nhec_residential_co_op_power_rate": "Co-op power charge"
         },
         "data_description": {
           "niteflex_effective_from": "NiteFlex prices every hour from local midnight on this day under these rates, and earlier hours keep the rates that applied then. A cycle you have finalized stays priced from its bill whatever day this is.",
@@ -100,7 +118,13 @@
           "niteflex_service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours.",
           "niteflex_pca_factor": "Dollars per kWh for the power cost adjustment rider, which the bill reveals. Leave it at zero until you have one.",
           "niteflex_sales_tax_rate": "Fraction of service charge, energy, and rider charged as sales tax. 0.0775 is Fulton County outside Atlanta.",
-          "niteflex_recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state."
+          "niteflex_recurring_adjustment": "A signed amount per cycle, untaxed, for a standing discount or fee the schedule does not state.",
+          "nhec_residential_effective_from": "NHEC bills a whole cycle at the rates in effect when the bill is rendered, so these rates price every cycle that ends on or after this day, all of its hours included. A cycle you have finalized is priced from its bill's read end instead.",
+          "nhec_residential_service_charge": "Dollars per billing cycle regardless of usage, spread evenly across its hours. A first cycle shorter than a month pays it for its days over 30.",
+          "nhec_residential_delivery_rate": "Dollars per kWh for distribution.",
+          "nhec_residential_system_benefits_rate": "Dollars per kWh for the electric assistance and energy efficiency programs.",
+          "nhec_residential_regional_access_rate": "Dollars per kWh for transmission. NHEC adjusts it around February 1 and August 1.",
+          "nhec_residential_co_op_power_rate": "Dollars per kWh for the electricity itself. NHEC adjusts it around February 1 and August 1."
         }
       },
       "remove_rate_version": {
@@ -255,7 +279,7 @@
         },
         "service_charge": {
           "name": "Service charge",
-          "description": "The fixed charge the bill lists for this cycle. Read by Cobb EMC NiteFlex."
+          "description": "The fixed charge the bill lists for this cycle, the member service charge on an NHEC bill. Read by Cobb EMC NiteFlex and NHEC Residential (B)."
         },
         "pca_factor": {
           "name": "Power cost adjustment",
