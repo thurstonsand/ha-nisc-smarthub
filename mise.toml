@@ -128,7 +128,18 @@ run = "python scripts/dev_bootstrap.py"
 
 [tasks.release]
 description = "Bump the manifest version, tag it, and publish a GitHub release"
-run = "python scripts/release.py {{arg(name='version')}}"
+usage = '''
+arg "<version>" help="The semver version to release, without a v"
+flag "--dry-run" help="Print every command that would change the world instead of running it"
+'''
+run = '''
+#!/usr/bin/env bash
+args=("${usage_version?}")
+if [ "${usage_dry_run:-false}" = "true" ]; then
+  args+=(--dry-run)
+fi
+python scripts/release.py "${args[@]}"
+'''
 
 [tasks."fixtures:capture"]
 description = "Re-record the SmartHub fixtures from the live portal through the agent-vault identity"
