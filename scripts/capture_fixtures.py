@@ -72,7 +72,7 @@ DESCRIPTION_FAKE: Final = "Example Premise"
 
 # Scalars the tests read by value, given a fixed fake instead of a placeholder.
 FAKED_PATHS: Final[dict[str, str]] = {
-    "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.description": DESCRIPTION_FAKE,
+    "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.description": DESCRIPTION_FAKE,
     "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.serviceSummary.serviceDescription": DESCRIPTION_FAKE,
     "billing[].accountBillingMap.<key>.serviceLocationMap.<key>.description": DESCRIPTION_FAKE,
     "service_location.serviceDescription": DESCRIPTION_FAKE,
@@ -90,20 +90,20 @@ ALLOWED_PATHS: Final = frozenset(
         "billing[].accountBillingMap.<key>.billingCycle",
         "billing[].accountBillingMap.<key>.hasUnbilledUsage",
         "billing[].accountBillingMap.<key>.numberOfBills",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.connectDate",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.primaryRateSchedule",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.primaryRateScheduleId",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.revenueClass",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.address.state",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.meters.<key>.id",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.meters.<key>.meterType",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.meters.<key>.rateSchedule",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.meters.<key>.status",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.primaryRateSchedule",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.primaryRateScheduleId",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.revenueClass",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.serviceLocation",
-        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.COBB.serviceLocationMap.<key>.taxable",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.connectDate",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.primaryRateSchedule",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.primaryRateScheduleId",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.revenueClass",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.address.state",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.meters.<key>.id",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.meters.<key>.meterType",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.meters.<key>.rateSchedule",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.meters.<key>.status",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.primaryRateSchedule",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.primaryRateScheduleId",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.revenueClass",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.serviceLocation",
+        "billing[].accountBillingMap.<key>.serviceBillingMap.ELEC.providerBillingMap.<key>.serviceLocationMap.<key>.taxable",
         "billing[].accountBillingMap.<key>.serviceLocationMap.<key>.address.state",
         "billing[].accountBillingMap.<key>.serviceLocationMap.<key>.serviceLocation",
         "billing[].customerSummary.accounts[]",
@@ -206,8 +206,8 @@ ALLOWED_PATHS: Final = frozenset(
     }
 )  # fmt: skip
 
-# Maps whose keys are data (account numbers, service location ids, meter
-# numbers, interval timestamps, billing months, chart series descriptions)
+# Maps whose keys are data (account numbers, providers, service location ids,
+# meter numbers, interval timestamps, billing months, chart series descriptions)
 # rather than field names. Their keys go through the value pass like any
 # other string and are spelled `<key>` in a path.
 IDENTIFIER_MAPS: Final = frozenset(
@@ -217,6 +217,7 @@ IDENTIFIER_MAPS: Final = frozenset(
         "meterNumbersToExternalMeterBaseIds",
         "meterToChartData",
         "meters",
+        "providerBillingMap",
         "serviceLocationIdToServiceLocationSummary",
         "serviceLocationMap",
         "serviceLocationStatusMap",
@@ -274,7 +275,8 @@ class Tokens:
 
     def add(self, kind: str, real: str | int | None) -> None:
         """Remember one identifier, numbering it after the others of its kind."""
-        if real is None or real == "" or str(real) in self._seen:
+        # A placeholder is a fixture read back in, never a member's value.
+        if real is None or str(real) in ("", PLACEHOLDERS[str], *self._seen):
             return
         self._seen.add(str(real))
         self._counts[kind] += 1
