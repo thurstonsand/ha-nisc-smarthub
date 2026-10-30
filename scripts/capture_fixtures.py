@@ -49,6 +49,8 @@ FIXTURES: Final = Path(__file__).parent.parent / "tests" / "fixtures"
 PORTAL_ZONE: Final = ZoneInfo("America/New_York")
 WINDOW_START: Final = datetime(2026, 9, 1, tzinfo=PORTAL_ZONE)
 WINDOW_END: Final = datetime(2026, 9, 4, tzinfo=PORTAL_ZONE)
+BILL_HISTORY_START: Final = datetime(2026, 8, 1, tzinfo=PORTAL_ZONE)
+BILL_HISTORY_END: Final = datetime(2026, 10, 27, tzinfo=PORTAL_ZONE)
 
 # Each kind of identifier is numbered in the order it is first seen, so the
 # configured account, location, and meter come out as the first of each and
@@ -109,6 +111,41 @@ ALLOWED_PATHS: Final = frozenset(
         "billing[].customerSummary.accounts[]",
         "billing[].customerSummary.users[]",
         "billing[].email",
+        "billing_history[].accountSummary.account",
+        "billing_history[].billOverviews[].adjustedBillAmount",
+        "billing_history[].billOverviews[].billCycleNumber",
+        "billing_history[].billOverviews[].billingDate",
+        "billing_history[].billOverviews[].charges[].chargeAmount",
+        "billing_history[].billOverviews[].charges[].chargeType",
+        "billing_history[].billOverviews[].charges[].industry",
+        "billing_history[].billOverviews[].charges[].provider",
+        "billing_history[].billOverviews[].charges[].rateSchedule",
+        "billing_history[].billOverviews[].charges[].serviceLocation",
+        "billing_history[].billOverviews[].charges[].unitOfMeasure",
+        "billing_history[].billOverviews[].charges[].usage",
+        "billing_history[].billOverviews[].isFinalBill",
+        "billing_history[].billOverviews[].modified",
+        "billing_history[].billOverviews[].originalBillAmount",
+        "billing_history[].billOverviews[].revenueMonth.month",
+        "billing_history[].billOverviews[].revenueMonth.monthInt",
+        "billing_history[].billOverviews[].revenueMonth.year",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].billedUsage",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].meter",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].presentReadDate",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].presentReadingType",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].previousReadDate",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].previousReadingType",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].provider",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].rateSchedule",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].service",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].serviceLocation",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].serviceSummary.industry",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].serviceSummary.service",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].unitOfMeasure",
+        "billing_history[].billOverviews[].serviceLocations[].readings[].usage",
+        "billing_history[].billOverviews[].serviceLocations[].serviceLocation",
+        "billing_history[].billOverviews[].totalAdjustments",
+        "billing_history[].systemOfRecord",
         "login.expiration",
         "login.expiresIn",
         "login.isBusinessUser",
@@ -191,6 +228,8 @@ ALLOWED_PATHS: Final = frozenset(
         "user_data[].serviceLocationIdToServiceLocationSummary.<key>.address.state",
         "user_data[].serviceLocationIdToServiceLocationSummary.<key>.id.serviceLocation",
         "user_data[].serviceLocationIdToServiceLocationSummary.<key>.id.srvLocNbr",
+        "user_data[].serviceLocationIdToServiceLocationSummary.<key>.lastBillPresReadDtTm",
+        "user_data[].serviceLocationIdToServiceLocationSummary.<key>.lastBillPrevReadDtTm",
         "user_data[].serviceLocationIdToServiceLocationSummary.<key>.meterNumbersToExternalMeterBaseIds.<key>",
         "user_data[].serviceLocationIdToServiceLocationSummary.<key>.serviceStatus",
         "user_data[].serviceLocationToIndustries.<key>[]",
@@ -199,6 +238,8 @@ ALLOWED_PATHS: Final = frozenset(
         "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].address.state",
         "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].id.serviceLocation",
         "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].id.srvLocNbr",
+        "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].lastBillPresReadDtTm",
+        "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].lastBillPrevReadDtTm",
         "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].serviceStatus",
         "user_data[].serviceLocationToUserDataServiceLocationSummaries.<key>[].services[]",
         "user_data[].serviceToProviders.ELEC[]",
@@ -214,6 +255,7 @@ IDENTIFIER_MAPS: Final = frozenset(
     {
         "accountBillingMap",
         "creditRatingHistory",
+        "currentYearToDateHistoryCharges",
         "meterNumbersToExternalMeterBaseIds",
         "meterToChartData",
         "meters",
@@ -515,6 +557,18 @@ async def capture() -> None:
         ) as response:
             response.raise_for_status()
             raw["billing"] = await response.json()
+
+        async with session.get(
+            f"{base}/secured/billing/history",
+            headers=headers,
+            params={
+                "account": credentials["account"],
+                "start": str(int(BILL_HISTORY_START.timestamp()) * 1000),
+                "end": str(int(BILL_HISTORY_END.timestamp()) * 1000),
+            },
+        ) as response:
+            response.raise_for_status()
+            raw["billing_history"] = await response.json()
 
         async with session.get(
             f"{base}/secured/service-locations/{credentials['location']}",

@@ -1,0 +1,463 @@
+[
+  {
+    "accountSummary": {
+      "account": "900000001",
+      "accountStatus": "scrubbed"
+    },
+    "billOverviews": [
+      {
+        "adjustedBillAmount": 145.0,
+        "billCycleNumber": 3,
+        "billInsertsExist": false,
+        "billProcessUuid": "scrubbed",
+        "billingDate": 1792644703000,
+        "billingHistoryAdjustments": [],
+        "charges": [
+          {
+            "chargeAmount": 5.44,
+            "chargeType": "TAX",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 1.36,
+            "chargeType": "TAX",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 1.36,
+            "chargeType": "TAX",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 0.94,
+            "chargeType": "OTHER",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 149.0,
+            "chargeType": "TRANSACTION_INQUIRY_FOR_A_BILLING",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": -149.0,
+            "chargeType": "PAYMENT",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 46.2,
+            "chargeType": "USAGE",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": "NFOFF",
+            "serviceLocation": "70001",
+            "unitOfMeasure": "KWH",
+            "usage": 616
+          },
+          {
+            "chargeAmount": 56.7,
+            "chargeType": "USAGE",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": "NFON",
+            "serviceLocation": "70001",
+            "unitOfMeasure": "KWH",
+            "usage": 405
+          },
+          {
+            "chargeAmount": 33.0,
+            "chargeType": "SERVICE",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": "NFON",
+            "serviceLocation": "70001",
+            "usage": 0
+          }
+        ],
+        "isFinalBill": false,
+        "modified": false,
+        "originalBillAmount": 145.0,
+        "priorBalanceAfterBilling": 0.0,
+        "revenueMonth": {
+          "month": "Oct",
+          "monthInt": 10,
+          "year": 2026
+        },
+        "serviceLocations": [
+          {
+            "address": {
+              "city": "scrubbed",
+              "lineOne": "scrubbed",
+              "state": "scrubbed",
+              "zipCode": "scrubbed"
+            },
+            "description": "scrubbed",
+            "industryServiceStatusMap": {
+              "ELECTRIC": "scrubbed"
+            },
+            "isDefault": false,
+            "location": "scrubbed",
+            "readings": [
+              {
+                "billedDemand": 0.0,
+                "billedUsage": 616,
+                "demandMultiplier": 0,
+                "demandReading": 0,
+                "demandRegisterMode": "scrubbed",
+                "kvarMultiplier": 0,
+                "kvarPresentReading": 0,
+                "kvarPreviousReading": 0,
+                "kvarRegisterMode": "scrubbed",
+                "kvarUsage": 0,
+                "meter": "1N0000000001",
+                "meterPositionNumber": 0,
+                "meterRegisterNumber": 0,
+                "presentMeterReading": 0,
+                "presentReadDate": 1792296000000,
+                "presentReadingType": "VALID",
+                "previousMeterReading": 0,
+                "previousReadDate": 1789704000000,
+                "previousReadingType": "VALID",
+                "provider": "COBB",
+                "rateSchedule": "NFOFF",
+                "service": "ELEC",
+                "serviceLocation": "70001",
+                "serviceSummary": {
+                  "industry": "ELECTRIC",
+                  "service": "ELEC",
+                  "serviceDescription": "scrubbed"
+                },
+                "unitOfMeasure": "KWH",
+                "usage": 616,
+                "usageRegisterMode": "scrubbed"
+              },
+              {
+                "billedDemand": 0,
+                "billedUsage": 405,
+                "demandMultiplier": 0,
+                "demandReading": 0,
+                "demandRegisterMode": "scrubbed",
+                "kvarMultiplier": 0,
+                "kvarPresentReading": 0,
+                "kvarPreviousReading": 0,
+                "kvarRegisterMode": "scrubbed",
+                "kvarUsage": 0,
+                "meter": "1N0000000001",
+                "meterPositionNumber": 0,
+                "meterRegisterNumber": 0,
+                "presentMeterReading": 0,
+                "presentReadDate": 1792296000000,
+                "presentReadingType": "VALID",
+                "previousMeterReading": 0,
+                "previousReadDate": 1789704000000,
+                "previousReadingType": "VALID",
+                "provider": "COBB",
+                "rateSchedule": "NFON",
+                "service": "ELEC",
+                "serviceLocation": "70001",
+                "serviceSummary": {
+                  "industry": "ELECTRIC",
+                  "service": "ELEC",
+                  "serviceDescription": "scrubbed"
+                },
+                "unitOfMeasure": "KWH",
+                "usage": 405,
+                "usageRegisterMode": "scrubbed"
+              },
+              {
+                "billedDemand": 0,
+                "billedUsage": 302,
+                "demandMultiplier": 0,
+                "demandReading": 0,
+                "demandRegisterMode": "scrubbed",
+                "kvarMultiplier": 0,
+                "kvarPresentReading": 0,
+                "kvarPreviousReading": 0,
+                "kvarRegisterMode": "scrubbed",
+                "kvarUsage": 0,
+                "meter": "1N0000000001",
+                "meterPositionNumber": 0,
+                "meterRegisterNumber": 0,
+                "presentMeterReading": 0,
+                "presentReadDate": 1792296000000,
+                "presentReadingType": "VALID",
+                "previousMeterReading": 0,
+                "previousReadDate": 1789704000000,
+                "previousReadingType": "VALID",
+                "provider": "COBB",
+                "rateSchedule": "NFSOF",
+                "service": "ELEC",
+                "serviceLocation": "70001",
+                "serviceSummary": {
+                  "industry": "ELECTRIC",
+                  "service": "ELEC",
+                  "serviceDescription": "scrubbed"
+                },
+                "unitOfMeasure": "KWH",
+                "usage": 302,
+                "usageRegisterMode": "scrubbed"
+              }
+            ],
+            "serviceLocation": "70001"
+          }
+        ],
+        "showViewBillLink": false,
+        "totalAdjustments": 0.0
+      },
+      {
+        "adjustedBillAmount": 149.0,
+        "billCycleNumber": 3,
+        "billInsertsExist": false,
+        "billProcessUuid": "scrubbed",
+        "billingDate": 1790139109000,
+        "billingHistoryAdjustments": [],
+        "charges": [
+          {
+            "chargeAmount": 4.49,
+            "chargeType": "TAX",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 1.12,
+            "chargeType": "TAX",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 1.12,
+            "chargeType": "TAX",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 0.09,
+            "chargeType": "OTHER",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 30.0,
+            "chargeType": "OTHER",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": " ",
+            "serviceLocation": "70001",
+            "usage": 0
+          },
+          {
+            "chargeAmount": 27.9,
+            "chargeType": "USAGE",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": "NFOFF",
+            "serviceLocation": "70001",
+            "unitOfMeasure": "KWH",
+            "usage": 372
+          },
+          {
+            "chargeAmount": 61.18,
+            "chargeType": "USAGE",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": "NFON",
+            "serviceLocation": "70001",
+            "unitOfMeasure": "KWH",
+            "usage": 437
+          },
+          {
+            "chargeAmount": 23.1,
+            "chargeType": "SERVICE",
+            "industry": "ELECTRIC",
+            "provider": "COBB",
+            "rateSchedule": "NFON",
+            "serviceLocation": "70001",
+            "usage": 0
+          }
+        ],
+        "isFinalBill": false,
+        "modified": false,
+        "originalBillAmount": 149.0,
+        "priorBalanceAfterBilling": 0.0,
+        "revenueMonth": {
+          "month": "Sep",
+          "monthInt": 9,
+          "year": 2026
+        },
+        "serviceLocations": [
+          {
+            "address": {
+              "city": "scrubbed",
+              "lineOne": "scrubbed",
+              "state": "scrubbed",
+              "zipCode": "scrubbed"
+            },
+            "description": "scrubbed",
+            "industryServiceStatusMap": {
+              "ELECTRIC": "scrubbed"
+            },
+            "isDefault": false,
+            "location": "scrubbed",
+            "readings": [
+              {
+                "billedDemand": 0.0,
+                "billedUsage": 372,
+                "demandMultiplier": 0,
+                "demandReading": 0,
+                "demandRegisterMode": "scrubbed",
+                "kvarMultiplier": 0,
+                "kvarPresentReading": 0,
+                "kvarPreviousReading": 0,
+                "kvarRegisterMode": "scrubbed",
+                "kvarUsage": 0,
+                "meter": "1N0000000001",
+                "meterPositionNumber": 0,
+                "meterRegisterNumber": 0,
+                "presentMeterReading": 0,
+                "presentReadDate": 1789704000000,
+                "presentReadingType": "VALID",
+                "previousMeterReading": 0,
+                "previousReadDate": 1787889600000,
+                "previousReadingType": "VALID",
+                "provider": "COBB",
+                "rateSchedule": "NFOFF",
+                "service": "ELEC",
+                "serviceLocation": "70001",
+                "serviceSummary": {
+                  "industry": "ELECTRIC",
+                  "service": "ELEC",
+                  "serviceDescription": "scrubbed"
+                },
+                "unitOfMeasure": "KWH",
+                "usage": 372,
+                "usageRegisterMode": "scrubbed"
+              },
+              {
+                "billedDemand": 0,
+                "billedUsage": 437,
+                "demandMultiplier": 0,
+                "demandReading": 0,
+                "demandRegisterMode": "scrubbed",
+                "kvarMultiplier": 0,
+                "kvarPresentReading": 0,
+                "kvarPreviousReading": 0,
+                "kvarRegisterMode": "scrubbed",
+                "kvarUsage": 0,
+                "meter": "1N0000000001",
+                "meterPositionNumber": 0,
+                "meterRegisterNumber": 0,
+                "presentMeterReading": 0,
+                "presentReadDate": 1789704000000,
+                "presentReadingType": "VALID",
+                "previousMeterReading": 0,
+                "previousReadDate": 1787889600000,
+                "previousReadingType": "VALID",
+                "provider": "COBB",
+                "rateSchedule": "NFON",
+                "service": "ELEC",
+                "serviceLocation": "70001",
+                "serviceSummary": {
+                  "industry": "ELECTRIC",
+                  "service": "ELEC",
+                  "serviceDescription": "scrubbed"
+                },
+                "unitOfMeasure": "KWH",
+                "usage": 437,
+                "usageRegisterMode": "scrubbed"
+              },
+              {
+                "billedDemand": 0,
+                "billedUsage": 206,
+                "demandMultiplier": 0,
+                "demandReading": 0,
+                "demandRegisterMode": "scrubbed",
+                "kvarMultiplier": 0,
+                "kvarPresentReading": 0,
+                "kvarPreviousReading": 0,
+                "kvarRegisterMode": "scrubbed",
+                "kvarUsage": 0,
+                "meter": "1N0000000001",
+                "meterPositionNumber": 0,
+                "meterRegisterNumber": 0,
+                "presentMeterReading": 0,
+                "presentReadDate": 1789704000000,
+                "presentReadingType": "VALID",
+                "previousMeterReading": 0,
+                "previousReadDate": 1787889600000,
+                "previousReadingType": "VALID",
+                "provider": "COBB",
+                "rateSchedule": "NFSOF",
+                "service": "ELEC",
+                "serviceLocation": "70001",
+                "serviceSummary": {
+                  "industry": "ELECTRIC",
+                  "service": "ELEC",
+                  "serviceDescription": "scrubbed"
+                },
+                "unitOfMeasure": "KWH",
+                "usage": 206,
+                "usageRegisterMode": "scrubbed"
+              }
+            ],
+            "serviceLocation": "70001"
+          }
+        ],
+        "showViewBillLink": false,
+        "totalAdjustments": 0.0
+      }
+    ],
+    "customerSummary": {
+      "address": {
+        "city": "scrubbed",
+        "country": "scrubbed",
+        "description": "scrubbed",
+        "lineOne": "scrubbed",
+        "state": "scrubbed",
+        "zip4": "scrubbed",
+        "zipCode": "scrubbed"
+      },
+      "customer": "scrubbed",
+      "customerStatus": "scrubbed",
+      "displayName": "scrubbed",
+      "firstName": "scrubbed",
+      "isDefault": false,
+      "lastName": "scrubbed"
+    },
+    "systemOfRecord": "UTILITY"
+  }
+]

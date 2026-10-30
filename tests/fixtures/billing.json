@@ -41,8 +41,20 @@
                   "accountReceivableCounter": 0,
                   "accountType": "scrubbed",
                   "agingDetails": {
+                    "currentBilledDate": 0,
+                    "currentCutoffDate": 0,
                     "currentDelinquentAmount": 0.0,
+                    "currentDelinquentStage": "scrubbed",
+                    "currentDq1Date": 0,
+                    "currentDq2Date": 0,
+                    "currentDueDate": 0,
                     "currentLateCharge": 0.0,
+                    "currentPrintDate": 0,
+                    "currentRevenueMonth": {
+                      "month": "scrubbed",
+                      "monthInt": 0,
+                      "year": 0
+                    },
                     "ninetyDelinquentAmount": 0.0,
                     "ninetyLateCharge": 0.0,
                     "past30DaysDue": 0.0,
@@ -51,19 +63,34 @@
                     "pastDue": 0.0,
                     "sixtyDelinquentAmount": 0.0,
                     "sixtyLateCharge": 0.0,
+                    "thirtyBilledDate": 0,
+                    "thirtyCutoffDate": 0,
                     "thirtyDelinquentAmount": 0.0,
+                    "thirtyDelinquentStage": "scrubbed",
+                    "thirtyDq1Date": 0,
+                    "thirtyDq2Date": 0,
+                    "thirtyDueDate": 0,
                     "thirtyLateCharge": 0.0,
+                    "thirtyPrintDate": 0,
+                    "thirtyRevenueMonth": {
+                      "month": "scrubbed",
+                      "monthInt": 0,
+                      "year": 0
+                    },
                     "totalDue": 0.0
                   },
                   "allowCheckPayments": false,
                   "allowCreditCardPayments": false,
+                  "bankDraftDate": 0,
                   "billInsertsExist": false,
                   "consecutive90DayBalance": 0,
                   "consecutiveDelinquentBills": 0,
+                  "currentDueDate": 0,
                   "delinquentActions": "scrubbed",
                   "eligibleForReconnect": false,
                   "gatewayLocationId": "scrubbed",
                   "lastPaymentAmount": 0.0,
+                  "lastPaymentDate": 0,
                   "latePayment": false,
                   "past30DaysDue": 0.0,
                   "past60DaysDue": 0.0,
@@ -80,16 +107,6 @@
                 "connectDate": 1787889600000,
                 "creditRating": {
                   "creditRatingHistory": {
-                    "202510": {
-                      "creditEvents": [],
-                      "level": "scrubbed",
-                      "revenueMonth": {
-                        "month": "scrubbed",
-                        "monthInt": 0,
-                        "year": 0
-                      },
-                      "score": 0
-                    },
                     "202511": {
                       "creditEvents": [],
                       "level": "scrubbed",
@@ -199,6 +216,16 @@
                         "year": 0
                       },
                       "score": 0
+                    },
+                    "202610": {
+                      "creditEvents": [],
+                      "level": "scrubbed",
+                      "revenueMonth": {
+                        "month": "scrubbed",
+                        "monthInt": 0,
+                        "year": 0
+                      },
+                      "score": 0
                     }
                   },
                   "level": "scrubbed",
@@ -229,9 +256,19 @@
                   {
                     "additionalAmountNextBillOnly": 0.0,
                     "additionalMonthlyContribution": 0.0,
+                    "currentYearToDateHistoryCharges": {
+                      "202609": 0.0,
+                      "202610": 0.0
+                    },
                     "previousYearToDateContribution": 0,
+                    "previousYearToDateHistoryCharges": {},
                     "provider": "scrubbed",
                     "recentContribution": 0.0,
+                    "recentContributionDate": {
+                      "month": "scrubbed",
+                      "monthInt": 0,
+                      "year": 0
+                    },
                     "status": false,
                     "yearToDateContribution": 0.0
                   }
