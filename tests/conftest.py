@@ -73,6 +73,7 @@ def mock_client() -> Generator[AsyncMock]:
     client.login.return_value = recordings.session()
     client.user_data.return_value = recordings.customers(recordings.LOCATION)
     client.billing.return_value = recordings.billing_summary()
+    client.billing_history.return_value = []
     client.service_location.return_value = recordings.service_location()
     client.poll_hourly.return_value = recordings.poll_result()
 

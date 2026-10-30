@@ -255,7 +255,7 @@
     },
     "finalize_cycle": {
       "name": "Finalize a cycle",
-      "description": "Records what a posted bill charged for one billing cycle and reprices it so its cost statistics match the bill to the cent. Besides the bill total, give the lines your rate schedule reads from a bill; each field says which schedules read it.",
+      "description": "Records what a posted bill charged for one billing cycle and reprices it so its cost statistics match the bill to the cent. Bills SmartHub posts are recorded on their own; use this for a bill it does not have, or to override one. Besides the bill total, give the lines your rate schedule reads from a bill; each field says which schedules read it.",
       "fields": {
         "config_entry_id": {
           "name": "Service location",
@@ -293,7 +293,7 @@
     },
     "unfinalize_cycle": {
       "name": "Unfinalize a cycle",
-      "description": "Drops a cycle's recorded bill and prices it from the rate schedule again.",
+      "description": "Drops a cycle's recorded bill and prices it from the rate schedule again. A bill SmartHub has posted comes back on the next run.",
       "fields": {
         "config_entry_id": {
           "name": "Service location",

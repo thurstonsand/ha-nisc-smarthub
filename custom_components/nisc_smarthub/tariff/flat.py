@@ -11,7 +11,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date, tzinfo
 
+from custom_components.nisc_smarthub.smarthub import Charge
+
 from .base import (
+    SERVICE_LINE,
     Cycle,
     CycleActuals,
     HourCost,
@@ -22,6 +25,7 @@ from .base import (
     Tariff,
     TariffSource,
     nominal_hours,
+    total_of,
     version_for,
 )
 
@@ -95,6 +99,10 @@ class FlatTariff(Tariff):
             ],
             allowance_remaining={},
         )
+
+    def read_bill(self, charges: Sequence[Charge]) -> dict[str, float]:
+        """Read the monthly charge off a bill."""
+        return {SERVICE_CHARGE: total_of(charges, SERVICE_LINE)}
 
 
 def _bill_day(cycle: Cycle, actuals: CycleActuals | None) -> date:

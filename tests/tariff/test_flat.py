@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
+from custom_components.nisc_smarthub.smarthub import Charge
 from custom_components.nisc_smarthub.tariff import (
     NHEC_RESIDENTIAL,
     Cycle,
@@ -152,3 +153,24 @@ def test_schedule_b_at_nhec_picks_the_tariff(
 ) -> None:
     """`COOP` is a generic qualifier, so only NHEC's portal makes it NHEC's."""
     assert (tariff_for(host, codes) is NHEC_RESIDENTIAL) is matched
+
+
+def test_a_bill_supplies_the_member_charge() -> None:
+    """Every service line counts toward it, and nothing else does."""
+    charges = [
+        Charge(
+            charge_type=charge_type,
+            service_location="70001",
+            industry="ELECTRIC",
+            rate_schedule="B",
+            usage=usage,
+            amount=amount,
+        )
+        for charge_type, usage, amount in (
+            ("USAGE", 621.0, 153.46),
+            ("SERVICE", 0.0, 29.0),
+            ("OTHER", 0.0, 4.0),
+        )
+    ]
+
+    assert NHEC_RESIDENTIAL.read_bill(charges) == {"service_charge": 29.0}

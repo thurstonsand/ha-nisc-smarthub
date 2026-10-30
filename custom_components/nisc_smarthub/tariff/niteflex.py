@@ -11,7 +11,13 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date, tzinfo
 
+from custom_components.nisc_smarthub.smarthub import Charge
+
 from .base import (
+    POWER_COST_ADJUSTMENT_LINE,
+    SERVICE_LINE,
+    TAX_LINE,
+    USAGE_LINE,
     Cycle,
     CycleActuals,
     HourCost,
@@ -23,6 +29,7 @@ from .base import (
     Tariff,
     TariffSource,
     nominal_hours,
+    total_of,
     version_for,
 )
 
@@ -99,6 +106,22 @@ class NiteFlexTariff(Tariff):
                 )
             },
         )
+
+    def read_bill(self, charges: Sequence[Charge]) -> dict[str, float]:
+        """Read the service charge, the tax, and the PCA factor off a bill.
+
+        The PCA applies to the kWh the schedule charged for, which the per-kWh
+        lines carry, so the free allowance stays out of the factor's divisor.
+        """
+        charged = sum(
+            charge.usage for charge in charges if charge.charge_type == USAGE_LINE
+        )
+        pca = total_of(charges, POWER_COST_ADJUSTMENT_LINE)
+        return {
+            SERVICE_CHARGE: total_of(charges, SERVICE_LINE),
+            PCA_FACTOR: pca / charged if charged else 0.0,
+            TAX: total_of(charges, TAX_LINE),
+        }
 
 
 def _components(

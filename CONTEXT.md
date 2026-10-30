@@ -45,7 +45,7 @@ One number a tariff's rate versions carry, declared by the tariff with whether i
 One dated set of a tariff's rate parameters with an `effective_from` calendar day. Which hours a version governs is the tariff's rule: NiteFlex prices each hour under the version in effect on its local day; a schedule billed on a bills-rendered basis prices a whole cycle under the version in effect when its bill is rendered.
 
 **Bill line**:
-One number a posted bill supplies that the tariff declares it reads, replacing its estimate for that cycle. NiteFlex reads the service charge, the PCA factor, and the tax. Read dates and the bill total belong to every bill.
+One number a posted bill supplies that the tariff declares it reads, replacing its estimate for that cycle. NiteFlex reads the service charge, the PCA factor, and the tax. Read dates and the bill total belong to every bill. A tariff reads its bill lines from the portal's charge categories (`SERVICE`, `TAX`, `POWER_COST_ADJUSTMENT`, ...).
 
 **Rider**:
 A per-kWh adjustment applied on top of the rate schedule and known only when the bill posts. Cobb EMC's is the Power Cost Adjustment (PCA).
@@ -71,7 +71,7 @@ The span of hours one run recomputes, diffs, and rewrites. It always ends at the
 A billing cycle whose bill has posted, so its rider and true-up values are known and its cost statistics can be frozen.
 
 **True-up**:
-Repricing a finalized cycle with the values from its bill and rewriting its cost statistics.
+Repricing a finalized cycle with the values from its bill and rewriting its cost statistics. A run trues up every cycle SmartHub has posted a bill for, reading the bill's read dates, total, and charge lines; the finalize action records a bill the portal lacks or overrides one.
 
 **Cycle record**:
 The stored per-cycle facts the integration did not derive from the schedule: bill-observed actuals (service charge, rider factor, tax, read dates, bill total) and the residual. Exists only for finalized cycles.

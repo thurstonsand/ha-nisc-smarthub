@@ -347,6 +347,64 @@ async def test_billing_conforms_the_account(
     assert location.meters[0].meter_type == "TIME_OF_DAY_KWH_DEMAND"
 
 
+async def test_billing_history_conforms_each_bill(
+    logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """Each bill keeps its read instants, its total, and every charge line."""
+    aioclient_mock.get(
+        f"{BASE}/secured/billing/history", json=fixture("billing_history")
+    )
+    start = datetime(2026, 8, 28, 4, tzinfo=UTC)
+    end = datetime(2026, 10, 27, 4, tzinfo=UTC)
+
+    bills = await logged_in.billing_history(ACCOUNT, start, end)
+
+    _, url, _, _ = aioclient_mock.mock_calls[0]
+    assert url.query == {
+        "account": ACCOUNT,
+        "start": "1787889600000",
+        "end": "1793073600000",
+    }
+    assert [bill.original_bill_amount for bill in bills] == [145.0, 149.0]
+    october = bills[0]
+    # Read dates are real instants at local midnight, like connectDate.
+    assert {
+        (reading.previous_read_date, reading.present_read_date)
+        for reading in october.readings
+    } == {(datetime(2026, 9, 18, 4, tzinfo=UTC), datetime(2026, 10, 18, 4, tzinfo=UTC))}
+    assert {reading.rate_schedule for reading in october.readings} == {
+        "NFON",
+        "NFOFF",
+        "NFSOF",
+    }
+    usage = next(
+        charge
+        for charge in october.charges
+        if charge.charge_type == "USAGE" and charge.rate_schedule == "NFON"
+    )
+    assert (usage.usage, usage.amount, usage.service_location) == (
+        405.0,
+        56.7,
+        LOCATION,
+    )
+    assert sum(charge.amount for charge in october.charges) == pytest.approx(145.0)
+
+
+async def test_billing_history_skips_other_accounts(
+    logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """A login that sees two accounts gets only the asked-for one's bills."""
+    payload = fixture("billing_history")
+    other = json.loads(json.dumps(payload[0]))
+    other["accountSummary"]["account"] = "900000002"
+    aioclient_mock.get(f"{BASE}/secured/billing/history", json=[other, *payload])
+    moment = datetime(2026, 10, 27, 4, tzinfo=UTC)
+
+    bills = await logged_in.billing_history(ACCOUNT, moment, moment)
+
+    assert len(bills) == 2
+
+
 async def test_billing_with_two_providers_is_rejected(
     logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
 ) -> None:

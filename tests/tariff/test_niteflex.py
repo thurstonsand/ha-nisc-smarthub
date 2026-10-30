@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
+from custom_components.nisc_smarthub.smarthub import Charge
 from custom_components.nisc_smarthub.tariff import (
     NITEFLEX,
     Cycle,
@@ -412,3 +413,48 @@ def test_a_recurring_adjustment_is_smeared_and_untaxed() -> None:
     assert costs[0].tax == pytest.approx(
         0.0775 * (costs[0].energy + costs[0].fixed + costs[0].rider)
     )
+
+
+def line(charge_type: str, amount: float, usage: float = 0.0) -> Charge:
+    """Return one charge line of a Cobb bill."""
+    return Charge(
+        charge_type=charge_type,
+        service_location="70001",
+        industry="ELECTRIC",
+        rate_schedule=" ",
+        usage=usage,
+        amount=amount,
+    )
+
+
+def test_a_bill_supplies_the_service_charge_tax_and_pca_factor() -> None:
+    """The factor divides the PCA by the kWh charged for, not the free kWh.
+
+    The October bill's per-kWh lines carry 616 + 405 kWh; its 302 free Super
+    Off-Peak kWh have no line, so dividing by every kWh would give 0.0077.
+    """
+    charges = [
+        line("USAGE", 46.2, usage=616),
+        line("USAGE", 56.7, usage=405),
+        line("SERVICE", 33.0),
+        line("POWER_COST_ADJUSTMENT", 10.21),
+        line("TAX", 5.44),
+        line("TAX", 1.36),
+        line("TAX", 1.36),
+        line("OTHER", 0.94),
+    ]
+
+    values = NITEFLEX.read_bill(charges)
+
+    assert values == {
+        "service_charge": 33.0,
+        "pca_factor": pytest.approx(0.01),
+        "tax": pytest.approx(8.16),
+    }
+
+
+def test_a_bill_without_a_pca_line_has_no_rider() -> None:
+    """Cobb's 2026 bills carry no PCA line at all."""
+    values = NITEFLEX.read_bill([line("SERVICE", 23.1), line("TAX", 4.49)])
+
+    assert values == {"service_charge": 23.1, "pca_factor": 0.0, "tax": 4.49}

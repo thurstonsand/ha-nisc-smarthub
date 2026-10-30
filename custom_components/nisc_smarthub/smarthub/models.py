@@ -108,6 +108,44 @@ class ServiceLocation:
 
 
 @dataclass(frozen=True, kw_only=True)
+class Charge:
+    """One line of a posted bill.
+
+    `charge_type` is the portal's category (`USAGE`, `SERVICE`, `TAX`,
+    `POWER_COST_ADJUSTMENT`, `OTHER`, `PAYMENT`, ...), and `usage` the kWh the
+    line was charged on, zero for a line not charged per kWh.
+    """
+
+    charge_type: str
+    service_location: str
+    industry: str
+    rate_schedule: str
+    usage: float
+    amount: float
+
+
+@dataclass(frozen=True, kw_only=True)
+class Reading:
+    """One register's reads for a posted bill, as real instants."""
+
+    service_location: str
+    meter: str
+    rate_schedule: str
+    previous_read_date: datetime
+    present_read_date: datetime
+
+
+@dataclass(frozen=True, kw_only=True)
+class Bill:
+    """One posted bill from the account's billing history."""
+
+    billing_date: datetime
+    original_bill_amount: float
+    charges: tuple[Charge, ...]
+    readings: tuple[Reading, ...]
+
+
+@dataclass(frozen=True, kw_only=True)
 class PollResult:
     """One completed usage poll.
 

@@ -10,7 +10,7 @@ One config entry tracks one service location. It ships two rate schedules: Cobb 
 - Hourly dollars for the same hours, priced from your rate schedule, as the grid source's cost statistic.
 - On a time-of-use schedule, one kWh statistic per period, so a template or a card can show how the day split between on peak, off peak, and super off peak.
 - Sensors for the cycle to date, any allowance the schedule has left, and how fresh the data is.
-- A true-up action that reprices a whole billing cycle from the bill when it posts, so a finalized cycle's cost statistics match the bill to the cent.
+- A true-up that reprices a whole billing cycle from its bill once SmartHub posts it, read dates and charge lines included, so a finalized cycle's cost statistics match the bill to the cent. It runs on its own; an action covers a bill the portal does not have.
 
 ## Supported accounts
 
@@ -149,6 +149,8 @@ It recomputes and rewrites; it never clears rows.
 
 ### `nisc_smarthub.finalize_cycle`
 
+Every run reads the account's billing history and finalizes each cycle a posted bill covers that no record covers yet, taking the read dates, the bill total, and the lines your tariff reads straight off the bill. Ledger entries (the payment against the previous bill and the balance carried) are not part of a bill's total. This action is for a bill the portal does not have, or one you want to override: a cycle you finalize by hand keeps your record, and the portal's bill for the same span is skipped.
+
 | Field | Required | Meaning |
 | --- | --- | --- |
 | `config_entry_id` | yes | The entry the bill belongs to. |
@@ -173,7 +175,7 @@ The action refuses a read end after today, read dates that overlap another recor
 | `config_entry_id` | yes | The entry the cycle belongs to. |
 | `cycle_start` | yes | The day the finalized cycle starts on. |
 
-Drops the recorded bill and prices the cycle from the rate schedule again.
+Drops the recorded bill and prices the cycle from the rate schedule again. A bill the portal has posted comes back on the next run, so this undoes a bill entered by hand.
 
 ## Changing an entry later
 
@@ -193,7 +195,7 @@ Each of these triggers a full reprice of everything it could have changed.
 The integration polls every 6 hours by default. Each run polls once and rewrites a window of hours rather than appending to the end:
 
 - A routine run recomputes from the start of the billing cycle containing seven days ago through the newest hour SmartHub has.
-- A full pass, from the oldest cycle without a bill, runs on the first run after a restart, after any rate or cycle change, after a true-up, and when you ask for one with `reconcile`.
+- A full pass, from the oldest cycle without a bill, runs on the first run after a restart, after any rate or cycle change, after a true-up, including one a newly posted bill triggers, and when you ask for one with `reconcile`.
 - SmartHub publishes hourly data about a day late, and lags its time-of-use classification behind its usage at the tail. Hours it has not classified yet carry kWh and no cost until the next run that finds them classified; a poll that arrives without any classification leaves the stored cost alone.
 - SmartHub revises past hours. A revision is rewritten along with every later cumulative sum, so the dashboard bar changes without a spike. The log carries one line per series per run with the count and range at INFO, and each hour's old and new values at DEBUG.
 - An hour that was stored and then vanishes from the portal's usage is rewritten to zero in every statistic rather than left standing, because the recorder cannot delete a row.
@@ -209,7 +211,7 @@ The integration polls every 6 hours by default. Each run polls once and rewrites
 
 ## Known limitations
 
-- Bills are not read. The true-up is an action you run with the numbers off your bill.
+- A bill's lines are sorted by the portal's own charge categories. A tariff reads the categories it knows (for NiteFlex the service charge, the PCA, and the tax), and anything filed elsewhere lands in the residual, so the total is right even when the split is not.
 - Two tariffs ship, NiteFlex and NHEC Residential (B). Other co-ops' schedules need a tariff module.
 - NHEC's tariff is built from its published schedule and one member's bills, not tested against a live NHEC login. It takes a cycle's bill to be rendered on the day the cycle ends, so around a February 1 or August 1 rate change an estimate can sit at the wrong version until the bill is finalized.
 - The first cycle's proration is a guess. It takes the full service charge and the full allowance regardless of its length, because how Cobb EMC prorates a short first cycle is not published. The first bill's true-up corrects it.
@@ -227,7 +229,7 @@ The integration polls every 6 hours by default. Each run polls once and rewrites
 
 **No dollars, only kWh.** Check the cycle-to-date cost sensor's `unpriced_hours` attribute and the repairs page. Hours with no time-of-use classification are written as usage with no cost.
 
-**Numbers do not match the bill.** Until you run `finalize_cycle`, the cost is an estimate that does not know your power cost adjustment. Its rider component is zero unless you entered a PCA factor.
+**Numbers do not match the bill.** Until the bill posts, the cost is an estimate that does not know your power cost adjustment, and it is only as good as the entry's cycle day and rate version: check that the cycle day matches your meter's read day and the tax rate matches your county. Once the bill posts, the next run trues the cycle up to it.
 
 **Diagnostics.** Download them from the entry's menu. The dump redacts the password, the TOTP secret, and the email by key, and the account number, the service location id, and the meter number wherever they appear, statistic ids included.
 

@@ -17,8 +17,15 @@ from enum import StrEnum
 import math
 from typing import Any
 
+from custom_components.nisc_smarthub.smarthub import Charge
+
 HOUR_SECONDS = 3600
 EFFECTIVE_FROM = "effective_from"
+
+USAGE_LINE = "USAGE"
+SERVICE_LINE = "SERVICE"
+POWER_COST_ADJUSTMENT_LINE = "POWER_COST_ADJUSTMENT"
+TAX_LINE = "TAX"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -258,6 +265,15 @@ class Tariff(ABC):
         The residual is left at zero; `settle` owns it.
         """
 
+    @abstractmethod
+    def read_bill(self, charges: Sequence[Charge]) -> dict[str, float]:
+        """Return the bill parameters a posted bill's charge lines supply.
+
+        The charges are the ones that make up the bill's total for the
+        location; whatever they hold that no parameter names lands in the
+        residual.
+        """
+
     def slug_for_label(self, label: str) -> str | None:
         """Return the slug of the period the portal calls `label`."""
         folded = label.casefold()
@@ -289,6 +305,11 @@ class Tariff(ABC):
     def bill_values(self, values: Mapping[str, Any]) -> dict[str, float]:
         """Conform the lines a bill supplies for this tariff, or refuse them."""
         return conform_values(self.bill_parameters, values)
+
+
+def total_of(charges: Sequence[Charge], charge_type: str) -> float:
+    """Return what a bill's lines of one portal category add up to."""
+    return sum(charge.amount for charge in charges if charge.charge_type == charge_type)
 
 
 def rate_version_to_data(version: RateVersion) -> dict[str, Any]:

@@ -16,6 +16,7 @@ from homeassistant.helpers.recorder import get_instance
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
+from .bills import posted_actuals
 from .const import (
     CONF_ACCOUNT,
     CONF_CYCLE_DAY,
@@ -32,6 +33,7 @@ from .const import (
 from .cycles import Cycle, cycle_containing, cycles_covering, local_midnight
 from .smarthub import (
     AuthError,
+    Bill,
     ClientError,
     PollResult,
     SmartHubClient,
@@ -265,11 +267,7 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
                 periods=self._tariff.periods,
             ),
         )
-        # A bill saved but never priced is a run that failed after the save,
-        # and a fresh coordinator would otherwise skip that cycle as finalized.
-        self._pending: FullRequest | None = FullRequest(
-            from_floor=True, day=store.earliest_unpriced_start()
-        )
+        self._pending: FullRequest | None = FullRequest(from_floor=True, day=None)
         # The oldest hour each repair was raised for. A run can only clear a
         # repair when its window reaches back that far, because a shorter
         # window cannot see whether the hour is still wrong.
@@ -380,7 +378,10 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
             floor = (await self._client.billing(self._account)).connect_date
             self._floor = floor
             now = dt_util.utcnow()
-            plan = self._plan(floor, now, requested)
+            await self._async_finalize_posted(
+                await self._client.billing_history(self._account, floor, now)
+            )
+            plan = self._plan(floor, now, self._with_unpriced(requested))
             seeds = await self._writer.async_read_seeds(
                 window_start=plan.start, floor=floor
             )
@@ -422,6 +423,44 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
         await self._store.async_set_residuals(run.residuals)
         self._report(run, plan)
         return run.data
+
+    async def _async_finalize_posted(self, bills: Sequence[Bill]) -> None:
+        """Freeze every cycle the portal has billed that no record covers yet.
+
+        A record already covering the span wins, so a bill entered through the
+        finalize action stands until it is dropped.
+        """
+        for bill in bills:
+            actuals = posted_actuals(
+                bill,
+                location=self._location,
+                tariff=self._tariff,
+                zone=self._local_zone,
+            )
+            if actuals is None:
+                continue
+            day = actuals.read_start.date()
+            if (
+                day in self._store.records
+                or self.overlapping_record(day, actuals.read_start, actuals.read_end)
+                is not None
+            ):
+                continue
+            _LOGGER.info("truing up the cycle read from %s to its bill", day)
+            await self._store.async_finalize(day, actuals)
+
+    def _with_unpriced(self, requested: FullRequest | None) -> FullRequest | None:
+        """Reach back to the cycle before any bill no run has priced yet.
+
+        A bill's read start moves the end of the cycle before it, so that cycle
+        is repriced too. A run that failed after a bill was saved leaves it
+        unpriced, which is how the next run knows to reach back for it.
+        """
+        unpriced = self._store.earliest_unpriced_start()
+        if unpriced is None:
+            return requested
+        reprice = FullRequest(from_floor=False, day=unpriced - timedelta(hours=1))
+        return reprice if requested is None else requested.merged(reprice)
 
     def _plan(
         self, floor: datetime, now: datetime, full: FullRequest | None

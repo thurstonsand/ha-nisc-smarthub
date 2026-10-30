@@ -14,11 +14,14 @@ from zoneinfo import ZoneInfo
 
 from custom_components.nisc_smarthub.smarthub import (
     Address,
+    Bill,
     BillingLocation,
     BillingSummary,
+    Charge,
     Customer,
     Meter,
     PollResult,
+    Reading,
     ServiceLocation,
     ServiceLocationSummary,
     Session,
@@ -189,3 +192,44 @@ def service_location() -> ServiceLocation:
         state="GA",
         zip_code="30000",
     )
+
+
+def _instant(epoch_ms: int) -> datetime:
+    return datetime.fromtimestamp(epoch_ms / 1000, UTC)
+
+
+def bills() -> list[Bill]:
+    """Return the account's two recorded bills, newest first.
+
+    September's covers 2026-08-28 to 09-18 for $149.00, October's 09-18 to
+    10-18 for $145.00.
+    """
+    return [
+        Bill(
+            billing_date=_instant(bill["billingDate"]),
+            original_bill_amount=float(bill["originalBillAmount"]),
+            charges=tuple(
+                Charge(
+                    charge_type=charge["chargeType"],
+                    service_location=charge["serviceLocation"],
+                    industry=charge["industry"],
+                    rate_schedule=charge["rateSchedule"],
+                    usage=float(charge["usage"]),
+                    amount=float(charge["chargeAmount"]),
+                )
+                for charge in bill["charges"]
+            ),
+            readings=tuple(
+                Reading(
+                    service_location=reading["serviceLocation"],
+                    meter=reading["meter"],
+                    rate_schedule=reading["rateSchedule"],
+                    previous_read_date=_instant(reading["previousReadDate"]),
+                    present_read_date=_instant(reading["presentReadDate"]),
+                )
+                for location in bill["serviceLocations"]
+                for reading in location["readings"]
+            ),
+        )
+        for bill in payload("billing_history")[0]["billOverviews"]
+    ]

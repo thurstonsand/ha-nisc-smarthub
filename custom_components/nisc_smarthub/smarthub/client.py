@@ -19,11 +19,14 @@ import pyotp
 
 from .models import (
     Address,
+    Bill,
     BillingLocation,
     BillingSummary,
+    Charge,
     Customer,
     Meter,
     PollResult,
+    Reading,
     ServiceLocation,
     ServiceLocationSummary,
     Session,
@@ -153,6 +156,21 @@ class SmartHubClient:
             params={"userId": self.session.username, "accountNumber": account},
         )
         return _parse(lambda raw: _billing(raw, account), data, "billing")
+
+    async def billing_history(
+        self, account: str, start: datetime, end: datetime
+    ) -> list[Bill]:
+        """Return the account's bills rendered between two instants, newest first."""
+        data = await self._get(
+            "secured/billing/history",
+            "billing-history",
+            params={
+                "account": account,
+                "start": str(int(start.timestamp()) * 1000),
+                "end": str(int(end.timestamp()) * 1000),
+            },
+        )
+        return _parse(lambda raw: _bills(raw, account), data, "billing-history")
 
     async def service_location(self, location: str) -> ServiceLocation:
         """Return the premise record behind a service location id."""
@@ -572,6 +590,44 @@ def _billing(data: Any, account: str) -> BillingSummary:
         primary_rate_schedule_id=provider["primaryRateScheduleId"],
         locations=locations,
     )
+
+
+def _bills(data: Any, account: str) -> list[Bill]:
+    return [
+        Bill(
+            billing_date=_instant(bill["billingDate"]),
+            original_bill_amount=float(bill["originalBillAmount"]),
+            charges=tuple(
+                Charge(
+                    charge_type=charge["chargeType"],
+                    service_location=charge["serviceLocation"],
+                    industry=charge["industry"],
+                    rate_schedule=charge["rateSchedule"],
+                    usage=float(charge["usage"]),
+                    amount=float(charge["chargeAmount"]),
+                )
+                for charge in bill["charges"]
+            ),
+            readings=tuple(
+                Reading(
+                    service_location=reading["serviceLocation"],
+                    meter=reading["meter"],
+                    rate_schedule=reading["rateSchedule"],
+                    previous_read_date=_instant(reading["previousReadDate"]),
+                    present_read_date=_instant(reading["presentReadDate"]),
+                )
+                for location in bill["serviceLocations"]
+                for reading in location["readings"]
+            ),
+        )
+        for entry in data
+        if entry["accountSummary"]["account"] == account
+        for bill in entry["billOverviews"]
+    ]
+
+
+def _instant(epoch_ms: int) -> datetime:
+    return datetime.fromtimestamp(epoch_ms / 1000, UTC)
 
 
 def _sole(mapping: Any) -> Any:

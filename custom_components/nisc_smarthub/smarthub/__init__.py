@@ -11,11 +11,14 @@ from .client import (
 )
 from .models import (
     Address,
+    Bill,
     BillingLocation,
     BillingSummary,
+    Charge,
     Customer,
     Meter,
     PollResult,
+    Reading,
     ServiceLocation,
     ServiceLocationSummary,
     Session,
@@ -24,8 +27,10 @@ from .models import (
 __all__ = [
     "Address",
     "AuthError",
+    "Bill",
     "BillingLocation",
     "BillingSummary",
+    "Charge",
     "ClientError",
     "Customer",
     "Meter",
@@ -33,6 +38,7 @@ __all__ = [
     "MultipleProviders",
     "PollResult",
     "PollTimeout",
+    "Reading",
     "ServiceLocation",
     "ServiceLocationSummary",
     "Session",

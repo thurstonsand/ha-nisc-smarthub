@@ -27,6 +27,7 @@ def serve_portal(aioclient_mock: AiohttpClientMocker, poll: Any) -> None:
     """Answer the calls one reconcile run makes with recorded responses."""
     aioclient_mock.post(f"{BASE}/oauth/auth/v2", json=login_response())
     aioclient_mock.get(f"{BASE}/secured/billing", json=recordings.payload("billing"))
+    aioclient_mock.get(f"{BASE}/secured/billing/history", json=[])
     aioclient_mock.post(f"{BASE}/secured/utility-usage/poll", json=poll)
 
 
