@@ -101,6 +101,7 @@ run = "python scripts/check_strings.py"
 description = "Run Home Assistant against the checked-out integration"
 depends = ["bootstrap:deps"]
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 link=config/custom_components
 if [ -L "$link" ]; then
