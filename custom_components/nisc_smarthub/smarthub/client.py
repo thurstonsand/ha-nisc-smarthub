@@ -10,8 +10,10 @@ No Home Assistant imports belong in this package.
 
 import asyncio
 from collections.abc import Callable, Iterable
-from datetime import UTC, datetime, tzinfo
+from dataclasses import dataclass
+from datetime import UTC, datetime, time, timedelta, tzinfo
 import logging
+import math
 from typing import Any, Final
 
 import aiohttp
@@ -37,6 +39,7 @@ _LOGGER = logging.getLogger(__name__)
 POLL_ATTEMPTS: Final = 5
 POLL_DELAY: Final = 4.0
 REQUEST_TIMEOUT: Final = 30.0
+USAGE_DECIMALS: Final = 2
 
 MFA_FAILURE_MARKER: Final = "could not be verified"
 
@@ -67,6 +70,16 @@ class MultipleProviders(UnsupportedAccount):
 
 class MultipleMeters(UnsupportedAccount):
     """The service location has more than one meter."""
+
+
+@dataclass(frozen=True, kw_only=True)
+class _RepeatedHour:
+    """The wall-clock hour a fall-back day repeats, and the day it falls in."""
+
+    day_start: datetime
+    day_end: datetime
+    first: datetime
+    second: datetime
 
 
 class SmartHubClient:
@@ -192,10 +205,75 @@ class SmartHubClient:
 
         Without `time_of_use` the response's classification is never read, so
         a tariff that prices usage alone cannot fail on a split it ignores.
+
+        The hourly series has one point per wall-clock hour, so the hour the
+        fall-back night repeats is missing from it, and only the daily total
+        counts it. Verified against the 2026-11-01 pull: 24 hourly points, no
+        second 1am, and a daily total 0.78 kWh above their sum, all of it
+        super off-peak. Each fall-back day the window holds whole costs one
+        daily poll, and what its total leaves over the day's hours is the
+        repeated hour's usage, in the period of the hour it repeats.
         """
-        return await self._poll(
+        result = await self._poll(
             "HOURLY", account, location, start, end, time_of_use=time_of_use
         )
+        for night in self._fall_back_days(start, end):
+            hours = [
+                hour for hour in result.usage if night.day_start <= hour < night.day_end
+            ]
+            # The day is not whole until the portal reports every wall-clock hour.
+            if len(hours) < 24:
+                continue
+            daily = await self._poll(
+                "DAILY",
+                account,
+                location,
+                night.day_start,
+                night.day_end,
+                time_of_use=False,
+            )
+            total = daily.usage.get(night.day_start)
+            if total is None:
+                _LOGGER.debug("no daily total for %s yet", night.day_start.isoformat())
+                continue
+            left_over = round(
+                total - sum(result.usage[hour] for hour in hours), USAGE_DECIMALS
+            )
+            if left_over <= 0:
+                _LOGGER.debug(
+                    "the daily total for %s leaves %s kWh over its hours",
+                    night.day_start.isoformat(),
+                    left_over,
+                )
+                continue
+            result.usage[night.second] = left_over
+            for values in result.periods.values():
+                if night.first in values:
+                    values[night.second] = left_over
+        return result
+
+    def _fall_back_days(self, start: datetime, end: datetime) -> list[_RepeatedHour]:
+        """Return the hour each whole local day in the window repeats, if any."""
+        found: list[_RepeatedHour] = []
+        day = start.astimezone(self._local_zone).date()
+        while (day_start := self._instant(datetime.combine(day, time()))) < end:
+            walls = [datetime.combine(day, time(hour)) for hour in range(24)]
+            day += timedelta(days=1)
+            day_end = self._instant(datetime.combine(day, time()))
+            if day_start < start or day_end > end:
+                continue
+            found.extend(
+                _RepeatedHour(
+                    day_start=day_start,
+                    day_end=day_end,
+                    first=self._instant(wall),
+                    second=self._instant(wall, fold=1),
+                )
+                for wall in walls
+                if self._exists(wall)
+                and self._instant(wall) != self._instant(wall, fold=1)
+            )
+        return found
 
     async def poll_daily(
         self,
@@ -325,10 +403,8 @@ class SmartHubClient:
         """Return the real UTC instant a wall-clock reading means.
 
         On the night clocks fall back the wall clock repeats an hour, and
-        `fold` picks which of the two instants a repeated reading means. How
-        the live portal encodes that night is unverified until 2026-11-01; the
-        working assumption is two points with the same wall-clock hour, in
-        order, and `_intervals` reads them that way.
+        `fold` picks which of the two instants a repeated reading means. The
+        portal reports that hour once, read as its first instant.
         """
         return wall.replace(tzinfo=self._local_zone, fold=fold).astimezone(UTC)
 
@@ -370,6 +446,7 @@ class SmartHubClient:
             }
         # A day holds hours of every period; only an hour belongs to one.
         if time_frame == "HOURLY":
+            _split_merged_hours(usage, periods)
             _one_period_per_hour(periods)
         return PollResult(meter=meter, usage=usage, periods=periods)
 
@@ -386,10 +463,9 @@ class SmartHubClient:
         phantom is dropped and a phantom carrying energy is added to that
         hour, since the portal has nowhere else to put it.
 
-        A second top-of-hour point for a wall-clock hour is the repeated hour
-        of the fall-back night and is read as its second instant. Anywhere
-        else, two points for one hour mean the response is not what this
-        client understands.
+        The portal reports the hour the fall-back night repeats once, so two
+        points for one hour mean the response is not what this client
+        understands.
         """
         values: dict[datetime, float] = {}
         on_the_hour: set[datetime] = set()
@@ -415,11 +491,7 @@ class SmartHubClient:
             elif hour != start:
                 _LOGGER.debug("folding the point at %s into its hour", start)
             elif hour in on_the_hour:
-                repeated = self._instant(wall, fold=1)
-                if repeated == hour or repeated in on_the_hour:
-                    raise ValueError(f"two readings for the hour at {hour.isoformat()}")
-                hour = repeated
-                on_the_hour.add(hour)
+                raise ValueError(f"two readings for the hour at {hour.isoformat()}")
             else:
                 on_the_hour.add(hour)
             values[hour] = values.get(hour, 0.0) + value
@@ -458,6 +530,34 @@ def _period_label(series_name: str, meter: str) -> str:
             "is not prefixed by the meter"
         )
     return label
+
+
+def _split_merged_hours(
+    usage: dict[datetime, float], periods: dict[str, dict[datetime, float]]
+) -> None:
+    """Hand an hour the time-of-use split folded into the hour before it back.
+
+    On the 2026-11-01 fall-back night the portal's time-of-use series put 5am's
+    kWh on its 4am point and left 5am out, while the usage series reported both
+    hours on their own. A classified hour carrying its own usage plus that of
+    an unclassified hour after it is that merge, and both hours keep its period.
+    """
+    classified = {hour for values in periods.values() for hour in values}
+    tolerance = 10**-USAGE_DECIMALS / 2
+    for values in periods.values():
+        for hour, value in list(values.items()):
+            following = hour + timedelta(hours=1)
+            if (
+                hour in usage
+                and following in usage
+                and following not in classified
+                and usage[following] > 0
+                and math.isclose(
+                    value, usage[hour] + usage[following], abs_tol=tolerance
+                )
+            ):
+                values[hour] = usage[hour]
+                values[following] = usage[following]
 
 
 def _one_period_per_hour(periods: dict[str, dict[datetime, float]]) -> None:

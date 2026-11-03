@@ -190,7 +190,7 @@ NiscSmartHubCoordinator._async_update_data
   plan = plan_window(requested)                    routine | full (set by setup, config change, finalize, action)
   seeds = writer.read_seeds(plan.start)            statistics_during_period([floor, W)) per owned id, last sum
     empty and W > floor -> plan = full from floor, seeds = 0
-  poll = client.poll_hourly(account, location, plan.start, now)      one poll per run; PENDING -> retry -> COMPLETE
+  poll = client.poll_hourly(account, location, plan.start, now)      one poll per run, plus a DAILY one per whole fall-back day; PENDING -> retry -> COMPLETE
   hours = conform(poll, tariff.periods)            unknown label -> keep usage, skip cost, raise repair
   cycles = split_into_cycles(hours, cycle_day, store.finalized_bounds())
   costs = [tariff.price_cycle(c, c.hours, versions, store.actuals(c)) for c in cycles]
@@ -327,7 +327,9 @@ Amended after the second review (2026-09-11): the scrub is default-deny. Identif
 - **Partial poll (USAGE without TIME_OF_USE):** usage written, cost skipped, repair issue.
 - **Hour in USAGE but in no period series:** treated as an unknown label.
 - **Newest hours absent:** SmartHub lags about a day; nothing is written for them; `newest_data_hour` shows what arrived.
-- **DST transitions:** hours are aware UTC at the boundary; the tariff's "local midnight" for version selection and the cycle's local bounds are computed in the configured timezone. The portal labels its wall clock as UTC, so the repeated 1am of the fall-back night arrives as two points with the same timestamp; the client reads the second as the second instant. Any other repeated hour is a `ClientError`. How the live portal encodes that night is unverified until 2026-11-01. The wall-clock hour the spring-forward night skips maps to the same instant as the hour after it; a reading there with 0 kWh is dropped and one carrying energy is added to that hour.
+- **DST transitions:** hours are aware UTC at the boundary; the tariff's "local midnight" for version selection and the cycle's local bounds are computed in the configured timezone. The portal labels its wall clock as UTC and reports one point per wall-clock hour, so the repeated 1am of the fall-back night arrives once and is read as its first instant; a repeated hour is a `ClientError`. The wall-clock hour the spring-forward night skips maps to the same instant as the hour after it; a reading there with 0 kWh is dropped and one carrying energy is added to that hour. How the live portal encodes the spring-forward night is unverified until 2027-03-14.
+
+  Amended after the 2026-11-01 fall-back night: the live portal reported 24 hourly points labeled 00 through 23 with no second 1am, and its daily total was 0.78 kWh above their sum, all of it super off-peak, so the repeated hour exists only in the daily series. The time-of-use split also put 5am's kWh on its 4am point and left 5am unclassified, which raised the unclassified-hour repair. `poll_hourly` now polls DAILY for each whole fall-back day in its window and writes what the total leaves over the day's hours at the repeated hour's second instant, in the period of its first; the client hands a time-of-use point carrying the next unclassified hour's usage back to both hours.
 - **Cycle day 31 in a 30-day month:** clamps to the last day.
 - **First cycle:** starts at the connect date, flat $33 and 400 kWh regardless of length; the true-up carries the actual.
 - **Rate version with a future date:** inert until its day; the routine window picks it up.

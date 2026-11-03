@@ -875,16 +875,23 @@ async def test_a_period_with_no_hours_in_the_window_is_dropped_with_them(
     assert set(result.periods) == {"Off Peak", "On Peak", "Super Off Pk"}
 
 
-def synthetic_poll(local_points: list[tuple[datetime, float]]) -> Any:
+def synthetic_poll(
+    local_points: list[tuple[datetime, float]],
+    periods: dict[str, list[tuple[datetime, float]]] | None = None,
+) -> Any:
     """Return a COMPLETE poll answer carrying given local wall-clock points.
 
     The portal labels its wall clock as UTC, so each point's `x` is the wall
-    time's epoch as if it were UTC.
+    time's epoch as if it were UTC. Without `periods`, every point is
+    classified Super Off Pk.
     """
-    data = [
-        {"x": int(wall.replace(tzinfo=UTC).timestamp() * 1000), "y": value}
-        for wall, value in local_points
-    ]
+
+    def series(points: list[tuple[datetime, float]]) -> list[dict[str, Any]]:
+        return [
+            {"x": int(wall.replace(tzinfo=UTC).timestamp() * 1000), "y": value}
+            for wall, value in points
+        ]
+
     return {
         "status": "COMPLETE",
         "data": {
@@ -892,35 +899,57 @@ def synthetic_poll(local_points: list[tuple[datetime, float]]) -> Any:
                 {
                     "type": "USAGE",
                     "meters": [{"seriesId": METER}],
-                    "series": [{"name": METER, "data": data}],
+                    "series": [{"name": METER, "data": series(local_points)}],
                 },
                 {
                     "type": "TIME_OF_USE",
-                    "series": [{"name": f"{METER} - Super Off Pk", "data": data}],
+                    "series": [
+                        {"name": f"{METER} - {label}", "data": series(points)}
+                        for label, points in (
+                            periods or {"Super Off Pk": local_points}
+                        ).items()
+                    ],
                 },
             ]
         },
     }
 
 
-async def test_the_repeated_hour_of_the_fall_back_night_is_read_in_order(
+# The first seven hours are the portal's 2026-11-01 pull; the rest are filler.
+FALL_BACK_NIGHT = datetime(2026, 11, 1)
+FALL_BACK_USAGE = [
+    (FALL_BACK_NIGHT.replace(hour=hour), kwh)
+    for hour, kwh in enumerate([0.91, 0.79, 0.8, 0.81, 0.8, 0.8, 0.79] + [1.0] * 17)
+]
+FALL_BACK_PERIODS = {
+    "Super Off Pk": [*FALL_BACK_USAGE[:4], (FALL_BACK_NIGHT.replace(hour=4), 1.6)],
+    "Off Peak": FALL_BACK_USAGE[6:],
+}
+
+
+def by_time_frame(answers: dict[str, Any]) -> Callable[[str, Any, Any], Any]:
+    """Answer each poll with the payload for the time frame it asks for."""
+
+    async def respond(method: str, url: Any, data: Any) -> AiohttpClientMockResponse:
+        return AiohttpClientMockResponse(method, url, json=answers[data["timeFrame"]])
+
+    return respond
+
+
+async def test_the_fall_back_night_gets_its_repeated_hour_from_the_daily_total(
     logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
 ) -> None:
-    """Two 1am points on the fall-back night are its first and second instants.
+    """The hourly series reports 1am once, and only the day's total counts both.
 
-    How the live portal encodes that night is unverified until 2026-11-01;
-    this pins the working assumption.
+    Its time-of-use split also puts 5am's kWh on 4am, which is handed back.
     """
-    night = datetime(2026, 11, 1)
     aioclient_mock.post(
         POLL_URL,
-        json=synthetic_poll(
-            [
-                (night.replace(hour=0), 1.0),
-                (night.replace(hour=1), 2.0),
-                (night.replace(hour=1), 3.0),
-                (night.replace(hour=2), 4.0),
-            ]
+        side_effect=by_time_frame(
+            {
+                "HOURLY": synthetic_poll(FALL_BACK_USAGE, FALL_BACK_PERIODS),
+                "DAILY": synthetic_poll([(FALL_BACK_NIGHT, 23.48)]),
+            }
         ),
     )
 
@@ -932,15 +961,43 @@ async def test_the_repeated_hour_of_the_fall_back_night_is_read_in_order(
         time_of_use=True,
     )
 
-    hours = sorted(result.usage)
-    assert hours == [
-        datetime(2026, 11, 1, 4, tzinfo=UTC),
-        datetime(2026, 11, 1, 5, tzinfo=UTC),
-        datetime(2026, 11, 1, 6, tzinfo=UTC),
-        datetime(2026, 11, 1, 7, tzinfo=UTC),
-    ]
-    assert [result.usage[hour] for hour in hours] == [1.0, 2.0, 3.0, 4.0]
-    assert result.periods["Super Off Pk"] == result.usage
+    assert len(result.usage) == 25
+    assert round(sum(result.usage.values()), 2) == 23.48
+    assert result.periods["Super Off Pk"] == {
+        datetime(2026, 11, 1, 4, tzinfo=UTC): 0.91,
+        datetime(2026, 11, 1, 5, tzinfo=UTC): 0.79,
+        datetime(2026, 11, 1, 6, tzinfo=UTC): 0.78,
+        datetime(2026, 11, 1, 7, tzinfo=UTC): 0.8,
+        datetime(2026, 11, 1, 8, tzinfo=UTC): 0.81,
+        datetime(2026, 11, 1, 9, tzinfo=UTC): 0.8,
+        datetime(2026, 11, 1, 10, tzinfo=UTC): 0.8,
+    }
+    classified = {hour for values in result.periods.values() for hour in values}
+    assert classified == set(result.usage)
+
+
+async def test_a_fall_back_day_still_reporting_waits_for_its_repeated_hour(
+    logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """Until every wall-clock hour is in, the daily total says nothing yet."""
+    aioclient_mock.post(
+        POLL_URL,
+        side_effect=by_time_frame(
+            {"HOURLY": synthetic_poll(FALL_BACK_USAGE[:12], FALL_BACK_PERIODS)}
+        ),
+    )
+
+    result = await logged_in.poll_hourly(
+        ACCOUNT,
+        LOCATION,
+        datetime(2026, 11, 1, tzinfo=PORTAL_ZONE),
+        datetime(2026, 11, 2, tzinfo=PORTAL_ZONE),
+        time_of_use=True,
+    )
+
+    assert aioclient_mock.call_count == 1
+    assert len(result.usage) == 12
+    assert datetime(2026, 11, 1, 6, tzinfo=UTC) not in result.usage
 
 
 async def test_the_spring_forward_night_skips_an_hour(
@@ -977,18 +1034,24 @@ async def test_the_spring_forward_night_skips_an_hour(
     ]
 
 
-async def test_a_duplicate_hour_on_an_ordinary_night_is_rejected(
-    logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker
+@pytest.mark.parametrize(
+    "night",
+    [
+        pytest.param(datetime(2026, 9, 1), id="an_ordinary_night"),
+        pytest.param(FALL_BACK_NIGHT, id="the_fall_back_night"),
+    ],
+)
+async def test_a_duplicate_hour_is_rejected(
+    logged_in: SmartHubClient, aioclient_mock: AiohttpClientMocker, night: datetime
 ) -> None:
-    """A second reading for an hour that does not repeat is unreadable."""
-    night = datetime(2026, 9, 1)
+    """The portal reports each wall-clock hour once, even the one that repeats."""
     aioclient_mock.post(
         POLL_URL,
         json=synthetic_poll(
             [
-                (night.replace(hour=1), 1.0),
-                (night.replace(hour=2), 2.0),
-                (night.replace(hour=2), 3.0),
+                (night.replace(hour=0), 1.0),
+                (night.replace(hour=1), 2.0),
+                (night.replace(hour=1), 3.0),
             ]
         ),
     )

@@ -192,7 +192,7 @@ Each of these triggers a full reprice of everything it could have changed.
 
 ## Data updates
 
-The integration polls every 6 hours by default. Each run polls once and rewrites a window of hours rather than appending to the end:
+The integration polls every 6 hours by default. Each run polls once, plus once more for each whole fall-back day in its window, and rewrites a window of hours rather than appending to the end:
 
 - A routine run recomputes from the start of the billing cycle containing seven days ago through the newest hour SmartHub has.
 - A full pass, from the oldest cycle without a bill, runs on the first run after a restart, after any rate or cycle change, after a true-up, including one a newly posted bill triggers, and when you ask for one with `reconcile`.
@@ -215,7 +215,7 @@ The integration polls every 6 hours by default. Each run polls once and rewrites
 - Two tariffs ship, NiteFlex and NHEC Residential (B). Other co-ops' schedules need a tariff module.
 - NHEC's tariff is built from its published schedule and one member's bills, not tested against a live NHEC login. It takes a cycle's bill to be rendered on the day the cycle ends, so around a February 1 or August 1 rate change an estimate can sit at the wrong version until the bill is finalized.
 - The first cycle's proration is a guess. It takes the full service charge and the full allowance regardless of its length, because how Cobb EMC prorates a short first cycle is not published. The first bill's true-up corrects it.
-- The fall-back hour of a daylight-saving transition is read as two instants at the same wall clock. How the portal actually encodes that night is unverified until 2026-11-01.
+- SmartHub's hourly series leaves out the hour the fall-back night repeats, so that hour's usage is what the day's daily total leaves over its hourly points, filled in once the day is whole. How the portal encodes the spring-forward night is unverified until 2027-03-14.
 - HACS custom repository only. This is not in the HACS default store and not in home-assistant/brands, so it has no brand icon in the UI.
 - Return to grid, net metering, and compensation statistics do not exist.
 
