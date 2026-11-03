@@ -687,7 +687,7 @@ async def test_only_an_interior_unclassified_hole_raises_a_repair(
     assert issue is not None
     assert issue.translation_placeholders == {
         "count": str(len(unclassified)),
-        "oldest": unclassified[0].isoformat(),
+        "oldest": "2026-09-02 06:00 EDT",
     }
 
     mock_client.poll_hourly.return_value = recordings.poll_result()

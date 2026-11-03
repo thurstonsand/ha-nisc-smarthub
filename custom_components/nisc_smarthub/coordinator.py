@@ -628,7 +628,9 @@ class NiscSmartHubCoordinator(DataUpdateCoordinator[SmartHubData]):
                 translation_key=ISSUE_UNCLASSIFIED_HOURS,
                 translation_placeholders={
                     "count": str(len(run.unclassified.holes)),
-                    "oldest": run.unclassified.holes[0].isoformat(),
+                    "oldest": run.unclassified.holes[0]
+                    .astimezone(self._local_zone)
+                    .strftime("%Y-%m-%d %H:%M %Z"),
                 },
             )
         else:

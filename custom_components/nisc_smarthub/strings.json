@@ -352,16 +352,16 @@
   },
   "issues": {
     "newer_rate_version": {
-      "title": "A newer rate version has been published",
-      "description": "This release ships rates for {tariff} effective from {effective_from}, newer than any version this entry is configured with. Rates are never applied on your behalf, because pricing your history under a rate you are not billed under would rewrite it wrongly. Compare them with your bill and add the version through Reconfigure."
+      "title": "Newer rates are available",
+      "description": "This release ships {tariff} rates effective {effective_from}. Your pricing history reflects the old rates. Check rates in your bill and adjust if needed through Reconfigure."
     },
     "unclassified_hours": {
-      "title": "Some hours have usage but no time-of-use classification",
-      "description": "SmartHub reported usage for {count} hours it never classified into a rate period, the oldest at {oldest}, and they sit between hours it did classify. Those hours carry kWh and no cost. The next run that finds them classified prices them and clears this."
+      "title": "Some hours have no rate period",
+      "description": "SmartHub reported usage for {count} hours without putting them in a rate period, starting at {oldest}. Those hours count kWh but no cost. It should clear on its own once SmartHub classifies them."
     },
     "unknown_period_label": {
-      "title": "SmartHub reported a rate period this tariff does not know",
-      "description": "The portal classified hours as {labels}, which {tariff} does not price. Those hours carry kWh and no cost. This needs a new release of the integration; report the labels above."
+      "title": "SmartHub reported an unexpected rate period",
+      "description": "SmartHub classified some hours as {labels}, which {tariff} doesn't price, so those hours count kWh but no cost. This needs a new release, so please open an issue with the labels above."
     }
   }
 }
