@@ -1,7 +1,13 @@
+min_version = "2026.10.4"
+
 [tools]
 python = "3.14"
 uv = "0.12.23"
-hk = "2.5.0"
+hk = "2.11.1"
+# hk's check and fix hooks run jactionlint, which runs shellcheck over every `run:` script. Renovate
+# does not know mise's `jactionlint` shorthand, so the backend is spelled out.
+"aqua:jdx/jactionlint" = "2.5.0"
+shellcheck = "0.11.0"
 markdownlint-cli2 = "0.23.3"
 fnox = "1.39.0"
 "1password-cli" = "2.39.0"
@@ -43,6 +49,7 @@ quiet = true
 [tasks.check]
 description = "Run every non-mutating check across the repo"
 depends = [
+  "actions:lint",
   "bootstrap:deps",
   "docs:lint",
   "python:fmt:check",
@@ -54,10 +61,19 @@ depends = [
 [tasks.fix]
 description = "Run every mutating formatter and autofixer across the repo"
 depends = [
+  "actions:fix",
   "docs:lint:fix",
   "python:fmt",
   "python:lint:fix",
 ]
+
+[tasks."actions:lint"]
+description = "Lint GitHub Actions workflows"
+run = "hk check --all --step jactionlint"
+
+[tasks."actions:fix"]
+description = "Apply jactionlint's safe fixes to GitHub Actions workflows"
+run = "hk fix --all --step jactionlint"
 
 [tasks."docs:lint"]
 description = "Lint Markdown"

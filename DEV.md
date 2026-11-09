@@ -7,7 +7,7 @@
 ## Commands
 
 ```sh
-mise run check             # every non-mutating check: markdown, ruff format, ruff lint, basedpyright, strings
+mise run check             # every non-mutating check: workflows, markdown, ruff format, ruff lint, basedpyright, strings
 mise run fix               # every formatter and autofixer
 mise run test              # pytest with coverage, gated at 95% of custom_components
 mise run dev               # run Home Assistant against this checkout, in the foreground
