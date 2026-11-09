@@ -17,6 +17,8 @@ mise run fixtures:capture  # re-record tests/fixtures from the live portal (lapt
 mise run release 0.1.0     # bump the manifest, tag, push, publish the GitHub release
 ```
 
+Releasing, and how to pick the version, is in [`docs/release.md`](docs/release.md).
+
 ## Layout
 
 ```text
@@ -37,6 +39,7 @@ scripts/             capture_fixtures, dev_bootstrap, check_strings, release
 tests/               pytest suite; fixtures/ are scrubbed portal recordings; snapshots/ are Syrupy
 docs/designs/        accepted design docs, amended in place with dates
 docs/runbooks/       the appliance cutover
+docs/release.md      how a release is cut and versioned
 docs/wayfinding/     the planning map for this effort
 config/              local dev instance; only configuration.yaml is tracked
 .agents/, .amp/      Amp orb setup, resume, and the dev instance as a portal service
