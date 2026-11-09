@@ -4,11 +4,14 @@
     "config:recommended",
     "helpers:pinGitHubActionDigests",
     ":configMigration",
+    ":maintainLockFilesWeekly",
     "abandonments:recommended",
     ":enableVulnerabilityAlertsWithAdditionalLabel(security)"
   ],
   "ignorePaths": ["**/node_modules/**", "docs/wayfinding/**/prototypes/**"],
   "dependencyDashboard": true,
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
   "timezone": "America/New_York",
   "labels": ["dependencies"],
   "customManagers": [
