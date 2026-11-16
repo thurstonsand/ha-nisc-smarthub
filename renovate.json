@@ -39,6 +39,12 @@
       "groupName": "mise tools"
     },
     {
+      "description": "The integration runs on Home Assistant's interpreter, so the dev Python stays on the minor Home Assistant ships; raise this cap when Home Assistant moves.",
+      "matchManagers": ["mise"],
+      "matchPackageNames": ["python"],
+      "allowedVersions": "<3.15"
+    },
+    {
       "description": "Home Assistant Core requirements enforced by hassfest must move with the Home Assistant package.",
       "matchManagers": ["homeassistant-manifest", "pep621"],
       "matchPackageNames": ["homeassistant", "pyotp"],

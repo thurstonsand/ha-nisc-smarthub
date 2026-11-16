@@ -2,15 +2,15 @@ min_version = "2026.10.4"
 
 [tools]
 python = "3.14"
-uv = "0.12.23"
-hk = "2.11.1"
+uv = "0.13.8"
+hk = "2.12.0"
 # hk's check and fix hooks run jactionlint, which runs shellcheck over every `run:` script. Renovate
 # does not know mise's `jactionlint` shorthand, so the backend is spelled out.
-"aqua:jdx/jactionlint" = "2.5.0"
+"aqua:jdx/jactionlint" = "2.6.0"
 shellcheck = "0.11.0"
-markdownlint-cli2 = "0.23.3"
-fnox = "1.39.0"
-"1password-cli" = "2.39.0"
+markdownlint-cli2 = "0.24.1"
+fnox = "1.48.0"
+"1password-cli" = "2.42.0"
 
 [settings]
 # Every tool, and every package mise locks under it, waits 3 days after release, like Renovate.
