@@ -33,7 +33,7 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 from homeassistant.util import dt as dt_util
-import voluptuous as vol
+import probatio
 
 from .const import (
     CONF_ACCOUNT,
@@ -81,50 +81,50 @@ def portal_host(value: str) -> str:
     return value.strip().removeprefix("https://").removeprefix("http://").rstrip("/")
 
 
-USER_SCHEMA = vol.Schema(
+USER_SCHEMA = probatio.Schema(
     {
-        vol.Required(CONF_HOST): TextSelector(
+        probatio.Required(CONF_HOST): TextSelector(
             TextSelectorConfig(type=TextSelectorType.TEXT, autocomplete="url")
         ),
-        vol.Required(CONF_EMAIL): TextSelector(
+        probatio.Required(CONF_EMAIL): TextSelector(
             TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
         ),
-        vol.Required(CONF_PASSWORD): TextSelector(
+        probatio.Required(CONF_PASSWORD): TextSelector(
             TextSelectorConfig(
                 type=TextSelectorType.PASSWORD, autocomplete="current-password"
             )
         ),
-        vol.Required(CONF_TOTP_SECRET): TextSelector(
+        probatio.Required(CONF_TOTP_SECRET): TextSelector(
             TextSelectorConfig(type=TextSelectorType.PASSWORD)
         ),
     }
 )
 
-REAUTH_SCHEMA = vol.Schema(
+REAUTH_SCHEMA = probatio.Schema(
     {
-        vol.Required(CONF_PASSWORD): TextSelector(
+        probatio.Required(CONF_PASSWORD): TextSelector(
             TextSelectorConfig(
                 type=TextSelectorType.PASSWORD, autocomplete="current-password"
             )
         ),
-        vol.Required(CONF_TOTP_SECRET): TextSelector(
+        probatio.Required(CONF_TOTP_SECRET): TextSelector(
             TextSelectorConfig(type=TextSelectorType.PASSWORD)
         ),
     }
 )
 
-CREDENTIALS_SCHEMA = vol.Schema(
+CREDENTIALS_SCHEMA = probatio.Schema(
     {
-        vol.Required(CONF_EMAIL): TextSelector(
+        probatio.Required(CONF_EMAIL): TextSelector(
             TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
         ),
         **REAUTH_SCHEMA.schema,
     }
 )
 
-OPTIONS_SCHEMA = vol.Schema(
+OPTIONS_SCHEMA = probatio.Schema(
     {
-        vol.Required(
+        probatio.Required(
             CONF_POLL_INTERVAL_MINUTES, default=DEFAULT_POLL_INTERVAL_MINUTES
         ): NumberSelector(
             NumberSelectorConfig(
@@ -140,11 +140,11 @@ OPTIONS_SCHEMA = vol.Schema(
 SELECTION_SEPARATOR = ":"
 
 
-def _cycle_day_schema(cycle_day: int) -> vol.Schema:
+def _cycle_day_schema(cycle_day: int) -> probatio.Schema:
     """Return a schema asking only for the billing cycle's start day."""
-    return vol.Schema(
+    return probatio.Schema(
         {
-            vol.Required(CONF_CYCLE_DAY, default=cycle_day): NumberSelector(
+            probatio.Required(CONF_CYCLE_DAY, default=cycle_day): NumberSelector(
                 NumberSelectorConfig(
                     min=FIRST_CYCLE_DAY,
                     max=LAST_CYCLE_DAY,
@@ -165,27 +165,27 @@ def form_key(tariff: Tariff, name: str) -> str:
     return f"{tariff.key}_{name}"
 
 
-def _rate_schema(tariff: Tariff, seed: RateVersion) -> vol.Schema:
+def _rate_schema(tariff: Tariff, seed: RateVersion) -> probatio.Schema:
     """Return a schema for one of a tariff's rate versions, seeded from another."""
     fields: dict[Any, Any] = {
-        vol.Required(
+        probatio.Required(
             form_key(tariff, EFFECTIVE_FROM), default=seed.effective_from.isoformat()
         ): DateSelector()
     }
     for parameter in tariff.rate_parameters:
         fields[
-            vol.Required(
+            probatio.Required(
                 form_key(tariff, parameter.key), default=seed.values[parameter.key]
             )
         ] = NumberSelector(
             NumberSelectorConfig(step="any", mode=NumberSelectorMode.BOX)
         )
-    return vol.Schema(fields)
+    return probatio.Schema(fields)
 
 
-def _cycle_schema(tariff: Tariff, seed: RateVersion) -> vol.Schema:
+def _cycle_schema(tariff: Tariff, seed: RateVersion) -> probatio.Schema:
     """Return the billing step's schema, seeded from a published rate version."""
-    return vol.Schema(
+    return probatio.Schema(
         {
             **_cycle_day_schema(DEFAULT_CYCLE_DAY).schema,
             **_rate_schema(tariff, seed).schema,
@@ -486,7 +486,7 @@ class NiscSmartHubConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is None:
             return self.async_show_form(
                 step_id="remove_rate_version",
-                data_schema=vol.Schema({}),
+                data_schema=probatio.Schema({}),
                 description_placeholders={
                     "effective_from": str(newest["effective_from"])
                 },
@@ -696,10 +696,10 @@ def _choices(customers: list[Customer]) -> dict[str, str]:
     }
 
 
-def _location_schema(choices: dict[str, str]) -> vol.Schema:
-    return vol.Schema(
+def _location_schema(choices: dict[str, str]) -> probatio.Schema:
+    return probatio.Schema(
         {
-            vol.Required(CONF_LOCATION): SelectSelector(
+            probatio.Required(CONF_LOCATION): SelectSelector(
                 SelectSelectorConfig(
                     options=[
                         SelectOptionDict(value=value, label=label)

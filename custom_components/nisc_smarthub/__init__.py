@@ -10,7 +10,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.util import dt as dt_util
-import voluptuous as vol
+import probatio
 
 from .const import (
     ATTR_BILL_TOTAL,
@@ -38,47 +38,46 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(  # pyright: ignore[reportUnk
     DOMAIN
 )
 
-RECONCILE_SCHEMA = vol.Schema(
+RECONCILE_SCHEMA = probatio.Schema(
     {
-        vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Optional(ATTR_FROM): cv.date,
+        probatio.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
+        probatio.Optional(ATTR_FROM): cv.date,
     }
 )
 
 # Every key past the envelope is a bill line, and which lines a bill has is the
 # entry's tariff's to say, so they are checked once the entry is known.
-FINALIZE_SCHEMA = vol.Schema(
+FINALIZE_SCHEMA = probatio.Schema(
     {
-        vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Required(ATTR_CYCLE_START): cv.date,
-        vol.Required(ATTR_READ_START): cv.date,
-        vol.Required(ATTR_READ_END): cv.date,
-        vol.Required(ATTR_BILL_TOTAL): vol.Coerce(float),
+        probatio.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
+        probatio.Required(ATTR_CYCLE_START): cv.date,
+        probatio.Required(ATTR_READ_START): cv.date,
+        probatio.Required(ATTR_READ_END): cv.date,
+        probatio.Required(ATTR_BILL_TOTAL): probatio.Coerce(float),
     },
-    extra=vol.ALLOW_EXTRA,
+    extra=probatio.ALLOW_EXTRA,
 )
 FINALIZE_ENVELOPE = frozenset(
     {ATTR_CONFIG_ENTRY_ID, ATTR_CYCLE_START, ATTR_READ_START, ATTR_READ_END}
 )
 BILL_TOTAL = Parameter(key=ATTR_BILL_TOTAL, signed=True)
 
-UNFINALIZE_SCHEMA = vol.Schema(
+UNFINALIZE_SCHEMA = probatio.Schema(
     {
-        vol.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Required(ATTR_CYCLE_START): cv.date,
+        probatio.Required(ATTR_CONFIG_ENTRY_ID): cv.string,
+        probatio.Required(ATTR_CYCLE_START): cv.date,
     }
 )
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Register the actions this integration exposes, once."""
-    hass.services.async_register(
-        DOMAIN, SERVICE_RECONCILE, _async_reconcile, schema=RECONCILE_SCHEMA
-    )
-    hass.services.async_register(
+    register = hass.services.async_register  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]  # Core's VolSchemaType names probatio.All unparameterized
+    register(DOMAIN, SERVICE_RECONCILE, _async_reconcile, schema=RECONCILE_SCHEMA)
+    register(
         DOMAIN, SERVICE_FINALIZE_CYCLE, _async_finalize_cycle, schema=FINALIZE_SCHEMA
     )
-    hass.services.async_register(
+    register(
         DOMAIN,
         SERVICE_UNFINALIZE_CYCLE,
         _async_unfinalize_cycle,

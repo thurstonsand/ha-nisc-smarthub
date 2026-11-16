@@ -11,12 +11,12 @@ from homeassistant.const import CONF_EMAIL, CONF_HOST, CONF_LOCATION, CONF_PASSW
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.util import dt as dt_util
+import probatio
 import pytest
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     async_fire_time_changed,
 )
-import voluptuous as vol
 
 from custom_components.nisc_smarthub.const import (
     CONF_ACCOUNT,
@@ -278,13 +278,13 @@ async def test_a_poll_that_never_completes_blocks_the_entry(
     assert result["type"] is FlowResultType.CREATE_ENTRY
 
 
-def defaults(schema: vol.Schema | None) -> dict[str, object]:
+def defaults(schema: probatio.Schema | None) -> dict[str, object]:
     """Return each field's default in a shown form."""
     assert schema is not None
     return {
         str(key.schema): cast("Callable[[], object]", key.default)()
         for key in schema.schema
-        if isinstance(key, vol.Required) and key.default is not vol.UNDEFINED
+        if isinstance(key, probatio.Required) and key.default is not probatio.UNDEFINED
     }
 
 

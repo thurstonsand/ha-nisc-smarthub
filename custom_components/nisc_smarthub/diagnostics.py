@@ -13,9 +13,7 @@ from typing import Any
 from homeassistant.const import CONF_EMAIL, CONF_LOCATION, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
-from homeassistant.helpers.redact import (
-    async_redact_data,  # pyright: ignore[reportUnknownVariableType]  # its overloads are generic over an unparameterized Mapping
-)
+from homeassistant.helpers.redact import async_redact_data  # pyright: ignore[reportUnknownVariableType]  # its overloads are generic over an unparameterized Mapping
 
 from . import NiscSmartHubConfigEntry
 from .const import CONF_ACCOUNT, CONF_TOTP_SECRET, DOMAIN
