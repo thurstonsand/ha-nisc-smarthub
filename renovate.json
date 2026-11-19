@@ -9,7 +9,9 @@
     ":enableVulnerabilityAlertsWithAdditionalLabel(security)"
   ],
   "ignorePaths": ["**/node_modules/**", "docs/wayfinding/**/prototypes/**"],
-  "dependencyDashboard": true,
+  "dependencyDashboard": {
+    "enabled": true
+  },
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
   "timezone": "America/New_York",
