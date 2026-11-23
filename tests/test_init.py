@@ -14,13 +14,8 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.recorder import get_instance
 from homeassistant.util import dt as dt_util
 import pytest
-from pytest_homeassistant_custom_component.common import (
-    MockConfigEntry,
-    async_fire_time_changed,
-)
-from pytest_homeassistant_custom_component.components.recorder.common import (
-    async_wait_recording_done,
-)
+from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
+from pytest_homeassistant.components.recorder.common import async_wait_recording_done
 
 from custom_components.nisc_smarthub.const import (
     CONF_POLL_INTERVAL_MINUTES,

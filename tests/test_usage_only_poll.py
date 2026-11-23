@@ -6,11 +6,9 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.components.recorder.common import (
-    async_wait_recording_done,
-)
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.components.recorder.common import async_wait_recording_done
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.nisc_smarthub.const import DOMAIN
 

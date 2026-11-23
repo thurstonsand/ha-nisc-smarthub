@@ -13,9 +13,7 @@ from homeassistant.components.recorder.statistics import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.recorder import get_instance
 import pytest
-from pytest_homeassistant_custom_component.components.recorder.common import (
-    async_wait_recording_done,
-)
+from pytest_homeassistant.components.recorder.common import async_wait_recording_done
 
 from custom_components.nisc_smarthub.tariff import NITEFLEX
 from custom_components.nisc_smarthub.writer import (

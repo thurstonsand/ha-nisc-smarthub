@@ -9,7 +9,9 @@
     ":enableVulnerabilityAlertsWithAdditionalLabel(security)"
   ],
   "ignorePaths": ["**/node_modules/**", "docs/wayfinding/**/prototypes/**"],
-  "dependencyDashboard": true,
+  "dependencyDashboard": {
+    "enabled": true
+  },
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
   "timezone": "America/New_York",
@@ -52,10 +54,11 @@
       "groupSlug": "home-assistant-dependency-set"
     },
     {
-      "description": "The pytest plugin has one release per Home Assistant version and pins Syrupy; update both while resolving a Home Assistant update instead of taking their independently latest releases.",
+      "description": "The pytest plugin and its Syrupy pin follow Home Assistant, as does Core's pyotp pin in the dev group. Do not update them independently.",
       "matchManagers": ["pep621"],
       "matchPackageNames": [
-        "pytest-homeassistant-custom-component",
+        "pyotp",
+        "pytest-homeassistant",
         "syrupy"
       ],
       "enabled": false
@@ -66,6 +69,7 @@
       "matchPackageNames": [
         "aiodhcpwatcher",
         "aiodiscover",
+        "aiohasupervisor",
         "aiousbwatcher",
         "async-upnp-client",
         "av",

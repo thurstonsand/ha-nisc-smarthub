@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock, patch
 from freezegun.api import FrozenDateTimeFactory
 from homeassistant.const import CONF_EMAIL, CONF_HOST, CONF_LOCATION, CONF_PASSWORD
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.syrupy import HomeAssistantSnapshotExtension
+from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.syrupy import HomeAssistantSnapshotExtension
 from syrupy.assertion import SnapshotAssertion
 
 from custom_components.nisc_smarthub.const import (
@@ -42,26 +42,15 @@ def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
 
 
 @pytest.fixture(autouse=True)
-def enable_custom_integration_loading(request: pytest.FixtureRequest) -> None:
-    """Let Home Assistant load this repository's integration.
-
-    Requested lazily so the pure client tests do not pay for a hass instance.
-    """
-    if "hass" in request.fixturenames:
-        # The recorder has to be in place before custom integrations are
-        # enabled, so order the two here rather than trusting argument order.
-        if "recorder_mock" in request.fixturenames:
-            request.getfixturevalue("recorder_mock")
-        request.getfixturevalue("enable_custom_integrations")
-
-
-@pytest.fixture(autouse=True)
 def frozen_clock(request: pytest.FixtureRequest) -> None:
     """Freeze every entry-setup test at one instant inside the recorded cycle.
 
     A test that needs another instant asks for `freezer` and moves it.
     """
     if "hass" in request.fixturenames:
+        # The recorder needs to configure its database before `hass` starts.
+        if "recorder_mock" in request.fixturenames:
+            request.getfixturevalue("recorder_mock")
         freezer: FrozenDateTimeFactory = request.getfixturevalue("freezer")
         freezer.move_to(FROZEN_NOW)
 

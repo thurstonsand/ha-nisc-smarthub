@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 if ! command -v mise >/dev/null 2>&1; then
-  curl -fsSL https://mise.run | sh
+  curl -fsSL https://mise.run | MISE_SELF_UPDATE_MINIMUM_RELEASE_AGE=3d sh
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
@@ -17,5 +17,5 @@ for profile in "$HOME/.bashrc" "$HOME/.bash_profile"; do
 done
 
 mise trust --yes
-mise install
+mise install --locked
 mise run bootstrap

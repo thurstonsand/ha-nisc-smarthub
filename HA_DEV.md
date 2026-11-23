@@ -504,7 +504,7 @@ tests/
 
 ### Bootstrap `tests/conftest.py`
 
-Custom integrations are **not** loaded by default in tests, so the first thing any new test file needs is this:
+The first-party `pytest-homeassistant` plugin enables custom integrations by default. Define shared entry fixtures in `tests/conftest.py`:
 
 ```python
 """Shared fixtures for nisc_smarthub tests."""
@@ -513,16 +513,11 @@ from collections.abc import Generator
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.nisc_smarthub.const import DOMAIN
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
-
-
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
-    """Load the custom integration in every test."""
 
 
 @pytest.fixture

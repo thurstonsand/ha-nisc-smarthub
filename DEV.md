@@ -2,7 +2,7 @@
 
 ## Setup
 
-`mise trust` then enter the directory. The `enter` hook syncs the uv venv and installs hk's pre-commit hooks. The venv carries Home Assistant 2026.10.4, its test plugin, and the runtime closure of the dev configuration, so a fresh clone runs the instance without `hass` installing anything for itself.
+`mise trust` then enter the directory. The `enter` hook syncs the uv venv and installs hk's pre-commit hooks. The venv carries Home Assistant, its first-party `pytest-homeassistant` plugin at the same version, and the runtime closure of the dev configuration, so a fresh clone runs the instance without `hass` installing anything for itself.
 
 ## Commands
 
@@ -49,7 +49,7 @@ config/              local dev instance; only configuration.yaml is tracked
 
 `mise run dev` creates the `config/custom_components -> ../custom_components` symlink if it is missing, refuses to touch anything else sitting at that path, and runs `hass --config config --debug --skip-pip` in the foreground. Restart after any Python, manifest, or translation change: reloading the entry does not reimport the modules.
 
-`--skip-pip` works because the dev group in `pyproject.toml` declares the runtime closure of `default_config` at the versions 2026.10.4 pins, the frontend included. After a Home Assistant bump, regenerate that list: start the instance once without `--skip-pip`, then diff `uv pip freeze` against `uv.lock` and pin what `hass` installed. A `uv sync` that prunes something the instance needs shows up as recovery mode at the next start, where custom integrations never load.
+`--skip-pip` works because the dev group in `pyproject.toml` declares the runtime closure of `default_config` at the versions Home Assistant pins, the frontend included. After a Home Assistant bump, regenerate that list: start the instance once without `--skip-pip`, then diff `uv pip freeze` against `uv.lock` and pin what `hass` installed. A `uv sync` that prunes something the instance needs shows up as recovery mode at the next start, where custom integrations never load.
 
 With the instance running, `mise run dev:bootstrap` creates the owner `dev` / `development` over the onboarding API and writes a long-lived token to `config/.agent-token`. It is a no-op once that file exists. Inspect the instance with that token over REST (`/api/config`, `/api/config/config_entries/entry`) or the WebSocket API (`recorder/list_statistic_ids`, `recorder/statistics_during_period`, `energy/save_prefs`). The onboarding API is internal; when a Home Assistant upgrade breaks `scripts/dev_bootstrap.py`, fix the script.
 
