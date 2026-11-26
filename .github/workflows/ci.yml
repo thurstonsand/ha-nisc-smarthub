@@ -27,6 +27,7 @@ jobs:
           install: true
           cache: true
           minimum_release_age: 3d
+          auto_update: true
 
       # No shell `enter` hook in CI, so the venv sync and hook install run
       # explicitly.
